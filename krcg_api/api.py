@@ -1,0 +1,282 @@
+import arrow
+import babel
+import flask
+import io
+import json
+import math
+import os
+import pkg_resources  # part of setuptools
+import requests
+import urllib.parse
+
+from krcg import analyzer
+from krcg import deck
+from krcg import logging
+from krcg import twda
+from krcg import utils as krcg_utils
+from krcg import vtes
+
+from . import config
+
+
+class KRCG(flask.Flask):
+    """Base API class for Access-Control headers handling."""
+
+    def make_default_options_response(self) -> flask.Response:
+        response = super().make_default_options_response()
+        response.headers.add("Access-Control-Allow-Headers", "*")
+        response.headers.add("Access-Control-Allow-Methods", "*")
+        return response
+
+    def process_response(self, response: flask.Response) -> flask.Response:
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+
+
+logger = logging.logger
+base = flask.Blueprint("base", "krcg")
+
+
+def create_app():
+    vtes.VTES.load()
+    twda.TWDA.load()
+    logger.info("launching app")
+    app = KRCG(__name__)
+    app.register_blueprint(base)
+    return app
+
+
+@base.route("/")
+@base.route("/index.html")
+def swagger():
+    """Swagger doc display."""
+    return flask.render_template("index.html")
+
+
+@base.route("/openapi.yaml")
+def openapi():
+    """OpenAPI schema."""
+    return flask.render_template(
+        "openapi.yaml",
+        version=pkg_resources.require("krcg-api")[0].version,
+    )
+
+
+@base.route("/card/<text>")
+def card(text):
+    """Get a card."""
+    try:
+        text = int(text)
+    except ValueError:
+        pass
+    try:
+        return flask.jsonify(vtes.VTES[text].to_json())
+    except KeyError:
+        return "Card not found", 404
+
+
+@base.route("/deck", methods=["POST"])
+def deck_by_cards():
+    """Get decks containing cards."""
+    data = flask.request.get_json() or {}
+    if data and data.get("player"):
+        decks = [
+            twda.TWDA[id_]
+            for id_ in twda.TWDA.by_author[krcg_utils.normalize(data["player"])]
+        ]
+    else:
+        decks = twda.TWDA.values()
+    if data and data.get("players_count"):
+        decks = [d for d in decks if d.players_count >= int(data["players_count"])]
+    if data and data.get("date_from"):
+        decks = [d for d in decks if d.date >= arrow.get(data["date_from"]).date()]
+    if data and data.get("date_to"):
+        decks = [d for d in decks if d.date < arrow.get(data["date_to"]).date()]
+    if data and data.get("cards"):
+        try:
+            cards = set(vtes.VTES[c] for c in data["cards"])
+        except KeyError as e:
+            return f"Invalid card name: {e.args}", 400
+        decks = [d for d in decks if all(c in d for c in cards)]
+    if not decks:
+        return "No result in TWDA", 404
+    return flask.jsonify([d.to_json() for d in decks])
+
+
+@base.route("/deck/<twda_id>")
+def deck_by_id(twda_id):
+    """Get a deck given its ID."""
+    if not twda_id:
+        return "Bad Request", 400
+    if twda_id not in twda.TWDA:
+        return "Not Found", 404
+    return flask.jsonify(twda.TWDA[twda_id].to_json())
+
+
+@base.route("/convert", methods=["POST"])
+def convert():
+    data = flask.request.get_json() or {}
+    try:
+        format = data.get("format")
+        if "json" in data:
+            d = deck.Deck()
+            d.from_json(data["json"])
+        else:
+            text = io.StringIO(data["text"])
+            d = deck.Deck.from_txt(text)
+        if format == "json":
+            return flask.jsonify({"result": d.to_json()})
+        else:
+            return flask.jsonify({"result": d.to_txt(format)})
+    except KeyError:
+        return "Missing key: text or json", 400
+
+
+@base.route("/amaranth", methods=["POST"])
+def amaranth():
+    data = flask.request.form or flask.request.json
+    try:
+        url = data["url"]
+        if url[:34] != "https://amaranth.vtes.co.nz/#deck/":
+            return "Amaranth URL required", 400
+        return flask.jsonify(deck.Deck.from_amaranth(url[34:]).to_json())
+    except KeyError:
+        return "Missing required parameter: url", 400
+
+
+@base.route("/candidates", methods=["POST"])
+def candidates():
+    data = flask.request.get_json() or {}
+    full = data.pop("mode", "") == "full"
+    decks = twda.TWDA.values()
+    if data and data.get("players_count"):
+        decks = [d for d in decks if d.players_count >= int(data.pop("players_count"))]
+    if data and data.get("date_from"):
+        date = data.pop("date_from")
+        decks = [d for d in decks if d.date >= arrow.get(date).date()]
+    if data and data.get("date_to"):
+        date = data.pop("date_to")
+        decks = [d for d in decks if d.date < arrow.get(date).date()]
+    try:
+        cards = [vtes.VTES[c] for c in data.pop("cards", [])]
+        A = analyzer.Analyzer(decks)
+        A.refresh(*cards)
+        if len(A.examples) < 4:
+            return "Too few examples in TWDA", 404
+        if cards:
+            ret = A.candidates(*cards, spoiler_multiplier=1)[:10]
+        else:
+            ret = A.played.most_common()[:10]
+        if full:
+            return flask.jsonify(
+                [
+                    {
+                        "card": c.to_json(),
+                        "score": round(s / (1 if cards else len(decks)), 4),
+                        "average": round(A.average[c]),
+                        "deviation": round(math.sqrt(A.variance[c]), 2),
+                    }
+                    for c, s in ret
+                ]
+            )
+        else:
+            return flask.jsonify(
+                [
+                    {
+                        "card": c.name,
+                        "score": round(s / (1 if cards else len(decks)), 4),
+                        "average": round(A.average[c]),
+                        "deviation": round(math.sqrt(A.variance[c]), 2),
+                    }
+                    for c, s in ret
+                ]
+            )
+    except KeyError as e:
+        return f"Invalid card name: {e.args}", 400
+
+
+@base.route("/complete/<text>")
+def complete(text):
+    """Card name completion."""
+    lang = _negotiate_locale(flask.request.accept_languages.values())
+    return flask.jsonify(vtes.VTES.complete(text, lang))
+
+
+@base.route("/card", methods=["POST"])
+def card_search():
+    """Card search."""
+    data = flask.request.get_json() or {}
+    full = data.pop("mode", "") == "full"
+    if data.get("lang"):
+        data["lang"] = _negotiate_locale([data["lang"]])
+    try:
+        result = sorted(vtes.VTES.search(**data), key=lambda c: c.name)
+    except ValueError as e:
+        return str(e), 422
+    if full:
+        result = [c.to_json() for c in result]
+    else:
+        result = [c.name for c in result]
+    return flask.jsonify(result)
+
+
+@base.route("/card", methods=["GET"])
+def card_search_dimensions():
+    """Card search dimensions."""
+    return flask.jsonify(vtes.VTES.search_dimensions)
+
+
+@base.route("/submit-ruling/<card>", methods=["POST"])
+def submit_ruling(card):
+    """Submit a new ruling proposal.
+
+    This posts an issue on the project Github repository.
+    """
+    try:
+        card = int(card)
+    except ValueError:
+        pass
+    try:
+        card = vtes.VTES[card].name
+    except KeyError:
+        return "Card not found", 404
+    data = flask.request.get_json() or {}
+    text = data.get("text")
+    link = data.get("link")
+    if not (text and link):
+        return "Invalid ruling data", 400
+    if urllib.parse.urlparse(link).hostname not in {
+        "boardgamegeek.com",
+        "www.boardgamegeek.com",
+        "groups.google.com",
+        "www.vekn.net",
+    }:
+        return "Invalid ruling link", 400
+    tryout = requests.get(link, stream=True)
+    if not tryout.ok:
+        return "Invalid ruling link", tryout.status_code
+
+    url = "https://api.github.com/repos/lionel-panhaleux/krcg/issues"
+    issue = {
+        "title": card,
+        "body": f"- **text:** {text}\n- **link:** {link}",
+    }
+    session = requests.session()
+    session.auth = (os.getenv("GITHUB_USERNAME"), os.getenv("GITHUB_TOKEN"))
+    response = session.post(url, json.dumps(issue))
+    if response.ok:
+        return flask.jsonify(response.json()), response.status_code
+    else:
+        return response.text, response.status_code
+
+
+def _negotiate_locale(preferred):
+    res = babel.negotiate_locale(
+        [x.replace("_", "-") for x in preferred],
+        ["en"] + list(config.SUPPORTED_LANGUAGES),
+        sep="-",
+    )
+    # negotiation is case-insensitive but the result uses the case of the first argument
+    if res:
+        res = res[:2]
+    return res
