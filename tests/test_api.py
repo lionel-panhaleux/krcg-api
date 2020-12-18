@@ -91,10 +91,10 @@ def test_card(client):
             "This vampire cannot commit diablerie. A vampire may have only one Alastor."
         ),
         "sets": {
-            "Gehenna": [{"Rarity": "Rare", "Release Date": "2004-05-17"}],
-            "Keepers of Tradition": [{"Rarity": "Rare", "Release Date": "2008-11-19"}],
+            "Gehenna": [{"rarity": "Rare", "release_date": "2004-05-17"}],
+            "Keepers of Tradition": [{"rarity": "Rare", "release_date": "2008-11-19"}],
             "Kindred Most Wanted": [
-                {"Copies": 1, "Precon": "Alastors", "Release Date": "2005-02-21"}
+                {"copies": 1, "precon": "Alastors", "release_date": "2005-02-21"}
             ],
         },
         "artists": ["Monte Moore"],
@@ -159,22 +159,22 @@ def test_card(client):
         },
         "sets": {
             "Anarchs": [
-                {"Copies": 2, "Precon": "Gangrel", "Release Date": "2003-05-19"}
+                {"copies": 2, "precon": "Gangrel", "release_date": "2003-05-19"}
             ],
             "Camarilla Edition": [
-                {"Rarity": "Common", "Release Date": "2002-08-19"},
-                {"Copies": 3, "Precon": "Nosferatu", "Release Date": "2002-08-19"},
+                {"rarity": "Common", "release_date": "2002-08-19"},
+                {"copies": 3, "precon": "Nosferatu", "release_date": "2002-08-19"},
             ],
             "First Blood": [
-                {"Copies": 6, "Precon": "Nosferatu", "Release Date": "2019-10-01"}
+                {"copies": 6, "precon": "Nosferatu", "release_date": "2019-10-01"}
             ],
-            "Jyhad": [{"Rarity": "Common", "Release Date": "1994-08-16"}],
+            "Jyhad": [{"rarity": "Common", "release_date": "1994-08-16"}],
             "Keepers of Tradition": [
-                {"Rarity": "Common", "Release Date": "2008-11-19"}
+                {"rarity": "Common", "release_date": "2008-11-19"}
             ],
-            "Third Edition": [{"Rarity": "Common", "Release Date": "2006-09-04"}],
+            "Third Edition": [{"rarity": "Common", "release_date": "2006-09-04"}],
             "Vampire: The Eternal Struggle": [
-                {"Rarity": "Common", "Release Date": "1995-09-15"}
+                {"rarity": "Common", "release_date": "1995-09-15"}
             ],
         },
         "_i18n": {
@@ -261,9 +261,9 @@ def test_card(client):
         "sets": {
             "Anthology": [
                 {
-                    "Copies": 1,
-                    "Precon": "EC Berlin Edition",
-                    "Release Date": "2017-05-11",
+                    "copies": 1,
+                    "precon": "EC Berlin Edition",
+                    "release_date": "2017-05-11",
                 }
             ]
         },
@@ -289,11 +289,11 @@ def test_card(client):
         "name": "The Dracon",
         "_name": "Dracon, The",
         "sets": {
-            "2015 Storyline Rewards": [{"Copies": 1, "Release Date": "2015-02-16"}],
+            "2015 Storyline Rewards": [{"copies": 1, "release_date": "2015-02-16"}],
             "2018 Humble Bundle": [
-                {"Copies": 2, "Precon": "Humble Bundle", "Release Date": "2018-10-04"}
+                {"copies": 2, "precon": "Humble Bundle", "release_date": "2018-10-04"}
             ],
-            "2019 Promo Pack 1": [{"Copies": 1, "Release Date": "2019-04-08"}],
+            "2019 Promo Pack 1": [{"copies": 1, "release_date": "2019-04-08"}],
         },
         "types": ["Vampire"],
     }
@@ -326,7 +326,7 @@ def test_card(client):
                 ),
             },
         },
-        "sets": {"The Unaligned": [{"Rarity": "Common", "Release Date": "2014-10-04"}]},
+        "sets": {"The Unaligned": [{"rarity": "Common", "release_date": "2014-10-04"}]},
         "types": ["Reaction"],
     }
     response = client.get("/card/Tyler")
@@ -347,8 +347,8 @@ def test_card(client):
         "name": "Tyler",
         "_name": "Tyler",
         "sets": {
-            "Blood Shadowed Court": [{"Release Date": "2008-04-14"}],
-            "Camarilla Edition": [{"Rarity": "Vampire", "Release Date": "2002-08-19"}],
+            "Blood Shadowed Court": [{"release_date": "2008-04-14"}],
+            "Camarilla Edition": [{"rarity": "Vampire", "release_date": "2002-08-19"}],
         },
         "title": "Primogen",
         "types": ["Vampire"],
@@ -389,9 +389,9 @@ def test_card(client):
             },
         },
         "sets": {
-            "Anthology": [{"Copies": 3, "Release Date": "2017-05-11"}],
+            "Anthology": [{"copies": 3, "release_date": "2017-05-11"}],
             "Keepers of Tradition": [
-                {"Rarity": "Common", "Release Date": "2008-11-19"}
+                {"rarity": "Common", "release_date": "2008-11-19"}
             ],
         },
         "types": ["Master"],
@@ -1817,7 +1817,7 @@ def test_card_search(client):
             },
             "sets": {
                 "Legacies of Blood": [
-                    {"Rarity": "Uncommon", "Release Date": "2005-11-14"}
+                    {"rarity": "Uncommon", "release_date": "2005-11-14"}
                 ]
             },
             "types": ["Vampire"],
