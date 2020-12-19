@@ -1809,7 +1809,7 @@ paths:
       summary: Get a deck by its TWDA ID
       description: Returns the deck with the given ID in the TWDA.
       parameters:
-        - name: twda_id
+        - name: id
           in: path
           required: true
           schema:
@@ -1834,6 +1834,7 @@ paths:
         returns the decklist in the requested format (defaults to json).
       parameters:
         - name: format
+          required: true
           in: path
           schema:
             type: string
