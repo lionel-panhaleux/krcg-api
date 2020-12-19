@@ -75,7 +75,7 @@ def card(text):
         return "Card not found", 404
 
 
-@base.route("/deck", methods=["POST"])
+@base.route("/twda", methods=["POST"])
 def deck_by_cards():
     """Get decks containing cards."""
     data = flask.request.get_json() or {}
@@ -103,7 +103,7 @@ def deck_by_cards():
     return flask.jsonify([d.to_json() for d in decks])
 
 
-@base.route("/deck/<twda_id>")
+@base.route("/twda/<twda_id>")
 def deck_by_id(twda_id):
     """Get a deck given its ID."""
     if not twda_id:
@@ -114,22 +114,22 @@ def deck_by_id(twda_id):
 
 
 @base.route("/convert", methods=["POST"])
-def convert():
-    data = flask.request.get_json() or {}
-    try:
-        format = data.get("format")
-        if "json" in data:
-            d = deck.Deck()
-            d.from_json(data["json"])
-        else:
-            text = io.StringIO(data["text"])
+@base.route("/convert/<format>", methods=["POST"])
+def convert(format="json"):
+    raw_data = flask.request.get_data()
+    if flask.request.json:
+        d = deck.Deck()
+        d.from_json(flask.request.json)
+    else:
+        try:
+            text = io.StringIO(raw_data.decode("utf-8"))
             d = deck.Deck.from_txt(text)
-        if format == "json":
-            return flask.jsonify({"result": d.to_json()})
-        else:
-            return flask.jsonify({"result": d.to_txt(format)})
-    except KeyError:
-        return "Missing key: text or json", 400
+        except UnicodeDecodeError:
+            return "Failed to decode text/plain data in utf-8", 400
+    if format in ["twd", "lackey", "jol"]:
+        return d.to_txt(format).encode("utf-8")
+    else:
+        return flask.jsonify(d.to_json())
 
 
 @base.route("/amaranth", methods=["POST"])
@@ -202,7 +202,7 @@ def complete(text):
     return flask.jsonify(vtes.VTES.complete(text, lang))
 
 
-@base.route("/card", methods=["POST"])
+@base.route("/card_search", methods=["POST"])
 def card_search():
     """Card search."""
     data = flask.request.get_json() or {}
@@ -212,7 +212,7 @@ def card_search():
     try:
         result = sorted(vtes.VTES.search(**data), key=lambda c: c.name)
     except ValueError as e:
-        return str(e), 422
+        return str(e), 400
     if full:
         result = [c.to_json() for c in result]
     else:
@@ -220,7 +220,7 @@ def card_search():
     return flask.jsonify(result)
 
 
-@base.route("/card", methods=["GET"])
+@base.route("/card_search", methods=["GET"])
 def card_search_dimensions():
     """Card search dimensions."""
     return flask.jsonify(vtes.VTES.search_dimensions)

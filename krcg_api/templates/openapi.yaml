@@ -12,16 +12,16 @@ info:
     url: https://opensource.org/licenses/MIT
 tags:
   - name: Card
-    description: VTES cards
+    description: operations on VTES cards
   - name: Deck
-    description: TWDA decks
+    description: operations on VTES decks
 components:
   schemas:
     card_count:
       type: object
       required: ["id", "name", "count"]
       properties:
-        id: { type: string }
+        id: { type: integer }
         name: { type: string }
         count: { type: integer }
         comments: { type: string }
@@ -30,39 +30,34 @@ components:
       description: |
         A card with all informations.
         Note empty fields are not included.
-        Set information can be momentarily missing in case of a parsing error due to a change in format.
-      required: ["Id", "Name", "Type", "Card Text", "Artist"]
+      required: ["id", "name", "types", "card_text", "artists"]
       properties:
-        Id:
-          description: Card ID
+        id:
+          type: integer
+          minLength: 1
+        name:
           type: string
           minLength: 1
-        Name:
-          description: Card name
+        _name:
+          description: Card name as listed in VEKN CSV files
           type: string
           minLength: 1
-        Image:
+        url:
           description: Card image URL
           type: string
-          format: url
+          format: uri
           minLength: 1
-        Aka:
-          description: Alternative card name
-          type: string
-          minLength: 0
-        Type:
-          description: Card types
+        types:
           type: array
           minLength: 1
           items:
             description: Type
             type: string
             minLength: 1
-        Card Text:
-          description: Card text
+        card_text:
           type: string
           minLength: 1
-        Set:
+        sets:
           description: Sets the card has been edited in (keys are set name in english)
           type: object
           additionalProperties:
@@ -82,149 +77,133 @@ components:
                 Print on Demand Precon key indicates the vendor.
                 The Anthology was printed twice: Precon "EC Berlin Edition" indicates the card was in that print only.
               properties:
-                Release Date:
+                release_date:
                   description: Release date of the pack
                   type: string
                   format: date
-                Rarity:
+                rarity:
                   description: Rarity in boosters
                   type: string
-                Precon:
+                precon:
                   description: Preconstructed bundle name
                   type: string
-                Copies:
+                copies:
                   description: Number of copies in fixed packs
                   type: integer
-                Frequency:
+                frequency:
                   description: Frequency in booster compared to base rarity frequency
                   type: number
                   minimum: 0.5
                   maximum: 5
-        Clan:
-          description: Clan (crypt cards) or clan requirement (library cards)
+        clans:
+          description: Clan (crypt cards) or clans requirements (library cards)
           type: array
           minLength: 0
           items:
-            description: Clan name
             type: string
             minLength: 1
-        Artist:
-          description: Card artists
-          type: string
+        artists:
+          type: array
           minLength: 1
-        Capacity:
-          description: Capacity (crypt card) or capacity bonus (library card)
+          items:
+            type: string
+            minLength: 1
+        capacity:
+          description: Capacity (crypt and library cards like The Embrace)
+          type: integer
+          minLength: 0
+        capacity_change:
+          description: Capacity bonus or malus (library cards only)
           type: string
           minLength: 0
-        Discipline:
-          description: Disciplines requirements (library cards only)
+        disciplines:
           type: array
           minLength: 0
           items:
-            description: Discipline name
+            description: Discipline trigrams, plus "striga" and "maleficia".
             type: string
             minLength: 1
-        Banned:
-          description: Year of banishment
+        banned:
+          description: Date of banishment
           type: string
-        Pool Cost:
+          format: date
+        pool_cost:
           description: Pool cost (library cards only)
           type: string
           minLength: 0
-        Blood Cost:
+        blood_cost:
           description: Blood cost (library cards only)
           type: string
           minLength: 0
-        Conviction Cost:
+        conviction_cost:
           description: Conviction cost (library cards only)
           type: string
           minLength: 0
-        Burn Option:
+        burn_option:
           description: Burn option (library cards only)
           type: boolean
-        Flavor Text:
+        flavor_text:
           description: Flavor text (library cards only)
           type: string
           minLength: 0
-        Requirement:
-          description: Requirement (library cards only)
-          type: string
-          minLength: 0
-        Draft:
-          description: Draft text (library card only)
-          type: string
-          minLength: 0
-        Group:
+        group:
           description: Group (crypt cards only) - can be "ANY"
           type: string
           minLength: 0
-        Disciplines:
-          description: Disciplines (crypt cards only)
-          type: array
-          minLength: 0
-          items:
-            description: Discipline trigram
-            type: string
-            minLength: 1
-        Title:
+        title:
           description: Title (crypt cards only)
           type: string
           minLength: 0
-        Rulings:
+        rulings:
           description: Rulings
-          type: array
+          type: object
           minLength: 0
-          items:
-            description: Ruling text
-            type: string
-            minLength: 1
-        Rulings Links:
-          description: Official rulings URLs
-          type: array
-          minLength: 0
-          items:
-            description: Ruling URL
-            type: object
-            required: ["Reference", "URL"]
-            properties:
-              Reference:
-                description: Ruling reference (without brackets)
+          properties:
+            text:
+              type: array
+              items:
+                description: Ruling text, including ruling reference (in brackets)
                 type: string
                 minLength: 1
-              URL:
-                description: Ruling URL
+            links:
+              description: |
+                Link to official rulings by Rules Directors.
+                Keys are the ruling reference (in brackets)
+              type: object
+              additionalProperties:
                 type: string
-                format: url
-                minLength: 1
-        Translations:
+                format: uri
+        _i18n:
           description: Card translations, keys are ISO 639-1 language codes
           type: object
           additionalProperties:
             type: object
-            required: ["Name", "Card Text"]
+            required: ["name", "card_text"]
             properties:
-              Name:
-                description: Card name
+              name:
                 type: string
                 minLength: 1
-              Card Text:
-                description: Card text
+              card_text:
                 type: string
                 minLength: 1
-              Flavor Text:
+              flavor_text:
                 description: Flavor text (library cards only)
                 type: string
                 minLength: 0
-              Set:
+              sets:
                 type: object
                 additionalProperties:
                   description: "Key: english name, value: translated name"
                   type: string
+              url:
+                type: string
+                format: uri
+                description: Card image in that language
     deck:
       type: object
-      required: ["twda_id", "date", "player", "crypt", "library"]
+      required: ["id", "date", "crypt", "library"]
       properties:
-        twda_id: { type: string }
+        id: { type: string }
         name: { type: string }
         event: { type: string }
         place: { type: string }
@@ -267,73 +246,63 @@ components:
   examples:
     card:
       value:
-        Id: "100029"
-        Name: "Aid from Bats"
-        Image: "https://images.krcg.org/aidfrombats.jpg"
-        Aka: ""
-        Type: ["Combat"]
-        Clan: []
-        Discipline: ["Animalism"]
-        Pool Cost": ""
-        Blood Cost": ""
-        Conviction Cost: ""
-        Burn Option: False
-        Card Text: |
+        id: 100029
+        name: "Aid from Bats"
+        url: "https://static.krcg.org/card/aidfrombats.jpg"
+        types: ["Combat"]
+        disciplines: ["ani"]
+        card_text: |
           [ani] Strike: 1R damage, with 1 optional maneuver.
           [ANI] As above, with 1 optional press.
-        Flavor Text: |
+        flavor_text: |
           Hanging upside down like rows of disgusting old rags
           And grinning in their sleep. Bats!
           D.H. Lawrence, "Bat"
-        Set:
-          Anarchs: [{ Precon: Gangrel, Copies: 2 }]
+        sets:
+          Anarchs: [{ precon: Gangrel, copies: 2 }]
           Camarilla Edition:
-            - Rarity: Common
-            - Precon: Nosferatu
-              Copies: 3
-          First Blood: [Precon: Nosferatu, Copies: 6]
-          Jyhad: [{ Rarity: Common }]
-          Keepers of Tradition: [{ Rarity: Common }]
-          Third Edition: [{ Rarity: Common }]
-          "Vampire: The Eternal Struggle": [{ Rarity: Common }]
-        Requirement: ["justicar", "inner circle"]
-        Banned: ""
-        Artist: "Melissa Benson; Eric Lofgren"
-        Capacity: ""
-        Draft: ""
-        Rulings:
-          - "[ANI] The press can only be used during the current round. [TOM 19960521]"
-        Rulings Links:
-          - Reference: "TOM 19960521"
-            URL: "https://groups.google.com/d/msg/rec.games.trading-cards.jyhad/4emymfUPwAM/B2SCC7L6kuMJ"
-        Translations:
+            - rarity: Common
+            - precon: Nosferatu
+              copies: 3
+          First Blood: [precon: Nosferatu, copies: 6]
+          Jyhad: [{ rarity: Common }]
+          Keepers of Tradition: [{ rarity: Common }]
+          Third Edition: [{ rarity: Common }]
+          "Vampire: The Eternal Struggle": [{ rarity: Common }]
+        artists: ["Eric Lofgren", "Melissa Benson"]
+        rulings:
+          text:
+            - "[ANI] The press can only be used during the current round. [TOM 19960521]"
+          links:
+            "[TOM 19960521]": "https://groups.google.com/d/msg/rec.games.trading-cards.jyhad/4emymfUPwAM/B2SCC7L6kuMJ"
+        _i18n:
           fr:
-            Name: "Aide des chauves-souris"
-            Card Text: |
+            name: "Aide des chauves-souris"
+            card_text: |
               [ani] Frapper à toute portée : 1 point de dégâts, avec 1 manœuvre optionnelle.
               [ANI] Comme ci-dessus, avec 1 poursuite optionnelle.
-            Flavor Text: |
+            flavor_text: |
               Pendues tête en bas comme des rangées de guenilles repoussantes
               Et souriant de toutes leurs dents dans leur sommeil. Des chauves-souris !
               D.H. Lawrence, "La Chauve-souris"
-            Set: { "First Blood": "Premier Sang" }
+            sets: { "First Blood": "Premier Sang" }
           es:
-            Name: "Ayuda de murciélagos"
-            Card Text: |
+            name: "Ayuda de murciélagos"
+            card_text: |
               [ani] Ataque: 1 de daño a distancia, con 1 maniobra opcional.
               [ANI] Como antes, con 1 acoso opcional.
-            Flavor Text: |
+            flavor_text: |
               Colgando boca abajo como hileras de trapos viejos y repugnantes
               Y sonriendo mientras duermen. ¡Murciélagos!
               D.H. Lawrence, "Murciélago"
-            Set: { "First Blood": "Primera Sangre" }
+            sets: { "First Blood": "Primera Sangre" }
     deck:
       value:
-        twd_id: 2014incbi
+        id: 2014incbi
         name: AAA - Alert Attention Alarm
         event: Italian NC 2014
         place: Bologna, Italy
-        date: 2014-06-01
+        date: "2014-06-01"
         player: Enrico De Stefano (Embraced)
         players_count: 25
         tournament_format: 3R+F
@@ -342,13 +311,13 @@ components:
           count: 12
           cards:
             [
-              { count: 4, name: Anson, id: "200107" },
-              { count: 2, name: Alexandra, id: "200049" },
-              { count: 2, name: Anneke, id: "200106" },
-              { count: 1, name: François Villon, id: "200478" },
-              { count: 1, name: Marcellus, id: "200910" },
-              { count: 1, name: Tatiana Romanov, id: "201347" },
-              { count: 1, name: "Volker, The Puppet Prince", id: "201458" },
+              { count: 4, name: Anson, id: 200107 },
+              { count: 2, name: Alexandra, id: 200049 },
+              { count: 2, name: Anneke, id: 200106 },
+              { count: 1, name: François Villon, id: 200478 },
+              { count: 1, name: Marcellus, id: 200910 },
+              { count: 1, name: Tatiana Romanov, id: 201347 },
+              { count: 1, name: "Volker, The Puppet Prince", id: 201458 },
             ]
         library:
           count: 90
@@ -356,65 +325,122 @@ components:
             - type: Master
               count: 30
               cards:
-                - { count: 9, name: Ashur Tablets, id: "100106" }
-                - { count: 7, name: Liquidation, id: "101112" }
-                - { count: 5, name: Villein, id: "102121" }
-                - { count: 3, name: Haven Uncovered, id: "100897" }
-                - { count: 1, name: Art Museum, id: "100095" }
-                - { count: 1, name: "Golconda: Inner Peace", id: "100842" }
-                - { count: 1, name: Information Highway, id: "100984" }
-                - { count: 1, name: Papillon, id: "101350" }
-                - { count: 1, name: "Pentex(TM) Subversion", id: "101384" }
-                - { count: 1, name: Wider View, id: "102180" }
+                - { count: 9, name: Ashur Tablets, id: 100106 }
+                - { count: 7, name: Liquidation, id: 101112 }
+                - { count: 5, name: Villein, id: 102121 }
+                - { count: 3, name: Haven Uncovered, id: 100897 }
+                - { count: 1, name: Art Museum, id: 100095 }
+                - { count: 1, name: "Golconda: Inner Peace", id: 100842 }
+                - { count: 1, name: Information Highway, id: 100984 }
+                - { count: 1, name: Papillon, id: 101350 }
+                - { count: 1, name: "Pentex(TM) Subversion", id: 101384 }
+                - { count: 1, name: Wider View, id: 102180 }
             - type: Action
               count: 3
               cards:
-                - { count: 2, name: Entrancement, id: "100652" }
-                - { count: 1, name: Heart of the City, id: "100904" }
+                - { count: 2, name: Entrancement, id: 100652 }
+                - { count: 1, name: Heart of the City, id: 100904 }
             - type: Equipment
               count: 11
               cards:
-                - { count: 6, name: ".44 Magnum", id: "100001" }
-                - { count: 3, name: Heart of Nizchetus, id: "100903" }
-                - { count: 1, name: Bowl of Convergence, id: "100243" }
-                - { count: 1, name: Codex of the Edenic Groundskeepers, id: "100374" }
+                - { count: 6, name: ".44 Magnum", id: 100001 }
+                - { count: 3, name: Heart of Nizchetus, id: 100903 }
+                - { count: 1, name: Bowl of Convergence, id: 100243 }
+                - { count: 1, name: Codex of the Edenic Groundskeepers, id: 100374 }
             - type: Political Action
               count: 4
               cards:
-                - { count: 3, name: Parity Shift, id: "101353" }
-                - { count: 1, name: Political Stranglehold, id: "101417" }
+                - { count: 3, name: Parity Shift, id: 101353 }
+                - { count: 1, name: Political Stranglehold, id: 101417 }
             - type: Action Modifier
               count: 2
-              cards: [{ count: 2, name: Aire of Elation, id: "100031" }]
+              cards: [{ count: 2, name: Aire of Elation, id: 100031 }]
             - type: Action Modifier/Combat
               count: 4
-              cards: [{ count: 4, name: "Resist Earth's Grasp", id: "101610" }]
+              cards: [{ count: 4, name: "Resist Earth's Grasp", id: 101610 }]
             - type: Reaction
               count: 13
               cards:
-                - { count: 8, name: "Second Tradition: Domain", id: "101706" }
-                - { count: 5, name: Telepathic Misdirection, id: "101949" }
+                - { count: 8, name: "Second Tradition: Domain", id: 101706 }
+                - { count: 5, name: Telepathic Misdirection, id: 101949 }
             - type: Combat
               count: 21
               cards:
-                - { count: 4, name: Blur, id: "100227" }
-                - { count: 4, name: Concealed Weapon, id: "100392" }
-                - { count: 4, name: "Psyche!", id: "101507" }
-                - { count: 4, name: Taste of Vitae, id: "101945" }
-                - { count: 3, name: Charismatic Aura, id: "100333" }
-                - { count: 2, name: Side Strike, id: "101778" }
+                - { count: 4, name: Blur, id: 100227 }
+                - { count: 4, name: Concealed Weapon, id: 100392 }
+                - { count: 4, name: "Psyche!", id: 101507 }
+                - { count: 4, name: Taste of Vitae, id: 101945 }
+                - { count: 3, name: Charismatic Aura, id: 100333 }
+                - { count: 2, name: Side Strike, id: 101778 }
             - type: Event
               count: 2
               cards:
-                - { count: 1, name: "Anthelios, The Red Star", id: "100074" }
-                - { count: 1, name: Scourge of the Enochians, id: "101697" }
+                - { count: 1, name: "Anthelios, The Red Star", id: 100074 }
+                - { count: 1, name: Scourge of the Enochians, id: 101697 }
+    first-blood-tremere:
+      value:
+        id: "4d3aa426-70da-44b7-8cb7-92377a1a0dbd"
+        name: "First Blood: Tremere"
+        comments: "https://blackchantry.com/How%20to%20play%20the%20First%20Blood%20Tremere%20deck.pdf"
+        author: BCP
+        date: "2020-12-13"
+        crypt:
+          count: 12
+          cards:
+            - { "count": 2, "id": 201020, "name": "Muhsin Samir" }
+            - { "count": 2, "id": 201213, "name": "Rutor" }
+            - { "count": 2, "id": 201388, "name": "Troius" }
+            - { "count": 2, "id": 201501, "name": "Zane" }
+            - { "count": 2, "id": 200025, "name": "Aidan Lyle" }
+            - { "count": 2, "id": 200280, "name": "Claus Wegener" }
+        library:
+          count: 86
+          cards:
+            - type: Master
+              count: 9
+              cards:
+                - { "count": 1, "id": 100015, "name": "Academic Hunting Ground" }
+                - { "count": 1, "id": 100081, "name": "Arcane Library" }
+                - { "count": 4, "id": 100199, "name": "Blood Doll" }
+                - { "count": 1, "id": 100329, "name": "Chantry" }
+                - { "count": 2, "id": 102092, "name": "Vast Wealth" }
+            - type: Action
+              count: 12
+              cards: [{ "count": 12, "id": 100845, "name": "Govern the Unaligned" }]
+            - type: Ally
+              count: 1
+              cards: [{ "count": 1, "id": 101963, "name": "Thadius Zho" }]
+            - type: Equipment
+              count: 7
+              cards:
+            - type: Retainer
+              count: 1
+              cards: [{ "count": 1, "id": 100335, "name": "Charnas the Imp" }]
+            - type: Action Modifier
+              count: 6
+              cards: [{ "count": 6, "id": 100236, "name": "Bonding" }]
+            - type: Reaction
+              count: 30
+              cards:
+                - { "count": 4, "id": 100644, "name": "Enhanced Senses" }
+                - { "count": 5, "id": 100760, "name": "Forced Awakening" }
+                - { "count": 5, "id": 101321, "name": "On the Qui Vive" }
+                - { "count": 4, "id": 101475, "name": "Precognition" }
+                - { "count": 4, "id": 101850, "name": "Spirit's Touch" }
+                - { "count": 8, "id": 101949, "name": "Telepathic Misdirection" }
+            - type: Combat
+              count: 20
+              cards:
+                - { "count": 8, "id": 100077, "name": "Apportation" }
+                - { "count": 10, "id": 101966, "name": "Theft of Vitae" }
+                - { "count": 2, "id": 102139, "name": "Walk of Flame" }
     deck-array:
       value:
         - twd_id: 2014incbi
           name: AAA - Alert Attention Alarm
           event: Italian NC 2014
           place: Bologna, Italy
-          date: 2014-06-01
+          date: "2014-06-01"
           player: Enrico De Stefano (Embraced)
           players_count: 25
           tournament_format: 3R+F
@@ -423,13 +449,13 @@ components:
             count: 12
             cards:
               [
-                { count: 4, name: Anson, id: "200107" },
-                { count: 2, name: Alexandra, id: "200049" },
-                { count: 2, name: Anneke, id: "200106" },
-                { count: 1, name: François Villon, id: "200478" },
-                { count: 1, name: Marcellus, id: "200910" },
-                { count: 1, name: Tatiana Romanov, id: "201347" },
-                { count: 1, name: "Volker, The Puppet Prince", id: "201458" },
+                { count: 4, name: Anson, id: 200107 },
+                { count: 2, name: Alexandra, id: 200049 },
+                { count: 2, name: Anneke, id: 200106 },
+                { count: 1, name: François Villon, id: 200478 },
+                { count: 1, name: Marcellus, id: 200910 },
+                { count: 1, name: Tatiana Romanov, id: 201347 },
+                { count: 1, name: "Volker, The Puppet Prince", id: 201458 },
               ]
           library:
             count: 90
@@ -437,81 +463,790 @@ components:
               - type: Master
                 count: 30
                 cards:
-                  - { count: 9, name: Ashur Tablets, id: "100106" }
-                  - { count: 7, name: Liquidation, id: "101112" }
-                  - { count: 5, name: Villein, id: "102121" }
-                  - { count: 3, name: Haven Uncovered, id: "100897" }
-                  - { count: 1, name: Art Museum, id: "100095" }
-                  - { count: 1, name: "Golconda: Inner Peace", id: "100842" }
-                  - { count: 1, name: Information Highway, id: "100984" }
-                  - { count: 1, name: Papillon, id: "101350" }
-                  - { count: 1, name: "Pentex(TM) Subversion", id: "101384" }
-                  - { count: 1, name: Wider View, id: "102180" }
+                  - { count: 9, name: Ashur Tablets, id: 100106 }
+                  - { count: 7, name: Liquidation, id: 101112 }
+                  - { count: 5, name: Villein, id: 102121 }
+                  - { count: 3, name: Haven Uncovered, id: 100897 }
+                  - { count: 1, name: Art Museum, id: 100095 }
+                  - { count: 1, name: "Golconda: Inner Peace", id: 100842 }
+                  - { count: 1, name: Information Highway, id: 100984 }
+                  - { count: 1, name: Papillon, id: 101350 }
+                  - { count: 1, name: "Pentex(TM) Subversion", id: 101384 }
+                  - { count: 1, name: Wider View, id: 102180 }
               - type: Action
                 count: 3
                 cards:
-                  - { count: 2, name: Entrancement, id: "100652" }
-                  - { count: 1, name: Heart of the City, id: "100904" }
+                  - { count: 2, name: Entrancement, id: 100652 }
+                  - { count: 1, name: Heart of the City, id: 100904 }
               - type: Equipment
                 count: 11
                 cards:
-                  - { count: 6, name: ".44 Magnum", id: "100001" }
-                  - { count: 3, name: Heart of Nizchetus, id: "100903" }
-                  - { count: 1, name: Bowl of Convergence, id: "100243" }
-                  - { count: 1, name: Codex of the Edenic Groundskeepers, id: "100374" }
+                  - { count: 6, name: ".44 Magnum", id: 100001 }
+                  - { count: 3, name: Heart of Nizchetus, id: 100903 }
+                  - { count: 1, name: Bowl of Convergence, id: 100243 }
+                  - { count: 1, name: Codex of the Edenic Groundskeepers, id: 100374 }
               - type: Political Action
                 count: 4
                 cards:
-                  - { count: 3, name: Parity Shift, id: "101353" }
-                  - { count: 1, name: Political Stranglehold, id: "101417" }
+                  - { count: 3, name: Parity Shift, id: 101353 }
+                  - { count: 1, name: Political Stranglehold, id: 101417 }
               - type: Action Modifier
                 count: 2
-                cards: [{ count: 2, name: Aire of Elation, id: "100031" }]
+                cards: [{ count: 2, name: Aire of Elation, id: 100031 }]
               - type: Action Modifier/Combat
                 count: 4
-                cards: [{ count: 4, name: "Resist Earth's Grasp", id: "101610" }]
+                cards: [{ count: 4, name: "Resist Earth's Grasp", id: 101610 }]
               - type: Reaction
                 count: 13
                 cards:
-                  - { count: 8, name: "Second Tradition: Domain", id: "101706" }
-                  - { count: 5, name: Telepathic Misdirection, id: "101949" }
+                  - { count: 8, name: "Second Tradition: Domain", id: 101706 }
+                  - { count: 5, name: Telepathic Misdirection, id: 101949 }
               - type: Combat
                 count: 21
                 cards:
-                  - { count: 4, name: Blur, id: "100227" }
-                  - { count: 4, name: Concealed Weapon, id: "100392" }
-                  - { count: 4, name: "Psyche!", id: "101507" }
-                  - { count: 4, name: Taste of Vitae, id: "101945" }
-                  - { count: 3, name: Charismatic Aura, id: "100333" }
-                  - { count: 2, name: Side Strike, id: "101778" }
+                  - { count: 4, name: Blur, id: 100227 }
+                  - { count: 4, name: Concealed Weapon, id: 100392 }
+                  - { count: 4, name: "Psyche!", id: 101507 }
+                  - { count: 4, name: Taste of Vitae, id: 101945 }
+                  - { count: 3, name: Charismatic Aura, id: 100333 }
+                  - { count: 2, name: Side Strike, id: 101778 }
               - type: Event
                 count: 2
                 cards:
-                  - { count: 1, name: "Anthelios, The Red Star", id: "100074" }
-                  - { count: 1, name: Scourge of the Enochians, id: "101697" }
+                  - { count: 1, name: "Anthelios, The Red Star", id: 100074 }
+                  - { count: 1, name: Scourge of the Enochians, id: 101697 }
 paths:
-  /card:
+  /card_search:
+    get:
+      tags: [Card]
+      summary: Get available search dimensions
+      responses:
+        "200":
+          description: |
+            Success, returns a JSON dictionnary of search dimensions
+            Note that the text dimensions *text*, *name*
+            *card_text* and *flavor_text* are not included in the response.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  minLength: 1
+                  items:
+                    description: Possible value for that dimension
+                    type: string
+              example:
+                artist:
+                  - Aaron Acevedo
+                  - Aaron Voss
+                  - Abrar Ajmal
+                  - Alan Rabinowitz
+                  - Albrecht
+                  - Alejandro Colucci
+                  - Alejandro F. Giraldo
+                  - Alexander Dunnigan
+                  - Amy Weber
+                  - Amy Wilkins
+                  - Andre Gates
+                  - Andrew Bates
+                  - Andrew Hepworth
+                  - Andrew Robinson
+                  - Andrew Trabbold
+                  - André Freitas
+                  - Anna Christenson
+                  - Anna Evertsdotter
+                  - Anson Maddocks
+                  - Ari Targownik
+                  - Arkady Roytman
+                  - Arthur Roberg
+                  - Ash Arnett
+                  - Atilio Gambedotti
+                  - Attila Adorjany
+                  - August Bøgedal Hansen
+                  - Avery Butterworth
+                  - Becky Cloonan
+                  - Becky Jollensten
+                  - Ben Mirabelli
+                  - Beth Trott
+                  - Bob Stevlic
+                  - Brad Williams
+                  - Brian Ashmore
+                  - Brian Horton
+                  - Brian LeBlanc
+                  - Brian Miskelley
+                  - Brian Snoddy
+                  - Britt Martin
+                  - Bryon Wackwitz
+                  - Caleb Cleaveland
+                  - Carmen Cornet
+                  - Chad Michael Ward
+                  - Chet Masters
+                  - Chris McLoughlin
+                  - Chris Richards
+                  - Chris Stevens
+                  - Christel Espenkrona
+                  - Christopher Rush
+                  - Christopher Shy
+                  - Cliff Nielson
+                  - Clint Langley
+                  - Corey Macourek
+                  - Cos Koniotis
+                  - Craig Grant
+                  - Craig Maher
+                  - D. Fryendall
+                  - Dan Frazier
+                  - Dan Smith
+                  - Daniel Gelon
+                  - Darryl Elliott
+                  - Dave Leri
+                  - Dave Roach
+                  - Dave Seeley
+                  - David Day
+                  - David Fooden
+                  - David Ho
+                  - David Kimmel
+                  - Dennis Calero
+                  - Diana Vick
+                  - Doug Alexander
+                  - Doug Gregory
+                  - Doug Stambaugh
+                  - Douglas Shuler
+                  - Drew Tucker
+                  - Durwin Talon
+                  - E.M. Gist
+                  - Ed Tadem
+                  - Edward Beard, Jr.
+                  - Efrem Palacios
+                  - Elli Adams
+                  - Eric Deschamps
+                  - Eric Kim
+                  - Eric LaCombe
+                  - Eric Lofgren
+                  - Erica Danell
+                  - Felipe Gaona
+                  - Francesc Grimalt
+                  - Franz Vohwinkel
+                  - Fred Harper
+                  - Fred Hooper
+                  - Gary Chatterton
+                  - Gary Leach
+                  - Ginés Quiñonero-Santiago
+                  - Glen Osterberger
+                  - Grant Garvin
+                  - Grant Goleash
+                  - Greg Boychuk
+                  - Greg Loudon
+                  - Greg Simanson
+                  - Grzegorz Bobrowski
+                  - Gábor Németh
+                  - Hannibal King
+                  - Harold Arthur McNeill
+                  - Heather Hudson
+                  - Heather J. McKinney
+                  - Heather V. Kreiter
+                  - Ian Hernaiz
+                  - Imaginary Friends Studios
+                  - J Frederick Y
+                  - Jake Smidt
+                  - James Allen Higgins
+                  - James Richardson
+                  - James Stowe
+                  - Jami Waggoner
+                  - Jared Smith
+                  - Jarkko Suvela
+                  - Jason Alexander Behnke
+                  - Jason Brubaker
+                  - Javier Santos
+                  - Jeff "el jefe" Holt
+                  - Jeff Klimek
+                  - Jeff Laubenstein
+                  - Jeff Menges
+                  - Jeff Miracola
+                  - Jeff Rebner
+                  - Jenny Frison
+                  - Jeremy C. Bills
+                  - Jeremy McHugh
+                  - Jesús Ybarzábal
+                  - Jim Di Bartolo
+                  - Jim Nelson
+                  - Jim Pavelec
+                  - Joe Slucher
+                  - Joe Ziolkowski
+                  - Joel Biske
+                  - John Bolton
+                  - John Bridges
+                  - John Kent
+                  - John Matson
+                  - John McCrea
+                  - John Scotello
+                  - John Van Fleet
+                  - Josh Timbrook
+                  - Juan Antonio Serrano Garcia
+                  - Juan Calle
+                  - Julian Jackson
+                  - Julie Collins
+                  - Justin Norman
+                  - Kaja Foglio
+                  - Kari Christensen
+                  - Karl Waller
+                  - Katie McCaskill
+                  - Kelly Howlett
+                  - Ken Meyer, Jr.
+                  - Kent Williams
+                  - Kevin McCann
+                  - Kieran Yanner
+                  - Kyri Koniotis
+                  - L. A. Williams
+                  - Laia López Tubau
+                  - Larry MacDougall
+                  - Lawrence Snelly
+                  - Lee Carter
+                  - Lee Dotson
+                  - Lee Fields
+                  - Leif Jones
+                  - Liz Danforth
+                  - Marco Marzoni
+                  - Marco Nelor
+                  - Margaret Organ-Kean
+                  - Marian Churchland
+                  - Mark Kelly
+                  - Mark Nelson
+                  - Mark Poole
+                  - Mark Tedin
+                  - Martín de Diego Sábada
+                  - Mathias Kollros
+                  - Matias Tapia
+                  - Matt Cavotta
+                  - Matt Dixon
+                  - Matt Smith
+                  - Matt Wilson
+                  - Matthew Mitchell
+                  - Max Shade Fellwalker
+                  - Melissa Benson
+                  - Melissa Uran
+                  - Michael Astrachan
+                  - Michael Dixon
+                  - Michael Gaydos
+                  - Michael Weaver
+                  - Mick Bertilorenzi
+                  - Mike Chaney
+                  - Mike Danza
+                  - Mike Dringenberg
+                  - Mike Huddleston
+                  - Mike Raabe
+                  - Mirko Falloni
+                  - Mitch Mueller
+                  - Monte Moore
+                  - Newel Anderson
+                  - Nicola Leonard
+                  - Nicolas "Dimple" Bigot
+                  - Nicole Cardiff
+                  - Nigel Sade
+                  - Nilson
+                  - Noah Hirka
+                  - Noora Hirvonen
+                  - Né Né Thomas
+                  - Oliver Meinerding
+                  - Oscar Salcedo
+                  - Pat Loboyko
+                  - Pat Morrissey
+                  - Patrick Kochakji
+                  - Patrick Lambert
+                  - Patrick McEvoy
+                  - Paul Ballard
+                  - Paul Tobin
+                  - Pete Burges
+                  - Pete Venters
+                  - Peter Bergting
+                  - Peter Kim
+                  - Peter Morbacher
+                  - Phil Wohr
+                  - Phillip Hilliker
+                  - Phillip Tan
+                  - Quinton Hoover
+                  - Randy Asplund
+                  - Randy Gallegos
+                  - Rebecca Guay
+                  - Riccardo Fabiani
+                  - Richard Kane Ferguson
+                  - Richard Thomas
+                  - Rick Berry
+                  - Rick O'Brien
+                  - Rik Martin
+                  - Rob Alexander
+                  - Robert McNeill
+                  - Robin Chyo
+                  - Roel Wielinga
+                  - Roger Raupp
+                  - Ron Lemon
+                  - Ron Spencer
+                  - Ron Van Halen
+                  - Rubén Bravo
+                  - Samuel Araya
+                  - Sandra Chang-Adair
+                  - Sandra Everingham
+                  - Satyr
+                  - Scott Fischer
+                  - Scott Kirschner
+                  - Scott M. Bakal
+                  - Shane Coppage
+                  - Steve Casper
+                  - Steve Eidson
+                  - Steve Ellis
+                  - Steve Prescott
+                  - Stuart Beel
+                  - Stuart Sayger
+                  - Sue Ann Harkey
+                  - Susan Van Camp
+                  - Talon Dunning
+                  - Ted Naifeh
+                  - Terese Nielsen
+                  - Thea Maia
+                  - Theodore Black
+                  - Thomas Baxa
+                  - Thomas Denmark
+                  - Thomas Manning
+                  - Thomas Nairb
+                  - Tim Bradstreet
+                  - Tom Biondillo
+                  - Tom Duncan
+                  - Tom Gianni
+                  - Tom Wänerstrand
+                  - Tomáš "zelgaris" Zahradníček
+                  - Tony Harris
+                  - Tony Shasteen
+                  - Torstein Nordstrand
+                  - Travis Ingram
+                  - Trevor Claxton
+                  - UDON
+                  - Vatche Mavlian
+                  - Veronica Jones
+                  - Vince Locke
+                  - Warren Mahy
+                  - Will Simpson
+                  - William O'Connor
+                  - Zina Saunders
+                  - matrix von z
+                  - rk post
+                bonus:
+                  - Bleed
+                  - Capacity
+                  - Intercept
+                  - Stealth
+                  - Trifle
+                  - Votes
+                capacity: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                city:
+                  - Addis Ababa
+                  - Amsterdam
+                  - Aragon
+                  - Athens
+                  - Atlanta
+                  - Barcelona
+                  - Berlin
+                  - Birmingham
+                  - Boston
+                  - Brussels
+                  - Budapest
+                  - Buenos Aires
+                  - Cairo
+                  - Canberra
+                  - Cape Town
+                  - Chicago
+                  - Cleveland
+                  - Columbus
+                  - Copenhagen
+                  - Cordoba
+                  - Corte
+                  - Dallas
+                  - Detroit
+                  - Dublin
+                  - Fortaleza
+                  - Frankfurt
+                  - Geneva
+                  - Glasgow
+                  - Guadalajara
+                  - Guatemala City
+                  - Houston
+                  - Istanbul
+                  - Lisbon
+                  - London
+                  - Los Angeles
+                  - Manila
+                  - Mannheim
+                  - Melbourne
+                  - Mexico City
+                  - Miami
+                  - Milan
+                  - Milwaukee
+                  - Monaco
+                  - Montreal
+                  - Nairobi
+                  - New York
+                  - Paris
+                  - Perth
+                  - Philadelphia
+                  - Pittsburgh
+                  - Port-au-Prince
+                  - Prague
+                  - Rio de Janeiro
+                  - Rome
+                  - Rotterdam
+                  - San Diego
+                  - Seattle
+                  - Stockholm
+                  - Strasbourg
+                  - Sydney
+                  - Taipei
+                  - Toronto
+                  - Venice
+                  - Versailles
+                  - Washington, D.C.
+                clan:
+                  - Abomination
+                  - Ahrimane
+                  - Akunanse
+                  - Assamite
+                  - Avenger
+                  - Baali
+                  - Blood Brother
+                  - Brujah
+                  - Brujah antitribu
+                  - Caitiff
+                  - Daughter of Cacophony
+                  - Defender
+                  - Follower of Set
+                  - Gangrel
+                  - Gangrel antitribu
+                  - Gargoyle
+                  - Giovanni
+                  - Guruhi
+                  - Harbinger of Skulls
+                  - Innocent
+                  - Ishtarri
+                  - Judge
+                  - Kiasyd
+                  - Lasombra
+                  - Malkavian
+                  - Malkavian antitribu
+                  - Martyr
+                  - Nagaraja
+                  - Nosferatu
+                  - Nosferatu antitribu
+                  - Osebo
+                  - Pander
+                  - Ravnos
+                  - Redeemer
+                  - Salubri
+                  - Salubri antitribu
+                  - Samedi
+                  - Toreador
+                  - Toreador antitribu
+                  - Tremere
+                  - Tremere antitribu
+                  - True Brujah
+                  - Tzimisce
+                  - Ventrue
+                  - Ventrue antitribu
+                  - Visionary
+                  - none
+                discipline:
+                  - ABO
+                  - ANI
+                  - AUS
+                  - CEL
+                  - CHI
+                  - DAI
+                  - DEM
+                  - DOM
+                  - FOR
+                  - MEL
+                  - MYT
+                  - NEC
+                  - OBE
+                  - OBF
+                  - OBT
+                  - POT
+                  - PRE
+                  - PRO
+                  - QUI
+                  - SAN
+                  - SER
+                  - SPI
+                  - TEM
+                  - THA
+                  - THN
+                  - VAL
+                  - VIC
+                  - VIS
+                  - abo
+                  - ani
+                  - aus
+                  - cel
+                  - chi
+                  - choice
+                  - combo
+                  - dai
+                  - def
+                  - dem
+                  - dom
+                  - flight
+                  - for
+                  - inn
+                  - jud
+                  - maleficia
+                  - mar
+                  - mel
+                  - mono
+                  - multi
+                  - myt
+                  - nec
+                  - none
+                  - obe
+                  - obf
+                  - obt
+                  - pot
+                  - pre
+                  - pro
+                  - qui
+                  - red
+                  - san
+                  - ser
+                  - spi
+                  - striga
+                  - tem
+                  - tha
+                  - thn
+                  - val
+                  - ven
+                  - vic
+                  - vin
+                  - vis
+                group: [1, 2, 3, 4, 5, 6]
+                precon:
+                  - "2018 Humble Bundle: Humble Bundle"
+                  - "Anarchs: Anarch Barons"
+                  - "Anarchs: Anarch Gang"
+                  - "Anarchs: Gangrel"
+                  - "Anthology: EC Berlin Edition"
+                  - "Black Hand: Malkavian antitribu"
+                  - "Black Hand: Nosferatu antitribu"
+                  - "Black Hand: Toreador antitribu"
+                  - "Black Hand: Tremere antitribu"
+                  - "Camarilla Edition: Brujah"
+                  - "Camarilla Edition: Malkavian"
+                  - "Camarilla Edition: Nosferatu"
+                  - "Camarilla Edition: Toreador"
+                  - "Camarilla Edition: Tremere"
+                  - "Camarilla Edition: Ventrue"
+                  - "Fifth Edition: Malkavian"
+                  - "Fifth Edition: Nosferatu"
+                  - "Fifth Edition: Toreador"
+                  - "Fifth Edition: Tremere"
+                  - "Fifth Edition: Ventrue"
+                  - "Final Nights: Assamite"
+                  - "Final Nights: Followers of Set"
+                  - "Final Nights: Giovanni"
+                  - "Final Nights: Ravnos"
+                  - "First Blood: Malkavian"
+                  - "First Blood: Nosferatu"
+                  - "First Blood: Toreador"
+                  - "First Blood: Tremere"
+                  - "First Blood: Ventrue"
+                  - "Heirs to the Blood: Gargoyles"
+                  - "Heirs to the Blood: Kiasyd"
+                  - "Heirs to the Blood: Reprint Bundle 1"
+                  - "Heirs to the Blood: Reprint Bundle 2"
+                  - "Heirs to the Blood: Salubri antitribu"
+                  - "Heirs to the Blood: Samedi"
+                  - "Keepers of Tradition: Brujah"
+                  - "Keepers of Tradition: Malkavian"
+                  - "Keepers of Tradition: Reprint Bundle 1"
+                  - "Keepers of Tradition: Reprint Bundle 2"
+                  - "Keepers of Tradition: Toreador"
+                  - "Keepers of Tradition: Ventrue"
+                  - "Kindred Most Wanted: Alastors"
+                  - "Kindred Most Wanted: Anathema"
+                  - "Kindred Most Wanted: Baali"
+                  - "Kindred Most Wanted: Gangrel antitribu"
+                  - "Legacies of Blood: Akunanse"
+                  - "Legacies of Blood: Guruhi"
+                  - "Legacies of Blood: Ishtarri"
+                  - "Legacies of Blood: Osebo"
+                  - "Lords of the Night: Assamite"
+                  - "Lords of the Night: Followers of Set"
+                  - "Lords of the Night: Giovanni"
+                  - "Lords of the Night: Ravnos"
+                  - "Print on Demand: DriveThruCards"
+                  - "Sabbat Preconstructed: Den of Fiends"
+                  - "Sabbat Preconstructed: Libertine Ball"
+                  - "Sabbat Preconstructed: Pact with Nephandi"
+                  - "Sabbat Preconstructed: Parliament of Shadows"
+                  - "Sabbat War: Brujah antitribu"
+                  - "Sabbat War: Lasombra"
+                  - "Sabbat War: Tzimisce"
+                  - "Sabbat War: Ventrue antitribu"
+                  - "Tenth Anniversary: Tin A"
+                  - "Tenth Anniversary: Tin B"
+                  - "Third Edition: Brujah antitribu"
+                  - "Third Edition: Malkavian antitribu"
+                  - "Third Edition: Tremere antitribu"
+                  - "Third Edition: Tzimisce"
+                rarity: [Common, Rare, Uncommon, Vampire]
+                sect: [Anarch, Camarilla, Independent, Laibon, Sabbat]
+                set:
+                  - 1996 Promo
+                  - 2003 Tournament promo
+                  - 2004 promo
+                  - 2005 Storyline promo
+                  - 2005 Tournament promo
+                  - 2006 Championship promo
+                  - 2006 EC Tournament promo
+                  - 2006 Storyline promo
+                  - 2006 Tournament promo
+                  - 2007 Promo
+                  - 2008 Storyline promo
+                  - 2008 Tournament promo
+                  - 2009 Tournament / Storyline promo
+                  - 2010 Storyline promo
+                  - 2015 Storyline Rewards
+                  - 2018 Humble Bundle
+                  - 2019 AC Promo
+                  - 2019 ACC Promo
+                  - 2019 DriveThruCards Promo
+                  - 2019 EC Promo
+                  - 2019 Grand Prix Promo
+                  - 2019 NAC Promo
+                  - 2019 Promo
+                  - 2019 Promo Pack 1
+                  - 2019 SAC Promo
+                  - 2020 GP Promo
+                  - 2020 Promo Pack 2
+                  - Anarch Unbound
+                  - Anarchs
+                  - Anarchs promo
+                  - Ancient Hearts
+                  - Anthology
+                  - Black Hand
+                  - Black Hand promo
+                  - Blood Shadowed Court
+                  - Bloodlines
+                  - Bloodlines promo
+                  - Camarilla Edition
+                  - Camarilla Edition promo
+                  - Danse Macabre
+                  - Dark Sovereigns
+                  - Ebony Kingdom
+                  - Fall 2002 Storyline promo
+                  - Fall 2004 Storyline promo
+                  - Fifth Edition
+                  - Final Nights
+                  - Final Nights promo
+                  - First Blood
+                  - Gehenna
+                  - Gehenna promo
+                  - Heirs to the Blood
+                  - Jyhad
+                  - Keepers of Tradition
+                  - Kindred Most Wanted
+                  - Kindred Most Wanted promo
+                  - Legacies of Blood
+                  - Legacies of Blood promo
+                  - Lords of the Night
+                  - Lost Kindred
+                  - Nights of Reckoning
+                  - Print on Demand
+                  - Prophecies league promo
+                  - Sabbat
+                  - Sabbat Preconstructed
+                  - Sabbat War
+                  - Sabbat War promo
+                  - Summer 2003 Storyline promo
+                  - Sword of Caine
+                  - Sword of Caine promo
+                  - Tenth Anniversary
+                  - The Unaligned
+                  - Third Edition
+                  - Third Edition promo
+                  - Twenty-Fifth Anniversary
+                  - Twilight Rebellion
+                  - V5 Polish Edition promo
+                  - "Vampire: The Eternal Struggle"
+                  - Winter 2002 Storyline promo
+                title:
+                  - 1 vote
+                  - 2 votes
+                  - Archbishop
+                  - Baron
+                  - Bishop
+                  - Cardinal
+                  - Imperator
+                  - Inner Circle
+                  - Justicar
+                  - Kholo
+                  - Magaji
+                  - Primogen
+                  - Prince
+                  - Priscus
+                  - Regent
+                trait:
+                  - Black Hand
+                  - Infernal
+                  - Red List
+                  - Scarce
+                  - Seraph
+                  - Slave
+                  - Sterile
+                type:
+                  - Action
+                  - Action Modifier
+                  - Ally
+                  - Combat
+                  - Conviction
+                  - Crypt
+                  - Equipment
+                  - Event
+                  - Imbued
+                  - Library
+                  - Master
+                  - Political Action
+                  - Power
+                  - Reaction
+                  - Retainer
+                  - Vampire
     post:
       tags: [Card]
       summary: Get cards matching given filters.
       description: |
-        If multiple filters are specified, only get cards matching all filters.
+        If multiple filters are specified, only get cards matching **all filters**.
         If no filter is specified, get all cards.
-        Only the "discipline" field is case-sensitive.
+        Only the *discipline* field is case sensitive.
+
+        Filtering on the text fields *text*, *card_text*, *flavor_text* and *name*
+        is done using a case insensitive prefix search in full text.
+        It will match two separated words, but only match words from start,
+        not parts of them. It will not match any other enum field (eg. *type*)
 
         Note that:
 
-        - Crypt / library are included in "type".
-        - Sect and titles are included in "trait",
-          independant titles are registered as "1 vote" and "2 votes".
-        - City titles are registered as a city trait
-          with the name of the city, eg. "los angeles".
-        - Crypt cards in the "any" group are also registered in all groups.
+        - Crypt & Library are included in *type*.
+        - Independant titles are registered as *1 vote* and *2 votes*.
+        - City titles are also registered in the *city* dimension.
+        - Crypt cards in the "any" group are registered in all groups.
         - Disciplines are case-sensitive:
-          ALL-UPPERCASE to denote the **superior** version
-          and all-lowercase to denote the *inferior* version.
+          UPPERCASE trigram (eg. *AUS*) to denote the **superior** version
+          and lowercase trigram (eg. *aus*) to denote the **inferior** version.
+        - Virtues are listed as disciplines.
+          *vin* is used as trigram for the Vision virtue, so as to not mix it with
+          *vis* Visceratika.
         - Only crypt cards register superior disciplines.
-        - Multi-disciplines cards are also registered in the "*" discipline.
+        - *flight*, *striga* and *maleficia* are registered as disciplines.
+        - Multi-disciplines cards are registered in the *multi* discipline, 
+          then in the *combo* or *choice* discipline, depending on the case.
+          In contrast, mono discipline cards are registered in the *mono* discipline.
+          Cards requiring no discipline are registered in the *none* discipline.
+          This allows for search like *discipline: [mono, ani]*.
       requestBody:
         content:
           application/json:
@@ -519,7 +1254,7 @@ paths:
               type: object
               properties:
                 mode:
-                  description: response format control (return name or full card)
+                  description: response format (return name or full card).
                   type: string
                   enum:
                     - name
@@ -530,281 +1265,275 @@ paths:
                   items:
                     type: string
                     enum:
-                      - action
-                      - action modifier
-                      - ally
-                      - combat
-                      - conviction
-                      - crypt
-                      - equipment
-                      - event
-                      - imbued
-                      - library
-                      - master
-                      - political action
-                      - power
-                      - reaction
-                      - retainer
-                      - vampire
+                      - Action
+                      - Action Modifier
+                      - Ally
+                      - Combat
+                      - Conviction
+                      - Crypt
+                      - Equipment
+                      - Event
+                      - Imbued
+                      - Library
+                      - Master
+                      - Political Action
+                      - Power
+                      - Reaction
+                      - Retainer
+                      - Vampire
                 clan:
                   description: Clan/Creed or required clan/creed (or none)
                   type: array
                   items:
                     type: string
                     enum:
-                      - abomination
-                      - ahrimane
-                      - akunanse
-                      - assamite
-                      - avenger
-                      - baali
-                      - blood brother
-                      - brujah
-                      - brujah antitribu
-                      - caitiff
-                      - daughter of cacophony
-                      - defender
-                      - follower of set
-                      - gangrel
-                      - gangrel antitribu
-                      - gargoyle
-                      - giovanni
-                      - guruhi
-                      - harbinger of skulls
-                      - innocent
-                      - ishtarri
-                      - judge
-                      - kiasyd
-                      - lasombra
-                      - malkavian
-                      - malkavian antitribu
-                      - martyr
-                      - nagaraja
                       - none
-                      - nosferatu
-                      - nosferatu antitribu
-                      - osebo
-                      - pander
-                      - ravnos
-                      - redeemer
-                      - salubri
-                      - salubri antitribu
-                      - samedi
-                      - toreador
-                      - toreador antitribu
-                      - tremere
-                      - tremere antitribu
-                      - true brujah
-                      - tzimisce
-                      - ventrue
-                      - ventrue antitribu
-                      - visionary
+                      - Abomination
+                      - Ahrimane
+                      - Akunanse
+                      - Assamite
+                      - Avenger
+                      - Baali
+                      - Blood Brother
+                      - Brujah
+                      - Brujah antitribu
+                      - Caitiff
+                      - Daughter of Cacophony
+                      - Defender
+                      - Follower of Set
+                      - Gangrel
+                      - Gangrel antitribu
+                      - Gargoyle
+                      - Giovanni
+                      - Guruhi
+                      - Harbinger of Skulls
+                      - Innocent
+                      - Ishtarri
+                      - Judge
+                      - Kiasyd
+                      - Lasombra
+                      - Malkavian
+                      - Malkavian antitribu
+                      - Martyr
+                      - Nagaraja
+                      - Nosferatu
+                      - Nosferatu antitribu
+                      - Osebo
+                      - Pander
+                      - Ravnos
+                      - Redeemer
+                      - Salubri
+                      - Salubri antitribu
+                      - Samedi
+                      - Toreador
+                      - Toreador antitribu
+                      - Tremere
+                      - Tremere antitribu
+                      - True Brujah
+                      - Tzimisce
+                      - Ventrue
+                      - Ventrue antitribu
+                      - Visionary
                 group:
                   description: Group (crypt cards only)
                   type: array
                   items:
+                    type: integer
+                    enum: [1, 2, 3, 4, 5, 6]
+                trait:
+                  description: Trait
+                  type: array
+                  items:
                     type: string
                     enum:
-                      - "1"
-                      - "2"
-                      - "3"
-                      - "4"
-                      - "5"
-                      - "6"
-                      - "any"
-                trait:
-                  description: Trait, title, city or sect
+                      - Black Hand
+                      - Infernal
+                      - Red List
+                      - Scarce
+                      - Seraph
+                      - Slave
+                      - Sterile
+                discipline:
+                  description: |
+                    Discipline trigram. Case matters. Some special values can be used:
+
+                    - none: no discipline required
+                    - mono: single discipline card
+                    - multi: multidiscipline card (outferior, combo, tridisciplines)
+                    - combo: discipline combo card
+                    - choice: discipline choice card (outferior, tridiscipline)
+
+                    Also, "flight", "striga", and "maleficia" can be used.
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - none
+                      - mono
+                      - multi
+                      - combo
+                      - choice
+                      - flight
+                      - maleficia
+                      - striga
+                      - abo
+                      - ani
+                      - aus
+                      - cel
+                      - chi
+                      - dai
+                      - def
+                      - dem
+                      - dom
+                      - for
+                      - inn
+                      - jud
+                      - mar
+                      - mel
+                      - myt
+                      - nec
+                      - obe
+                      - obf
+                      - obt
+                      - pot
+                      - pre
+                      - pro
+                      - qui
+                      - red
+                      - san
+                      - ser
+                      - spi
+                      - tem
+                      - tha
+                      - thn
+                      - val
+                      - ven
+                      - vic
+                      - vin
+                      - vis
+                      - ABO
+                      - ANI
+                      - AUS
+                      - CEL
+                      - CHI
+                      - DAI
+                      - DEM
+                      - DOM
+                      - FOR
+                      - MEL
+                      - MYT
+                      - NEC
+                      - OBE
+                      - OBF
+                      - OBT
+                      - POT
+                      - PRE
+                      - PRO
+                      - QUI
+                      - SAN
+                      - SER
+                      - SPI
+                      - TEM
+                      - THA
+                      - THN
+                      - VAL
+                      - VIC
+                      - VIS
+                sect:
+                  description: Vampiric sect. Also matches cards requiring a sect.
+                  type: array
+                  items:
+                    type: string
+                    enum: ["Anarch", "Camarilla", "Independent", "Laibon", "Sabbat"]
+                title:
+                  description: Title. Also matches cards requiring a title.
                   type: array
                   items:
                     type: string
                     enum:
                       - 1 vote
                       - 2 votes
-                      - addis ababa
-                      - amsterdam
-                      - anarch
-                      - aragon
-                      - archbishop
-                      - athens
-                      - atlanta
-                      - barcelona
-                      - baron
-                      - berlin
-                      - birmingham
-                      - bishop
-                      - black hand
-                      - boston
-                      - brussels
-                      - budapest
-                      - buenos aires
-                      - cairo
-                      - camarilla
-                      - canberra
-                      - cape town
-                      - cardinal
-                      - chicago
-                      - chicago
-                      - cleveland
-                      - columbus
-                      - copenhagen
-                      - cordoba
-                      - corte
-                      - dallas
-                      - detroit
-                      - dublin
-                      - fortaleza
-                      - frankfurt
-                      - geneva
-                      - glasgow
-                      - guadalajara
-                      - guatemala city
-                      - houston
-                      - imperator
-                      - independent
-                      - infernal
-                      - inner circle
-                      - istanbul
-                      - justicar
-                      - kholo
-                      - laibon
-                      - liaison
-                      - lisbon
-                      - london
-                      - los angeles
-                      - magaji
-                      - manila
-                      - mannheim
-                      - melbourne
-                      - mexico city
-                      - miami
-                      - milan
-                      - milwaukee
-                      - monaco
-                      - montreal
-                      - nairobi
-                      - new york
-                      - paris
-                      - perth
-                      - philadelphia
-                      - pittsburgh
-                      - port-au-prince
-                      - prague
-                      - primogen
-                      - prince
-                      - priscus
-                      - red list
-                      - regent
-                      - rio de janeiro
-                      - rome
-                      - rotterdam
-                      - sabbat
-                      - san diego
-                      - scarce
-                      - seattle
-                      - seraph
-                      - slave
-                      - sterile
-                      - stockholm
-                      - strasbourg
-                      - sydney
-                      - taipei
-                      - toronto
-                      - venice
-                      - versailles
-                      - washington, d.c.
-                discipline:
-                  description: Discipline
+                      - Archbishop
+                      - Baron
+                      - Bishop
+                      - Cardinal
+                      - Imperator
+                      - Inner Circle
+                      - Justicar
+                      - Kholo
+                      - Magaji
+                      - Primogen
+                      - Prince
+                      - Priscus
+                      - Regent
+                set:
+                  description: Set the card was edited in
+                  type: array
+                  items:
+                    description: Use a GET on /card to list possible values.
+                    type: string
+                rarity:
+                  description: Rarity of the card in boosters.
                   type: array
                   items:
                     type: string
-                    enum:
-                      - "*"
-                      - ANIMALISM
-                      - AUSPEX
-                      - CELERITY
-                      - CHIMERSTRY
-                      - DAIMOINON
-                      - DEMENTATION
-                      - DOMINATE
-                      - FORTITUDE
-                      - MELPOMINEE
-                      - MYTHERCERIA
-                      - NECROMANCY
-                      - OBEAH
-                      - OBFUSCATE
-                      - OBTENEBRATION
-                      - POTENCE
-                      - PRESENCE
-                      - PROTEAN
-                      - QUIETUS
-                      - SANGUINUS
-                      - SERPENTIS
-                      - SPIRITUS
-                      - TEMPORIS
-                      - THANATOSIS
-                      - THAUMATURGY
-                      - VALEREN
-                      - VICISSITUDE
-                      - VISCERATIKA
-                      - abombwe
-                      - animalism
-                      - auspex
-                      - celerity
-                      - chimerstry
-                      - daimoinon
-                      - defense
-                      - dementation
-                      - dominate
-                      - flight
-                      - fortitude
-                      - innocence
-                      - judgment
-                      - maleficia
-                      - martyrdom
-                      - melpominee
-                      - mytherceria
-                      - necromancy
-                      - none
-                      - obeah
-                      - obfuscate
-                      - obtenebration
-                      - potence
-                      - presence
-                      - protean
-                      - quietus
-                      - redemption
-                      - sanguinus
-                      - serpentis
-                      - spiritus
-                      - striga
-                      - temporis
-                      - thanatosis
-                      - thaumaturgy
-                      - valeren
-                      - vengeance
-                      - vicissitude
-                      - visceratika
-                      - vision
+                    enum: ["Common", "Rare", "Uncommon", "Vampire"]
+                precon:
+                  description: Percon starter
+                  type: array
+                  items:
+                    description: Use a GET on /card to list possible values.
+                    type: string
+                artist:
+                  description: Artist for the card picture
+                  type: array
+                  items:
+                    description: Use a GET on /card to list possible values.
+                    type: string
+                city:
+                  description: Matches cards related to a city title.
+                  type: array
+                  items:
+                    description: Use a GET on /card to list possible values.
+                    type: string
                 bonus:
                   description: Special bonus provided
                   type: array
                   items:
                     type: string
+                    description: |
+                      Intercept matches card reducing stealth too,
+                      and Stealth the cards reducing intercept.
+                      Stealth won't match +X stealth actions.
+                      Votes matches any titled vampire as well as cards providing votes.
                     enum:
-                      - votes
-                      - intercept
-                      - bleed
-                      - stealth
+                      - Bleed
+                      - Capacity
+                      - Intercept
+                      - Stealth
+                      - Trifle
+                      - Votes
                 text:
-                  description: Card text to search for - also matches card names
+                  description: |
+                    Card text to search for - also matches card names and flavor text
+                  type: string
+                card_text:
+                  description: |
+                    Card text to search for, excluding card names and flavor text
+                  type: string
+                name:
+                  description: Card name to search for
+                  type: string
+                flavor_text:
+                  description: Flavor text to search for
                   type: string
                 lang:
                   description: Additional language to search in (for text search only)
                   type: string
                   format: language tag
-              example:
-                type: ["political action"]
-                trait: ["anarch"]
+            example:
+              type: ["political action"]
+              sect: ["anarch"]
       responses:
         "200":
           description: Success, returns a JSON array of card names
@@ -820,17 +1549,15 @@ paths:
                   - type: array
                     minLength: 1
                     items: { $ref: "#/components/schemas/card" }
-                example:
-                  - Anarch Salon
-                  - Eat the Rich
-                  - Exclusion Principle
-                  - Firebrand
-                  - Free States Rant
-                  - Patsy
-                  - Persona Non Grata
-                  - Reckless Agitation
-                  - Revolutionary Council
-                  - Sweepe
+              example:
+                - Anarch Salon
+                - Eat the Rich
+                - Firebrand
+                - Free States Rant
+                - Patsy
+                - Reckless Agitation
+                - Revolutionary Council
+                - Sweepe
         "400":
           description: Malformed body
         "404":
@@ -838,10 +1565,9 @@ paths:
   /card/{name_or_id}:
     get:
       tags: [Card]
-      summary: Get card text and rulings
+      summary: Get card information
       description: |
-        Return the matching card information.
-        Works with translated card names.
+        Return the matching card information. Also works with **translated** card names.
       parameters:
         - name: name_or_id
           in: path
@@ -891,6 +1617,104 @@ paths:
               example: ["The unnamed", "Unnatural Disaster"]
         "404":
           description: Not found
+  /candidates:
+    post:
+      tags: [Card]
+      summary: Given a list of cards, returns likely additional candidates for a deck
+      description: |
+        Only 10 candidates are returned. If there less than 4 decks in the TWDA
+        tha ressemble the cards list provided, 404 is returned.
+        If no card is provided, it will simply output the list of most played cards.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mode:
+                  type: string
+                  description: response format (return name or full card).
+                  enum: ["name", "full"]
+                players_count:
+                  type: integer
+                  description: |
+                    If set, only consider tournament winning decks from tournaments
+                    with at least that many players participating
+                date_from:
+                  type: string
+                  format: date
+                  description: |
+                    If set, only consider tournament winning decks from that date on
+                date_to:
+                  type: string
+                  format: date
+                  description: |
+                    If set, only consider tournament winning decks up to that date
+                cards:
+                  type: array
+                  items:
+                    oneOf:
+                      - type: string
+                        description: Card name
+                      - type: integer
+                        description: Card ID
+            example:
+              cards: [Cybele, Nana Buruku]
+              date_from: "2015"
+              date_to: "2020"
+      responses:
+        "200":
+          description: Success, returns a list of up to 10 candidates
+          content:
+            application/json:
+              schema:
+                type: array
+                description: |
+                  Card names, or full card JSON objects
+                  if the "full" mode has been requested
+                items:
+                  type: object
+                  properties:
+                    card:
+                      description: |
+                        Card name or JSON, depending on the "mode"
+                        provided in the request.
+                      oneOf:
+                        - type: string
+                          description: Card name
+                        - { $ref: "#/components/schemas/card" }
+                    score:
+                      type: number
+                      description: |
+                        Percentage of presence in similar tournament winning decks: 0.4
+                        means the card is listed in 40% of similar decks in the TWDA.
+                    average:
+                      type: integer
+                      description: |
+                        Average number of copies used in similar decks using the card.
+                    deviation:
+                      type: number
+                      description: |
+                        Standard deviation for the number of copies.
+                        Note that average has been rounded (so presents a 0.5 error).
+                        A "typical" range for copies can be computed using:
+                        floor(max(1, average - deviation)), ceil(average + deviation)
+              example:
+                - { "average": 14, "card": "Ashur Tablets", "deviation": 6.25, "score": 1.0 }
+                - { "average": 1, "card": "Giant's Blood", "deviation": 0.0, "score": 1.0 }
+                - { "average": 2, "card": "The Parthenon", "deviation": 0.81, "score": 1.0 }
+                - { "average": 1, "card": "Archon Investigation", "deviation": 0.0, "score": 0.9 }
+                - { "average": 5, "card": "Villein", "deviation": 1.7, "score": 0.9 }
+                - { "average": 1, "card": "Wider View", "deviation": 0.42, "score": 0.9 }
+                - { "average": 3, "card": "Aksinya Daclau", "deviation": 0.43, "score": 0.8 }
+                - { "average": 2, "card": "Dreams of the Sphinx", "deviation": 0.6, "score": 0.8 }
+                - { "average": 8, "card": "Liquidation", "deviation": 2.42, "score": 0.8 }
+                - { "average": 1, "card": "Pentex™ Subversion", "deviation": 0.48, "score": 0.8 }
+        "400":
+          description: |
+            Malformed body, typically an invalid card name or ID
+        "404":
+          description: Not found, typically not enough matching examples in the TWDA
   /submit-ruling/{card_name_or_id}:
     post:
       tags: [Card]
@@ -915,7 +1739,7 @@ paths:
                 link:
                   description: "Link to the official ruling from a Rules Director"
                   type: string
-                  format: url
+                  format: uri
               example:
                 text: Cannot be played by vampires who aren't controlled.
                 link: https://groups.google.com/d/msg/rec.games.trading-cards.jyhad/80KRDjVFkyg/TBJso9Ra_9QJ
@@ -926,7 +1750,7 @@ paths:
           description: Malformed body
         "404":
           description: Card not found
-  /deck:
+  /twda:
     post:
       tags: [Deck]
       summary: Get TWDA decks matching given filters
@@ -937,24 +1761,27 @@ paths:
               type: object
               properties:
                 card_names:
-                  description: "If absent, all decks are returned"
+                  description: |
+                    Return decks containing those cards.
+                    If absent, all decks are returned.
                   type: array
                   minLength: 0
                   items:
-                    description: "Case-insensitive card name"
+                    description: Case insensitive card name.
                     type: string
                 date_from:
-                  description: "Only consider decks from this date on"
+                  description: Only consider decks from this date on.
                   type: string
                   format: date
                   default: "2008-01-01"
                 date_to:
-                  description: "Only consider decks until this date"
+                  description: Only consider decks until this date.
                   type: string
                   format: date
                   default: null
                 players:
-                  description: "Only consider tournaments with at least this number of players"
+                  description: |
+                    Only consider tournaments with at least this number of players.
                   type: integer
                   minimum: 0
                   default: 0
@@ -964,7 +1791,7 @@ paths:
                 players: 25
       responses:
         "200":
-          description: Successful, returns a list of decks as a JSON array
+          description: Successful, returns a list of decks as a JSON array.
           content:
             application/json:
               schema:
@@ -976,11 +1803,11 @@ paths:
           description: Malformed body
         "404":
           description: Not found
-  /deck/{twda_id}:
+  /twda/{id}:
     get:
       tags: [Deck]
       summary: Get a deck by its TWDA ID
-      description: Returns the deck with the given ID
+      description: Returns the deck with the given ID in the TWDA.
       parameters:
         - name: twda_id
           in: path
@@ -997,3 +1824,182 @@ paths:
               examples: { deck: { $ref: "#/components/examples/deck" } }
         "404":
           description: Not Found
+
+  /convert/{format}:
+    post:
+      tags: [Deck]
+      summary: Convert a deck list format
+      description: |
+        Provide a text/plain or application/json deck list,
+        returns the decklist in the requested format (defaults to json).
+      parameters:
+        - name: format
+          in: path
+          schema:
+            type: string
+            enum: ["twd", "lackey", "json", "jol"]
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/deck" }
+            examples: { deck: { $ref: "#/components/examples/deck" } }
+          text/plain:
+            schema:
+              type: string
+            example: |
+              Crypt (12 cards, min=7, max=24, avg=3.75)
+              -----------------------------------------
+              1x Gilbert Duane          7 AUS DOM OBF      prince  Malkavian:1
+              1x Mariel, Lady Thunder   7 DOM OBF aus tha          Malkavian:1
+              1x Badr al-Budur          5 OBF cel dom qui          Assamite:2
+              1x Count Ormonde          5 OBF dom pre ser          Follower of Set:2
+              1x Didi Meyers            5 DOM aus cel obf          Malkavian:1
+              1x Zebulon                5 OBF aus dom pro          Malkavian:1
+              1x Dimple                 2 obf                      Nosferatu:1
+              1x Mustafa Rahman         2 dom                      Tremere:2
+              1x Normal                 2 obf                      Malkavian:1
+              1x Ohanna                 2 dom                      Malkavian:2
+              1x Samson                 2 dom                      Ventrue antitribu:2
+              1x Basil                  1 obf                      Pander:2
+
+              Library (87 cards)
+              Master (19; 3 trifle)
+              1x Channel 10
+              2x Charisma
+              1x Creepshow Casino
+              1x KRCG News Radio
+              2x Perfectionist
+              6x Storage Annex
+              3x Sudden Reversal
+              3x Vessel
+
+              Ally (12)
+              1x Carlton Van Wyk
+              1x Gregory Winter
+              1x Impundulu
+              1x Muddled Vampire Hunter
+              1x Ossian
+              6x Procurer
+              1x Young Bloods
+
+              Equipment (9)
+              1x Deer Rifle
+              8x Flash Grenade
+
+              Action Modifier (19)
+              6x Cloak the Gathering
+              7x Conditioning
+              2x Lost in Crowds
+              4x Veil the Legions
+
+              Reaction (16)
+              7x Deflection
+              2x Delaying Tactics
+              7x On the Qui Vive
+
+              Combat (8)
+              8x Concealed Weapon
+
+              Event (4)
+              1x FBI Special Affairs Division
+              1x Hunger Moon
+              1x Restricted Vitae
+              1x Unmasking, The
+      responses:
+        "200":
+          description: Success, returns the deck in given format
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/deck" }
+              examples: { deck: { $ref: "#/components/examples/deck" } }
+            text/plain:
+              schema:
+                type: string
+              example: |
+                1	Channel 10
+                2	Charisma
+                1	Creepshow Casino
+                1	KRCG News Radio
+                2	Perfectionist
+                6	Storage Annex
+                3	Sudden Reversal
+                3	Vessel
+                1	Carlton Van Wyk
+                1	Gregory Winter
+                1	Impundulu
+                1	Muddled Vampire Hunter
+                1	Ossian
+                6	Procurer
+                1	Young Bloods
+                1	Deer Rifle
+                8	Flash Grenade
+                6	Cloak the Gathering
+                7	Conditioning
+                2	Lost in Crowds
+                4	Veil the Legions
+                7	Deflection
+                2	Delaying Tactics
+                7	On the Qui Vive
+                8	Concealed Weapon
+                1	FBI Special Affairs Division
+                1	Hunger Moon
+                1	Restricted Vitae
+                1	Unmasking, The
+                Crypt:
+                1	Gilbert Duane
+                1	Mariel, Lady Thunder
+                1	Badr al-Budur
+                1	Count Ormonde
+                1	Didi Meyers
+                1	Zebulon
+                1	Dimple
+                1	Mustafa Rahman
+                1	Normal
+                1	Ohanna
+                1	Samson
+                1	Bas
+        "400":
+          description: |
+            Malformed body. Note the text parser won't fail easily:
+            in case of parsing error it will list any non-parsed line as comment.
+
+  /amaranth:
+    post:
+      tags: [Deck]
+      summary: Retrieve a deck from Amaranth
+      description: |
+        Retrieve a deck from [Amaranth](https://amaranth.vtes.co.nz/) 
+        using a share URL.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  description: "[Amaranth](https://amaranth.vtes.co.nz/) share URL"
+                  format: uri
+            example:
+              url: "https://amaranth.vtes.co.nz/#deck/4d3aa426-70da-44b7-8cb7-92377a1a0dbd"
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  description: "[Amaranth](https://amaranth.vtes.co.nz/) share URL"
+                  format: uri
+            example:
+              url: "https://amaranth.vtes.co.nz/#deck/4d3aa426-70da-44b7-8cb7-92377a1a0dbd"
+      responses:
+        "200":
+          description: Success, returns the deck
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/deck" }
+              examples: { deck: { $ref: "#/components/examples/first-blood-tremere" } }
+        "400":
+          description: |
+            Malformed body. The Amaranth URL is expected to begin with
+            https://amaranth.vtes.co.nz/#deck/
