@@ -90,8 +90,7 @@ curl
 ]
 ```
 
-Browse the **TWDA**: search for decks containing given cards,
-get candidates for your decklist out of it:
+Get candidates for your decklist out of the **TWDA**:
 
 ```bash
 curl
@@ -132,6 +131,7 @@ curl
 
 And a few other features, including:
 
+-   search decks in the TWDA, by cards, dates, author and number of players
 -   deck list format conversion
 -   retrieving a decklist from an Amaranth share URL
 -   card name completions

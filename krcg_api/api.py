@@ -76,7 +76,7 @@ def card(text):
 
 
 @base.route("/twda", methods=["POST"])
-def deck_by_cards():
+def deck_search():
     """Get decks containing cards."""
     data = flask.request.get_json() or {}
     if data and data.get("player"):

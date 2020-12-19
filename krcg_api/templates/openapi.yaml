@@ -34,7 +34,7 @@ components:
       properties:
         id:
           type: integer
-          minLength: 1
+          minimum: 100001
         name:
           type: string
           minLength: 1
@@ -111,7 +111,8 @@ components:
         capacity:
           description: Capacity (crypt and library cards like The Embrace)
           type: integer
-          minLength: 0
+          minimum: 1
+          maximum: 11
         capacity_change:
           description: Capacity bonus or malus (library cards only)
           type: string
@@ -127,6 +128,7 @@ components:
           description: Date of banishment
           type: string
           format: date
+          minLength: 0
         pool_cost:
           description: Pool cost (library cards only)
           type: string
@@ -142,6 +144,7 @@ components:
         burn_option:
           description: Burn option (library cards only)
           type: boolean
+          default: false
         flavor_text:
           description: Flavor text (library cards only)
           type: string
@@ -157,14 +160,13 @@ components:
         rulings:
           description: Rulings
           type: object
-          minLength: 0
           properties:
             text:
               type: array
               items:
                 description: Ruling text, including ruling reference (in brackets)
                 type: string
-                minLength: 1
+                minLength: 0
             links:
               description: |
                 Link to official rulings by Rules Directors.
@@ -199,6 +201,7 @@ components:
                 type: string
                 format: uri
                 description: Card image in that language
+                minLength: 0
     deck:
       type: object
       required: ["id", "date", "crypt", "library"]
@@ -1640,6 +1643,7 @@ paths:
                   description: |
                     If set, only consider tournament winning decks from tournaments
                     with at least that many players participating
+                  default: 0
                 date_from:
                   type: string
                   format: date
@@ -1765,10 +1769,13 @@ paths:
                     Return decks containing those cards.
                     If absent, all decks are returned.
                   type: array
-                  minLength: 0
                   items:
                     description: Case insensitive card name.
                     type: string
+                player:
+                  description: |
+                    Player name (case insensitive)
+                  type: string
                 date_from:
                   description: Only consider decks from this date on.
                   type: string
@@ -1779,7 +1786,7 @@ paths:
                   type: string
                   format: date
                   default: null
-                players:
+                players_count:
                   description: |
                     Only consider tournaments with at least this number of players.
                   type: integer
