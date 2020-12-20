@@ -15,7 +15,7 @@ release:
 	pip install -e ".[dev]"
 
 update:
-	pip install --upgrade --upgrade-strategy eager -e .[dev]
+	pip install --upgrade --upgrade-strategy eager -e ".[dev]"
 
 clean:
 	rm -rf dist

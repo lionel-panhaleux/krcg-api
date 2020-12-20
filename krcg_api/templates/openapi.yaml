@@ -5,7 +5,7 @@ info:
   description: |
     **V:tES** cards and decks based on VEKN resources, including the [TWDA](http://www.vekn.fr/decks/twd.htm).
   contact:
-    name: "KRCG"
+    name: "KRCG API"
     url: https://github.com/lionel-panhaleux/krcg-api
   license:
     name: MIT License
@@ -47,6 +47,17 @@ components:
           type: string
           format: uri
           minLength: 1
+        aka:
+          description: Alternative names used on older versions of the card
+          type: array
+          minLength: 0
+          items:
+            type: string
+            minLength: 1
+        adv:
+          description: True if the card is an advanced vampire
+          type: boolean
+          default: false
         types:
           type: array
           minLength: 1
@@ -81,15 +92,20 @@ components:
                   description: Release date of the pack
                   type: string
                   format: date
+                  minLength: 0
+                  maxLength: 10
                 rarity:
                   description: Rarity in boosters
                   type: string
+                  minLength: 0
                 precon:
                   description: Preconstructed bundle name
                   type: string
+                  minLength: 0
                 copies:
                   description: Number of copies in fixed packs
                   type: integer
+                  minimum: 0
                 frequency:
                   description: Frequency in booster compared to base rarity frequency
                   type: number
@@ -124,6 +140,14 @@ components:
             description: Discipline trigrams, plus "striga" and "maleficia".
             type: string
             minLength: 1
+        combo:
+          description: True if the card is a disciplines combo card
+          type: boolean
+          default: false
+        multidisc:
+          description: True if the card offers a choice between multiple disciplines
+          type: boolean
+          default: false
         banned:
           description: Date of banishment
           type: string
@@ -149,6 +173,10 @@ components:
           description: Flavor text (library cards only)
           type: string
           minLength: 0
+        draft:
+          description: Draft text (library cards only)
+          type: string
+          minLength: 0
         group:
           description: Group (crypt cards only) - can be "ANY"
           type: string
@@ -164,7 +192,10 @@ components:
             text:
               type: array
               items:
-                description: Ruling text, including ruling reference (in brackets)
+                description: |
+                  Ruling text, including ruling reference (in brackets).
+                  Inside rulings text, other card names are between braces.
+                  Ruling references are between brackets, at the end of the text.
                 type: string
                 minLength: 0
             links:

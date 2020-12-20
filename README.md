@@ -137,3 +137,57 @@ And a few other features, including:
 -   card name completions
 
 Check the [online documentation](https://api.v2.krcg.org/) for more.
+
+### Hosting the web API
+
+To host the web API, you can use pip to install it:
+
+```bash
+pip install "krcg-api"
+```
+
+No wsgi server is installed by default, you need to install one.
+HTTP web servers can then easily be configured to serve WSGI applications,
+check the documentation of your web server.
+
+The API can be served with [uWSGI](https://uwsgi-docs.readthedocs.io):
+
+```bash
+uwsgi --module krcg_api.wsgi:application
+```
+
+or [Gunicorn](https://gunicorn.org):
+
+```bash
+gunicorn krcg_api.wsgi:application
+```
+
+Two environment variables are expected: `GITHUB_USERNAME` and `GITHUB_TOKEN`,
+to allow the API to connect to Github as a user in order to post new rulings
+as issues on the repository (`/submit-ruling` endpoint).
+
+See the [Github help](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
+on how to generate a personal token for the account you want KRCG to use.
+
+#### Development
+
+The development version of KRCG installs uWSGI to serve the API,
+this is the preferred WSGI server for now.
+
+```bash
+$ pip install -e ".[dev]"
+$ make serve
+...
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000
+```
+
+You can check the API is running by using your browser
+on the provided address [http://127.0.0.1:8000](http://127.0.0.1:8000).
+
+The environment variables `GITHUB_USERNAME` and `GITHUB_TOKEN` can be provided
+by a personal `.env` file at the root of the krcg folder (ignored by git):
+
+```bash
+export GITHUB_USERNAME="dedicated_github_username_for_the_api"
+export GITHUB_TOKEN="the_matching_github_token"
+```

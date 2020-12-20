@@ -1,6 +1,7 @@
 include LICENSE README.md CHANGELOG.rst
 
-graft krcg-api
+graft krcg_api
+prune tests
 exclude Makefile
 exclude dark-pack.png
 exclude .markdownlint.json
