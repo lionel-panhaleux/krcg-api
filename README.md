@@ -1,5 +1,11 @@
 # KRCG API
 
+[![PyPI version](https://badge.fury.io/py/krcg-api.svg)](https://badge.fury.io/py/krcg-api)
+[![Validation](https://github.com/lionel-panhaleux/krcg-api/workflows/Validation/badge.svg)](https://github.com/lionel-panhaleux/krcg-api/actions)
+[![Python version](https://img.shields.io/badge/python-3.8-blue)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/License-MIT-blue)](https://opensource.org/licenses/MIT)
+[![Code Style](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
+
 A web API for V:tES based on
 the VEKN [official card texts](http://www.vekn.net/card-lists)
 and the [Tournament Winning Deck Archive (TWDA)](http://www.vekn.fr/decks/twd.htm).
