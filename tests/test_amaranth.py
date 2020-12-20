@@ -4,7 +4,10 @@ def test(client):
         "date": "2020-12-13",
         "author": "BCP",
         "name": "First Blood: Tremere",
-        "comments": "https://blackchantry.com/How%20to%20play%20the%20First%20Blood%20Tremere%20deck.pdf",
+        "comments": (
+            "https://blackchantry.com/"
+            "How%20to%20play%20the%20First%20Blood%20Tremere%20deck.pdf"
+        ),
         "crypt": {
             "cards": [
                 {"count": 2, "id": 201020, "name": "Muhsin Samir"},
