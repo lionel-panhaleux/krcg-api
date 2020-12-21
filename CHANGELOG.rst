@@ -1,7 +1,7 @@
 2.2 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Fix Python 3.7
 
 
 2.1 (2020-12-21)
