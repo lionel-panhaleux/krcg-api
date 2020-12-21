@@ -1,7 +1,7 @@
 2.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Fix the way multi-valued search filters are handled
 
 
 2.2 (2020-12-21)

@@ -1262,6 +1262,10 @@ paths:
         It will match two separated words, but only match words from start,
         not parts of them. It will not match any other enum field (eg. *type*)
 
+        When multiple values are provided for a given filter, it matches any value,
+        except for the "trait", "bonus" and "discipline" dimensions, where it must 
+        match all values.
+
         Note that:
 
         - Crypt & Library are included in *type*.
