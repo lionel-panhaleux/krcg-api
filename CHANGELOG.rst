@@ -1,7 +1,7 @@
 2.1 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Minor fixes (doc, packaging)
 
 
 2.0 (2020-12-20)
