@@ -1,4 +1,4 @@
-2.1 (unreleased)
+2.1 (2020-12-21)
 ----------------
 
 - Minor fixes (doc, packaging)
