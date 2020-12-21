@@ -1,7 +1,7 @@
 .PHONY: quality test serve release update clean
 
 quality:
-	black --check krcg tests
+	black --check .
 	flake8
 
 test: quality

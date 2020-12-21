@@ -695,10 +695,10 @@ def test(client):
     assert response.status_code == 400
     assert response.json is None
     assert response.data == (
-        b"Invalid search dimension {'foo'}. Valid dimensions are: ['name', 'card_text"
-        b"', 'flavor_text', 'type', 'sect', 'clan', 'title', 'city', 'trait', 'group',"
-        b" 'capacity', 'discipline', 'artist', 'set', 'rarity', 'precon', 'bonus', "
-        b"'text']"
+        b"Invalid search dimension: foo. Valid dimensions are: name, card_text"
+        b", flavor_text, type, sect, clan, title, city, trait, group,"
+        b" capacity, discipline, artist, set, rarity, precon, bonus, "
+        b"text"
     )
     # non-existing values do not crash
     response = client.post("/card_search", json={"bonus": ["foo"]})
