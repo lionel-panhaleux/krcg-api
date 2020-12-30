@@ -1,3 +1,4 @@
 from krcg import config
 
 SUPPORTED_LANGUAGES = list(config.SUPPORTED_LANGUAGES)
+KRCG_STATIC_SERVER = config.KRCG_STATIC_SERVER

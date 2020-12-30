@@ -1,21 +1,21 @@
 def test(client):
     first_blood_tremere = {
-        "id": "4d3aa426-70da-44b7-8cb7-92377a1a0dbd",
-        "date": "2020-12-28",
+        "id": "b798e734fff7404085f7b01ad2ccb479",
+        "date": "2020-12-30",
         "author": "BCP",
-        "name": "First Blood: Tremere",
+        "name": "First Blood Tremere",
         "comments": (
             "https://blackchantry.com/"
             "How%20to%20play%20the%20First%20Blood%20Tremere%20deck.pdf"
         ),
         "crypt": {
             "cards": [
+                {"count": 2, "id": 200025, "name": "Aidan Lyle"},
+                {"count": 2, "id": 200280, "name": "Claus Wegener"},
                 {"count": 2, "id": 201020, "name": "Muhsin Samir"},
                 {"count": 2, "id": 201213, "name": "Rutor"},
                 {"count": 2, "id": 201388, "name": "Troius"},
                 {"count": 2, "id": 201501, "name": "Zane"},
-                {"count": 2, "id": 200025, "name": "Aidan Lyle"},
-                {"count": 2, "id": 200280, "name": "Claus Wegener"},
             ],
             "count": 12,
         },
@@ -89,23 +89,17 @@ def test(client):
         },
     }
     response = client.post(
-        "/amaranth",
+        "/vdb",
         data={
-            "url": (
-                "https://amaranth.vtes.co.nz/#deck/"
-                "4d3aa426-70da-44b7-8cb7-92377a1a0dbd"
-            )
+            "url": "https://vdb.smeea.casa/decks?id=b798e734fff7404085f7b01ad2ccb479"
         },
     )
     assert response.status_code == 200
     assert response.json == first_blood_tremere
     response = client.post(
-        "/amaranth",
+        "/vdb",
         json={
-            "url": (
-                "https://amaranth.vtes.co.nz/#deck/"
-                "4d3aa426-70da-44b7-8cb7-92377a1a0dbd"
-            )
+            "url": "https://vdb.smeea.casa/decks?id=b798e734fff7404085f7b01ad2ccb479"
         },
     )
     assert response.status_code == 200

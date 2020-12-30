@@ -1,7 +1,7 @@
 2.4 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Add /vdb endpoint to fetch a deck from VDB
 
 
 2.3 (2020-12-21)
