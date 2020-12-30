@@ -1,4 +1,4 @@
-2.4 (unreleased)
+2.4 (2020-12-30)
 ----------------
 
 - Add /vdb endpoint to fetch a deck from VDB
