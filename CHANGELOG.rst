@@ -1,7 +1,7 @@
 2.5 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Provide card scans URLs for all prints
 
 
 2.4 (2020-12-30)

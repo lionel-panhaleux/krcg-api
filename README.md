@@ -69,6 +69,11 @@ curl -X GET "http://127.0.0.1:8000/card/Alastor" -H  "accept: application/json"
                 "release_date": "2005-02-21"
             }
         ]
+    },
+    "scans": {
+        "Gehenna": "https://static.krcg.org/card/set/gehenna/alastor.jpg",
+        "Keepers of Tradition": "https://static.krcg.org/card/set/keepers-of-tradition/alastor.jpg",
+        "Kindred Most Wanted": "https://static.krcg.org/card/set/kindred-most-wanted/alastor.jpg"
     }
 }
 ```
