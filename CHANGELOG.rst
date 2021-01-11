@@ -1,4 +1,4 @@
-2.5 (unreleased)
+2.5 (2021-01-11)
 ----------------
 
 - Provide card scans URLs for all prints
