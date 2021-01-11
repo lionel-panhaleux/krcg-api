@@ -26,6 +26,15 @@ def test(client):
                 {"copies": 1, "precon": "Alastors", "release_date": "2005-02-21"}
             ],
         },
+        "scans": {
+            "Gehenna": "https://static.krcg.org/card/set/gehenna/alastor.jpg",
+            "Keepers of Tradition": (
+                "https://static.krcg.org/card/set/keepers-of-tradition/alastor.jpg"
+            ),
+            "Kindred Most Wanted": (
+                "https://static.krcg.org/card/set/kindred-most-wanted/alastor.jpg"
+            ),
+        },
         "artists": ["Monte Moore"],
         "rulings": {
             "links": {
@@ -110,6 +119,26 @@ def test_i18n(client):
             "Vampire: The Eternal Struggle": [
                 {"rarity": "Common", "release_date": "1995-09-15"}
             ],
+        },
+        "scans": {
+            "Anarchs": "https://static.krcg.org/card/set/anarchs/aidfrombats.jpg",
+            "Camarilla Edition": (
+                "https://static.krcg.org/card/set/camarilla-edition/aidfrombats.jpg"
+            ),
+            "First Blood": (
+                "https://static.krcg.org/card/set/first-blood/aidfrombats.jpg"
+            ),
+            "Jyhad": "https://static.krcg.org/card/set/jyhad/aidfrombats.jpg",
+            "Keepers of Tradition": (
+                "https://static.krcg.org/card/set/keepers-of-tradition/aidfrombats.jpg"
+            ),
+            "Third Edition": (
+                "https://static.krcg.org/card/set/third-edition/aidfrombats.jpg"
+            ),
+            "Vampire: The Eternal Struggle": (
+                "https://static.krcg.org/card/set/"
+                "vampire-the-eternal-struggle/aidfrombats.jpg"
+            ),
         },
         "_i18n": {
             "es": {
@@ -205,6 +234,9 @@ def test_sets(client):
                 }
             ]
         },
+        "scans": {
+            "Anthology": "https://static.krcg.org/card/set/anthology/linethe.jpg"
+        },
         "types": ["Master"],
     }
     # promo card
@@ -232,6 +264,17 @@ def test_sets(client):
                 {"copies": 2, "precon": "Humble Bundle", "release_date": "2018-10-04"}
             ],
             "2019 Promo Pack 1": [{"copies": 1, "release_date": "2019-04-08"}],
+        },
+        "scans": {
+            "2015 Storyline Rewards": (
+                "https://static.krcg.org/card/set/promo/draconthe.jpg"
+            ),
+            "2018 Humble Bundle": (
+                "https://static.krcg.org/card/set/humble-bundle/draconthe.jpg"
+            ),
+            "2019 Promo Pack 1": (
+                "https://static.krcg.org/card/set/promo-pack-1/draconthe.jpg"
+            ),
         },
         "types": ["Vampire"],
     }
@@ -266,6 +309,11 @@ def test_sets(client):
             },
         },
         "sets": {"The Unaligned": [{"rarity": "Common", "release_date": "2014-10-04"}]},
+        "scans": {
+            "The Unaligned": (
+                "https://static.krcg.org/card/set/the-unaligned/ophidiangaze.jpg"
+            ),
+        },
         "types": ["Reaction"],
     }
 
@@ -293,6 +341,14 @@ def test_artists(client):
         "sets": {
             "Blood Shadowed Court": [{"release_date": "2008-04-14"}],
             "Camarilla Edition": [{"rarity": "Vampire", "release_date": "2002-08-19"}],
+        },
+        "scans": {
+            "Blood Shadowed Court": (
+                "https://static.krcg.org/card/set/blood-shadowed-court/tyler.jpg"
+            ),
+            "Camarilla Edition": (
+                "https://static.krcg.org/card/set/camarilla-edition/tyler.jpg"
+            ),
         },
         "title": "Primogen",
         "types": ["Vampire"],
@@ -339,6 +395,12 @@ def test_artists(client):
             "Keepers of Tradition": [
                 {"rarity": "Common", "release_date": "2008-11-19"}
             ],
+        },
+        "scans": {
+            "Anthology": "https://static.krcg.org/card/set/anthology/ashurtablets.jpg",
+            "Keepers of Tradition": (
+                "https://static.krcg.org/card/set/keepers-of-tradition/ashurtablets.jpg"
+            ),
         },
         "types": ["Master"],
     }

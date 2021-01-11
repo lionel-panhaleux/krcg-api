@@ -1,7 +1,7 @@
 def test(client):
     first_blood_tremere = {
         "id": "b798e734fff7404085f7b01ad2ccb479",
-        "date": "2020-12-30",
+        "date": "2021-01-11",
         "author": "BCP",
         "name": "First Blood Tremere",
         "comments": (

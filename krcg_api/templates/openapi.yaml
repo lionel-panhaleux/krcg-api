@@ -111,6 +111,14 @@ components:
                   type: number
                   minimum: 0.5
                   maximum: 5
+        scans:
+          description: |
+            Scanned card image URLs, by set.
+            Note the image is not necessarily available, beware of 404 errors.
+          type: object
+          additionalProperties:
+            type: string
+            format: uri
         clans:
           description: Clan (crypt cards) or clans requirements (library cards)
           type: array
@@ -303,6 +311,14 @@ components:
           Keepers of Tradition: [{ rarity: Common }]
           Third Edition: [{ rarity: Common }]
           "Vampire: The Eternal Struggle": [{ rarity: Common }]
+        scans:
+          Anarchs: https://static.krcg.org/card/set/anarchs/aidfrombats.jpg
+          Camarilla Edition: https://static.krcg.org/card/set/camarilla-edition/aidfrombats.jpg
+          First Blood: https://static.krcg.org/card/set/first-blood/aidfrombats.jpg
+          Jyhad: https://static.krcg.org/card/set/jyhad/aidfrombats.jpg
+          Keepers of Tradition: https://static.krcg.org/card/set/keepers-of-tradition/aidfrombats.jpg
+          Third Edition: https://static.krcg.org/card/set/third-edition/aidfrombats.jpg
+          "Vampire: The Eternal Struggle": https://static.krcg.org/card/set/vampire-the-eternal-struggle/aidfrombats.jpg
         artists: ["Eric Lofgren", "Melissa Benson"]
         rulings:
           text:

@@ -863,6 +863,11 @@ def test_full(client):
                     {"rarity": "Uncommon", "release_date": "2005-11-14"}
                 ]
             },
+            "scans": {
+                "Legacies of Blood": (
+                    "https://static.krcg.org/card/set/legacies-of-blood/sennadurek.jpg"
+                ),
+            },
             "types": ["Vampire"],
         }
     ]
