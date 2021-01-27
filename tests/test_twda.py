@@ -297,3 +297,23 @@ def test_search(client):
         },
     )
     assert len(response.json) == 1
+    response = client.post(
+        "/twda",
+        json={
+            "date_from": "2015-01-01",
+            "date_to": "2020-01-01",
+            "players_count": 22,
+            "cards": ["Al-Ashrad, Amr of Alamut (ADV)"],
+        },
+    )
+    assert len(response.json) == 1
+    response = client.post(
+        "/twda",
+        json={
+            "date_from": "2015-01-01",
+            "date_to": "2020-01-01",
+            "players_count": 23,
+            "cards": ["Al-Ashrad, Amr of Alamut (ADV)"],
+        },
+    )
+    assert response.status_code == 404

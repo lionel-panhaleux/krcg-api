@@ -88,7 +88,9 @@ def deck_search():
     else:
         decks = twda.TWDA.values()
     if data and data.get("players_count"):
-        decks = [d for d in decks if d.players_count >= int(data["players_count"])]
+        decks = [
+            d for d in decks if (d.players_count or 0) >= int(data["players_count"])
+        ]
     if data and data.get("date_from"):
         decks = [d for d in decks if d.date >= arrow.get(data["date_from"]).date()]
     if data and data.get("date_to"):
@@ -161,7 +163,9 @@ def candidates():
     full = data.pop("mode", "") == "full"
     decks = twda.TWDA.values()
     if data and data.get("players_count"):
-        decks = [d for d in decks if d.players_count >= int(data.pop("players_count"))]
+        decks = [
+            d for d in decks if (d.players_count or 0) >= int(data.pop("players_count"))
+        ]
     if data and data.get("date_from"):
         date = data.pop("date_from")
         decks = [d for d in decks if d.date >= arrow.get(date).date()]
