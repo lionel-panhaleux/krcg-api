@@ -1,4 +1,4 @@
-2.6 (unreleased)
+2.6 (2021-01-27)
 ----------------
 
 - Unquote/decode text parameters in URL path
