@@ -33,6 +33,11 @@ def test(client):
     response = client.get("/complete/rot")
     assert response.status_code == 200
     assert response.json == ["Rötschreck", "Ulrike Rothbart"]
+    # utf8 url parameters are ok
+    response = client.get("/complete/röt")
+    assert response.status_code == 200
+    assert response.json == ["Rötschreck", "Ulrike Rothbart"]
+    # as well as url-encoded ones
     response = client.get("/complete/r%C3%B6t")
     assert response.status_code == 200
     assert response.json == ["Rötschreck", "Ulrike Rothbart"]
