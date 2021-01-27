@@ -2,7 +2,7 @@
 ----------------
 
 - Unquote/decode text parameters in URL path
-
+- Fix players_count search parameter for the TWDA 
 
 2.5 (2021-01-11)
 ----------------
