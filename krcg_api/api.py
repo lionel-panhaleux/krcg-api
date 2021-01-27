@@ -69,7 +69,7 @@ def card(text):
     try:
         text = int(text)
     except ValueError:
-        pass
+        text = urllib.parse.unquote(text)
     try:
         return flask.jsonify(vtes.VTES[text].to_json())
     except KeyError:
@@ -210,7 +210,7 @@ def candidates():
 def complete(text):
     """Card name completion."""
     lang = _negotiate_locale(flask.request.accept_languages.values())
-    return flask.jsonify(vtes.VTES.complete(text, lang))
+    return flask.jsonify(vtes.VTES.complete(urllib.parse.unquote(text), lang))
 
 
 @base.route("/card_search", methods=["POST"])

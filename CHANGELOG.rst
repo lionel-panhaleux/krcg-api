@@ -1,7 +1,7 @@
 2.6 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Unquote/decode text parameters in URL path
 
 
 2.5 (2021-01-11)

@@ -62,8 +62,8 @@ def test(client):
 
 
 def test_slashes(client):
-    # slash in names cannot be used
-    response = client.get("/card/Kpist%20m45")
+    # slash in names must be replaced by spaces
+    response = client.get("/card/Kpist%20m%2045")
     assert response.status_code == 200
 
 

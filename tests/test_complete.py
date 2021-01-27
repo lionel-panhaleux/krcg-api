@@ -33,6 +33,13 @@ def test(client):
     response = client.get("/complete/rot")
     assert response.status_code == 200
     assert response.json == ["Rötschreck", "Ulrike Rothbart"]
+    response = client.get("/complete/r%C3%B6t")
+    assert response.status_code == 200
+    assert response.json == ["Rötschreck", "Ulrike Rothbart"]
+    # match omitted slashes
+    response = client.get("/complete/Kpist%20m%204")
+    assert response.status_code == 200
+    assert response.json == ["Kpist m/45"]
     # do not complete translations without accept-language header
     response = client.get("/complete/Aide%20des")
     assert response.status_code == 200
