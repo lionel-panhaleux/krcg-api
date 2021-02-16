@@ -1,7 +1,7 @@
 2.7 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Additional rulings
 
 
 2.6 (2021-01-27)
