@@ -2,6 +2,7 @@
 ----------------
 
 - Additional rulings
+- Fix Lackey export
 
 
 2.6 (2021-01-27)
