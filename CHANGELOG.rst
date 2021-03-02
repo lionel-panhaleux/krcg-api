@@ -1,4 +1,4 @@
-2.7 (unreleased)
+2.7 (2021-03-02)
 ----------------
 
 - Additional rulings
