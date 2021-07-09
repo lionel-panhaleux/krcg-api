@@ -1,7 +1,7 @@
 2.9 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Improve logging
 
 
 2.8 (2021-07-08)

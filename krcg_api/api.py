@@ -3,6 +3,7 @@ import babel
 import flask
 import io
 import json
+import logging
 import math
 import os
 import pkg_resources  # part of setuptools
@@ -12,7 +13,6 @@ import urllib.request
 
 from krcg import analyzer
 from krcg import deck
-from krcg import logging
 from krcg import twda
 from krcg import utils as krcg_utils
 from krcg import vtes
@@ -34,7 +34,8 @@ class KRCG(flask.Flask):
         return response
 
 
-logger = logging.logger
+logger = logging.getLogger()
+logging.basicConfig(format="[%(levelname)7s] %(message)s")
 base = flask.Blueprint("base", "krcg")
 
 
