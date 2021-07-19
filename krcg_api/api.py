@@ -35,7 +35,7 @@ class KRCG(flask.Flask):
 
 
 logger = logging.getLogger()
-logging.basicConfig(format="[%(levelname)7s] %(message)s")
+logging.basicConfig(level=logging.INFO, format="[%(levelname)7s] %(message)s")
 base = flask.Blueprint("base", "krcg")
 
 
