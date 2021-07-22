@@ -286,8 +286,8 @@ def test_sets(client):
         "card_text": (
             "[pre][ser] Reduce a bleed against you by 2.\n"
             "[PRE][SER] Only usable during a political action, after blocks are "
-            "declined. Cancel an action modifier as it is played, and its cost is not "
-            "paid."
+            "declined. Cancel an action modifier card as it is played, and its cost is "
+            "not paid."
         ),
         "disciplines": ["pre", "ser"],
         "combo": True,
@@ -308,7 +308,12 @@ def test_sets(client):
                 ),
             },
         },
-        "sets": {"The Unaligned": [{"rarity": "Common", "release_date": "2014-10-04"}]},
+        "sets": {
+            "The Unaligned": [
+                {"rarity": "Common", "release_date": "2014-10-04"},
+                {"copies": 4, "precon": "Bundle 2", "release_date": "2021-07-09"},
+            ]
+        },
         "scans": {
             "The Unaligned": (
                 "https://static.krcg.org/card/set/the-unaligned/ophidiangaze.jpg"
