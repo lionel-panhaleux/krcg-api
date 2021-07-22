@@ -1,7 +1,7 @@
 2.10 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Fix VDB endpoint for form-encoded data
 
 
 2.9 (2021-07-09)
