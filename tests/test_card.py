@@ -299,7 +299,7 @@ def test_sets(client):
             "text": [
                 "[SER][PRE] Can be used to cancel an action modifier player "
                 '"after the action/referendum is successful" (eg. {Voter '
-                "Captivatoin} or {Freak Drive}). [ANK 20180909]"
+                "Captivation} or {Freak Drive}). [ANK 20180909]"
             ],
             "links": {
                 "[ANK 20180909]": (
