@@ -107,6 +107,15 @@ def deck_search():
     return flask.jsonify([d.to_json() for d in decks])
 
 
+@base.route("/twda/list", methods=["GET"])
+def deck_list():
+    """Get list of available TWDA decks"""
+    decklist = [
+        {"name": d.name, "id": d.id, "date": d.date} for d in twda.TWDA.values()
+    ]
+    return flask.jsonify([d for d in decklist])
+
+
 @base.route("/twda/<twda_id>")
 def deck_by_id(twda_id):
     """Get a deck given its ID."""
