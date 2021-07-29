@@ -149,6 +149,9 @@ ousted pretty fast after that before any real damage to me was done.
             "count": 88,
         },
     }
+    response = client.get("/twda/list")
+    assert response.status_code == 200
+    assert len(response.json) >= 3125
 
 
 def test_search(client):
