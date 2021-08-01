@@ -166,7 +166,7 @@ def random_deck():
             for id_ in twda.TWDA.by_author[krcg_utils.normalize(data["player"])]
         ]
     else:
-        decks = twda.TWDA.values()
+        decks = list(twda.TWDA.values())
     if data and data.get("players_count"):
         decks = [
             d for d in decks if (d.players_count or 0) >= int(data["players_count"])
