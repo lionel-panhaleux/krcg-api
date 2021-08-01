@@ -302,8 +302,7 @@ components:
           type: array
           minLength: 0
           maxLength: 10000
-          items:
-            type: { $ref: "#/components/schemas/deck" }
+          items: { $ref: "#/components/schemas/deck_summary" }
   examples:
     card:
       value:
@@ -601,29 +600,29 @@ components:
                 cards:
                   - { count: 1, name: "Anthelios, The Red Star", id: 100074 }
                   - { count: 1, name: Scourge of the Enochians, id: 101697 }
-      deck-list:
-        value:
-          count: 3
-          decks:
-            - {
-                author: Joe Blogs,
-                date: "2014-06-01",
-                id: 2019bolbg,
-                name: Anson’s beautifull Tongue,
-              }
-            - {
-                author: Joe Blogs,
-                date: "2014-06-01",
-                id: 2019fotsvvb,
-                name: Bang bang,
-                my baby shot me down (A.k.a. Anson Guns),
-              }
-            - {
-                author: Randal Rudstam,
-                date: "2014-06-01",
-                id: 2019tftdss,
-                name: Bleed n guns n bleed n guns hurrah hurrah v 2.0 now with titles,
-              }
+    deck-list:
+      value:
+        count: 3
+        decks:
+          - {
+              author: Joe Blogs,
+              date: "2014-06-01",
+              id: 2019bolbg,
+              name: Anson’s beautifull Tongue,
+            }
+          - {
+              author: Joe Blogs,
+              date: "2014-06-01",
+              id: 2019fotsvvb,
+              name: Bang bang,
+              my baby shot me down (A.k.a. Anson Guns),
+            }
+          - {
+              author: Randal Rudstam,
+              date: "2014-06-01",
+              id: 2019tftdss,
+              name: Bleed n guns n bleed n guns hurrah hurrah v 2.0 now with titles,
+            }
 
 paths:
   /card_search:
@@ -2021,7 +2020,7 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/deck_list" }
-              examples: { $ref: "#/components/examples/deck_list" }
+              examples: { $ref: "#/components/examples/deck-list" }
         "400":
           description: Malformed body
         "404":
