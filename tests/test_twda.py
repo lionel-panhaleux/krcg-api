@@ -149,9 +149,12 @@ ousted pretty fast after that before any real damage to me was done.
             "count": 88,
         },
     }
-    response = client.get("/twda/list")
+    response = client.post("/twda/list", json={"cards": []})
     assert response.status_code == 200
-    assert len(response.json) >= 3125
+    assert response.json["count"] >= 3125
+
+    response = client.post("/twda/random", json={"cards": ["Anthelios, The Red Star"]})
+    assert response.status_code == 200
 
 
 def test_search(client):

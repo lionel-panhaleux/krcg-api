@@ -7,6 +7,7 @@ import logging
 import math
 import os
 import pkg_resources  # part of setuptools
+import random
 import requests
 import urllib.parse
 import urllib.request
@@ -107,13 +108,42 @@ def deck_search():
     return flask.jsonify([d.to_json() for d in decks])
 
 
-@base.route("/twda/list", methods=["GET"])
+@base.route("/twda/list", methods=["POST"])
 def deck_list():
     """Get list of available TWDA decks"""
-    decklist = [
-        {"name": d.name, "id": d.id, "date": d.date} for d in twda.TWDA.values()
-    ]
-    return flask.jsonify([d for d in decklist])
+    data = flask.request.get_json() or {}
+    if data and data.get("player"):
+        decks = [
+            twda.TWDA[id_]
+            for id_ in twda.TWDA.by_author[krcg_utils.normalize(data["player"])]
+        ]
+    else:
+        decks = twda.TWDA.values()
+    if data and data.get("players_count"):
+        decks = [
+            d for d in decks if (d.players_count or 0) >= int(data["players_count"])
+        ]
+    if data and data.get("date_from"):
+        decks = [d for d in decks if d.date >= arrow.get(data["date_from"]).date()]
+    if data and data.get("date_to"):
+        decks = [d for d in decks if d.date < arrow.get(data["date_to"]).date()]
+    if data and data.get("cards"):
+        try:
+            cards = set(vtes.VTES[c] for c in data["cards"])
+        except KeyError as e:
+            return f"Invalid card name: {e.args}", 400
+        decks = [d for d in decks if all(c in d for c in cards)]
+    if not decks:
+        return "No result in TWDA", 404
+
+    decklist = {
+        "count": len(decks),
+        "decks": [
+            {"name": d.name, "id": d.id, "date": d.date, "author": d.author}
+            for d in decks
+        ],
+    }
+    return flask.jsonify(decklist)
 
 
 @base.route("/twda/<twda_id>")
@@ -124,6 +154,37 @@ def deck_by_id(twda_id):
     if twda_id not in twda.TWDA:
         return "Not Found", 404
     return flask.jsonify(twda.TWDA[twda_id].to_json())
+
+
+@base.route("/twda/random", methods=["POST"])
+def random_deck():
+    """Get TWDA decks containing cards."""
+    data = flask.request.get_json() or {}
+    if data and data.get("player"):
+        decks = [
+            twda.TWDA[id_]
+            for id_ in twda.TWDA.by_author[krcg_utils.normalize(data["player"])]
+        ]
+    else:
+        decks = list(twda.TWDA.values())
+    if data and data.get("players_count"):
+        decks = [
+            d for d in decks if (d.players_count or 0) >= int(data["players_count"])
+        ]
+    if data and data.get("date_from"):
+        decks = [d for d in decks if d.date >= arrow.get(data["date_from"]).date()]
+    if data and data.get("date_to"):
+        decks = [d for d in decks if d.date < arrow.get(data["date_to"]).date()]
+    if data and data.get("cards"):
+        try:
+            cards = set(vtes.VTES[c] for c in data["cards"])
+        except KeyError as e:
+            return f"Invalid card name: {e.args}", 400
+        decks = [d for d in decks if all(c in d for c in cards)]
+    if not decks:
+        return "No result in TWDA", 404
+
+    return flask.jsonify(random.choice(decks).to_json())
 
 
 @base.route("/convert", methods=["POST"])

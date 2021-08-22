@@ -285,6 +285,24 @@ components:
                     minLength: 1
                     maxLength: 90
                     items: { $ref: "#/components/schemas/card_count" }
+    deck_summary:
+      type: object
+      required: ["id", "date", "name", "author"]
+      properties:
+        id: { type: string }
+        date: { type: string, format: date }
+        name: { type: string }
+        author: { type: string }
+    deck_list:
+      type: object
+      required: ["count", "deck_list"]
+      properties:
+        count: { type: integer }
+        decks:
+          type: array
+          minLength: 0
+          maxLength: 10000
+          items: { $ref: "#/components/schemas/deck_summary" }
   examples:
     card:
       value:
@@ -396,7 +414,11 @@ components:
                 - { count: 6, name: ".44 Magnum", id: 100001 }
                 - { count: 3, name: Heart of Nizchetus, id: 100903 }
                 - { count: 1, name: Bowl of Convergence, id: 100243 }
-                - { count: 1, name: Codex of the Edenic Groundskeepers, id: 100374 }
+                - {
+                    count: 1,
+                    name: Codex of the Edenic Groundskeepers,
+                    id: 100374,
+                  }
             - type: Political Action
               count: 4
               cards:
@@ -449,14 +471,19 @@ components:
             - type: Master
               count: 9
               cards:
-                - { "count": 1, "id": 100015, "name": "Academic Hunting Ground" }
+                - {
+                    "count": 1,
+                    "id": 100015,
+                    "name": "Academic Hunting Ground",
+                  }
                 - { "count": 1, "id": 100081, "name": "Arcane Library" }
                 - { "count": 4, "id": 100199, "name": "Blood Doll" }
                 - { "count": 1, "id": 100329, "name": "Chantry" }
                 - { "count": 2, "id": 102092, "name": "Vast Wealth" }
             - type: Action
               count: 12
-              cards: [{ "count": 12, "id": 100845, "name": "Govern the Unaligned" }]
+              cards:
+                [{ "count": 12, "id": 100845, "name": "Govern the Unaligned" }]
             - type: Ally
               count: 1
               cards: [{ "count": 1, "id": 101963, "name": "Thadius Zho" }]
@@ -477,7 +504,11 @@ components:
                 - { "count": 5, "id": 101321, "name": "On the Qui Vive" }
                 - { "count": 4, "id": 101475, "name": "Precognition" }
                 - { "count": 4, "id": 101850, "name": "Spirit's Touch" }
-                - { "count": 8, "id": 101949, "name": "Telepathic Misdirection" }
+                - {
+                    "count": 8,
+                    "id": 101949,
+                    "name": "Telepathic Misdirection",
+                  }
             - type: Combat
               count: 20
               cards:
@@ -534,7 +565,11 @@ components:
                   - { count: 6, name: ".44 Magnum", id: 100001 }
                   - { count: 3, name: Heart of Nizchetus, id: 100903 }
                   - { count: 1, name: Bowl of Convergence, id: 100243 }
-                  - { count: 1, name: Codex of the Edenic Groundskeepers, id: 100374 }
+                  - {
+                      count: 1,
+                      name: Codex of the Edenic Groundskeepers,
+                      id: 100374,
+                    }
               - type: Political Action
                 count: 4
                 cards:
@@ -565,6 +600,30 @@ components:
                 cards:
                   - { count: 1, name: "Anthelios, The Red Star", id: 100074 }
                   - { count: 1, name: Scourge of the Enochians, id: 101697 }
+    deck-list:
+      value:
+        count: 3
+        decks:
+          - {
+              author: Joe Blogs,
+              date: "2014-06-01",
+              id: 2019bolbg,
+              name: Anson’s beautifull Tongue,
+            }
+          - {
+              author: Joe Blogs,
+              date: "2014-06-01",
+              id: 2019fotsvvb,
+              name: Bang bang,
+              my baby shot me down (A.k.a. Anson Guns),
+            }
+          - {
+              author: Randal Rudstam,
+              date: "2014-06-01",
+              id: 2019tftdss,
+              name: Bleed n guns n bleed n guns hurrah hurrah v 2.0 now with titles,
+            }
+
 paths:
   /card_search:
     get:
@@ -1498,7 +1557,8 @@ paths:
                   type: array
                   items:
                     type: string
-                    enum: ["Anarch", "Camarilla", "Independent", "Laibon", "Sabbat"]
+                    enum:
+                      ["Anarch", "Camarilla", "Independent", "Laibon", "Sabbat"]
                 title:
                   description: Title. Also matches cards requiring a title.
                   type: array
@@ -1755,16 +1815,66 @@ paths:
                         A "typical" range for copies can be computed using:
                         floor(max(1, average - deviation)), ceil(average + deviation)
               example:
-                - { "average": 14, "card": "Ashur Tablets", "deviation": 6.25, "score": 1.0 }
-                - { "average": 1, "card": "Giant's Blood", "deviation": 0.0, "score": 1.0 }
-                - { "average": 2, "card": "The Parthenon", "deviation": 0.81, "score": 1.0 }
-                - { "average": 1, "card": "Archon Investigation", "deviation": 0.0, "score": 0.9 }
-                - { "average": 5, "card": "Villein", "deviation": 1.7, "score": 0.9 }
-                - { "average": 1, "card": "Wider View", "deviation": 0.42, "score": 0.9 }
-                - { "average": 3, "card": "Aksinya Daclau", "deviation": 0.43, "score": 0.8 }
-                - { "average": 2, "card": "Dreams of the Sphinx", "deviation": 0.6, "score": 0.8 }
-                - { "average": 8, "card": "Liquidation", "deviation": 2.42, "score": 0.8 }
-                - { "average": 1, "card": "Pentex™ Subversion", "deviation": 0.48, "score": 0.8 }
+                - {
+                    "average": 14,
+                    "card": "Ashur Tablets",
+                    "deviation": 6.25,
+                    "score": 1.0,
+                  }
+                - {
+                    "average": 1,
+                    "card": "Giant's Blood",
+                    "deviation": 0.0,
+                    "score": 1.0,
+                  }
+                - {
+                    "average": 2,
+                    "card": "The Parthenon",
+                    "deviation": 0.81,
+                    "score": 1.0,
+                  }
+                - {
+                    "average": 1,
+                    "card": "Archon Investigation",
+                    "deviation": 0.0,
+                    "score": 0.9,
+                  }
+                - {
+                    "average": 5,
+                    "card": "Villein",
+                    "deviation": 1.7,
+                    "score": 0.9,
+                  }
+                - {
+                    "average": 1,
+                    "card": "Wider View",
+                    "deviation": 0.42,
+                    "score": 0.9,
+                  }
+                - {
+                    "average": 3,
+                    "card": "Aksinya Daclau",
+                    "deviation": 0.43,
+                    "score": 0.8,
+                  }
+                - {
+                    "average": 2,
+                    "card": "Dreams of the Sphinx",
+                    "deviation": 0.6,
+                    "score": 0.8,
+                  }
+                - {
+                    "average": 8,
+                    "card": "Liquidation",
+                    "deviation": 2.42,
+                    "score": 0.8,
+                  }
+                - {
+                    "average": 1,
+                    "card": "Pentex™ Subversion",
+                    "deviation": 0.48,
+                    "score": 0.8,
+                  }
         "400":
           description: |
             Malformed body, typically an invalid card name or ID
@@ -1856,11 +1966,119 @@ paths:
                 type: array
                 minLength: 1
                 items: { $ref: "#/components/schemas/deck" }
-              examples: { deck-array: { $ref: "#/components/examples/deck-array" } }
+              examples:
+                { deck-array: { $ref: "#/components/examples/deck-array" } }
         "400":
           description: Malformed body
         "404":
           description: Not found
+
+  /twda/list:
+    post:
+      tags: [Deck]
+      summary: Get list of TWDA decks matching given filters
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                card_names:
+                  description: |
+                    Return a list of decks containing those cards.
+                  type: array
+                  items:
+                    description: Case insensitive card name.
+                    type: string
+                player:
+                  description: |
+                    Player name (case insensitive)
+                  type: string
+                date_from:
+                  description: Only consider decks from this date on.
+                  type: string
+                  format: date
+                  default: "2008-01-01"
+                date_to:
+                  description: Only consider decks until this date.
+                  type: string
+                  format: date
+                  default: null
+                players_count:
+                  description: |
+                    Only consider tournaments with at least this number of players.
+                  type: integer
+                  minimum: 0
+                  default: 0
+              example:
+                cards: ["François Villon"]
+                date_from: "1994-01-01"
+                players: 25
+      responses:
+        "200":
+          description: Success, returns the list as JSON
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/deck_list" }
+              examples: { $ref: "#/components/examples/deck-list" }
+        "400":
+          description: Malformed body
+        "404":
+          description: Not found
+
+  /twda/random:
+    post:
+      tags: [Deck]
+      summary: Get a random TWDA deck matching given filters
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                card_names:
+                  description: |
+                    Return a random decks containing those cards.
+                  type: array
+                  items:
+                    description: Case insensitive card name.
+                    type: string
+                player:
+                  description: |
+                    Player name (case insensitive)
+                  type: string
+                date_from:
+                  description: Only consider decks from this date on.
+                  type: string
+                  format: date
+                  default: "2008-01-01"
+                date_to:
+                  description: Only consider decks until this date.
+                  type: string
+                  format: date
+                  default: null
+                players_count:
+                  description: |
+                    Only consider tournaments with at least this number of players.
+                  type: integer
+                  minimum: 0
+                  default: 0
+              example:
+                cards: ["François Villon"]
+                date_from: "1994-01-01"
+                players: 25
+      responses:
+        "200":
+          description: Successful, returns a random deck as a JSON array.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/deck" }
+              examples: { deck: { $ref: "#/components/examples/deck" } }
+        "400":
+          description: Malformed body
+        "404":
+          description: Not found
+
   /twda/{id}:
     get:
       tags: [Deck]
@@ -2056,7 +2274,8 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/deck" }
-              examples: { deck: { $ref: "#/components/examples/first-blood-tremere" } }
+              examples:
+                { deck: { $ref: "#/components/examples/first-blood-tremere" } }
         "400":
           description: |
             Malformed body. The Amaranth URL is expected to begin with
@@ -2096,7 +2315,8 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/deck" }
-              examples: { deck: { $ref: "#/components/examples/first-blood-tremere" } }
+              examples:
+                { deck: { $ref: "#/components/examples/first-blood-tremere" } }
         "400":
           description: |
             Malformed body. The VDB URL is expected to begin with
