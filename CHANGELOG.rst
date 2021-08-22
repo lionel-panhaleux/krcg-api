@@ -1,7 +1,7 @@
 2.11 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- New endpoints: twda/list and twda/random
 
 
 2.10 (2021-07-22)
