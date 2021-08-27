@@ -1,7 +1,7 @@
 2.12 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Bump KRCG version
 
 
 2.11 (2021-08-22)
