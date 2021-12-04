@@ -193,6 +193,25 @@ components:
           description: Title (crypt cards only)
           type: string
           minLength: 0
+        name_variants:
+          type: array
+          minLength: 0
+          items:
+            description: name variant that should match this card when parsing content
+            type: string
+            minLength: 1
+        has_advanced:
+          description: Has an advanced version in the same group (vampires only)
+          type: boolean
+          default: false
+        has_evolution:
+          description: Has a version in a higher group (vampires only)
+          type: boolean
+          default: false
+        is_evolution:
+          description: Has a version in a lower group (vampires only)
+          type: boolean
+          default: false
         rulings:
           description: Rulings
           type: object

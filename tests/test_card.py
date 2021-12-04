@@ -7,6 +7,7 @@ def test(client):
         "id": 100038,
         "_name": "Alastor",
         "name": "Alastor",
+        "printed_name": "Alastor",
         "url": "https://static.krcg.org/card/alastor.jpg",
         "types": ["Political Action"],
         "card_text": (
@@ -46,13 +47,21 @@ def test(client):
                     "http://www.vekn.net/forum/rules-questions/"
                     "78830-alastor-and-ankara-citadel#100653"
                 ),
+                "[LSJ 20040518-2]": (
+                    "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
+                    "c/4emymfUPwAM/m/JF_o7OOoCbkJ"
+                ),
             },
             "text": [
                 (
                     "If the given weapon costs blood, "
                     "the target Alastor pays the cost. [LSJ 20040518]"
                 ),
-                "Requirements do not apply. [ANK 20200901]",
+                (
+                    "Requirements do not apply. If a discipline is required "
+                    "(eg. {Inscription}) and the Alastor vampire does not have it, the "
+                    "inferior version is used. [ANK 20200901] [LSJ 20040518-2]"
+                ),
             ],
         },
     }
@@ -85,6 +94,7 @@ def test_i18n(client):
         "id": 100029,
         "url": "https://static.krcg.org/card/aidfrombats.jpg",
         "name": "Aid from Bats",
+        "printed_name": "Aid from Bats",
         "_name": "Aid from Bats",
         "rulings": {
             "text": [
@@ -196,6 +206,8 @@ def test_sets(client):
         "id": 101110,
         "url": "https://static.krcg.org/card/linethe.jpg",
         "name": "The Line",
+        "printed_name": "The Line",
+        "name_variants": ["Line, The"],
         "_name": "Line, The",
         "rulings": {
             "text": [
@@ -255,8 +267,14 @@ def test_sets(client):
         "disciplines": ["ANI", "AUS", "POT", "THA", "VIC"],
         "group": "5",
         "id": 200385,
-        "url": "https://static.krcg.org/card/draconthe.jpg",
-        "name": "The Dracon",
+        "url": "https://static.krcg.org/card/dracontheg5.jpg",
+        "name": "The Dracon (G5)",
+        "printed_name": "The Dracon",
+        "name_variants": [
+            "Dracon, The (G5)",
+            "The Dracon",
+            "Dracon, The",
+        ],
         "_name": "Dracon, The",
         "sets": {
             "2015 Storyline Rewards": [{"copies": 1, "release_date": "2015-02-16"}],
@@ -267,13 +285,13 @@ def test_sets(client):
         },
         "scans": {
             "2015 Storyline Rewards": (
-                "https://static.krcg.org/card/set/promo/draconthe.jpg"
+                "https://static.krcg.org/card/set/promo/dracontheg5.jpg"
             ),
             "2018 Humble Bundle": (
-                "https://static.krcg.org/card/set/humble-bundle/draconthe.jpg"
+                "https://static.krcg.org/card/set/humble-bundle/dracontheg5.jpg"
             ),
             "2019 Promo Pack 1": (
-                "https://static.krcg.org/card/set/promo-pack-1/draconthe.jpg"
+                "https://static.krcg.org/card/set/promo-pack-1/dracontheg5.jpg"
             ),
         },
         "types": ["Vampire"],
@@ -294,17 +312,37 @@ def test_sets(client):
         "id": 101325,
         "url": "https://static.krcg.org/card/ophidiangaze.jpg",
         "name": "Ophidian Gaze",
+        "printed_name": "Ophidian Gaze",
         "_name": "Ophidian Gaze",
         "rulings": {
             "text": [
-                "[SER][PRE] Can be used to cancel an action modifier player "
-                '"after the action/referendum is successful" (eg. {Voter '
-                "Captivation} or {Freak Drive}). [ANK 20180909]"
+                (
+                    "[SER][PRE] Can be used to cancel an action modifier player "
+                    '"after the action/referendum is successful" (eg. {Voter '
+                    "Captivation} or {Freak Drive}). [ANK 20180909]"
+                ),
+                (
+                    '[SER][PRE] Cards are not replaced during the "as '
+                    'played" window. [LSJ 20061013]'
+                ),
+                (
+                    '[SER][PRE] If the canceled card had a "Do Not Replace '
+                    'Until" clause on it, that clause is canceled as well '
+                    "and the card is replaced normally. [LSJ 20011023]"
+                ),
             ],
             "links": {
                 "[ANK 20180909]": (
                     "http://www.vekn.net/forum/rules-questions/"
                     "76987-ophidian-gaze-and-post-referendum-action-modifiers#90501"
+                ),
+                "[LSJ 20011023]": (
+                    "https://groups.google.com/d/msg/rec.games.trading-cards.jyhad/"
+                    "2GOLIrXAF8M/P4T3Dj6UNL0J"
+                ),
+                "[LSJ 20061013]": (
+                    "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
+                    "c/6w8K3yDtBH0/m/M_SZH9Id8n8J"
                 ),
             },
         },
@@ -340,8 +378,10 @@ def test_artists(client):
         "disciplines": ["dom", "for", "obt", "CEL", "POT", "PRE"],
         "group": "3",
         "id": 201397,
-        "url": "https://static.krcg.org/card/tyler.jpg",
-        "name": "Tyler",
+        "url": "https://static.krcg.org/card/tylerg3.jpg",
+        "name": "Tyler (G3)",
+        "printed_name": "Tyler",
+        "name_variants": ["Tyler"],
         "_name": "Tyler",
         "sets": {
             "Blood Shadowed Court": [{"release_date": "2008-04-14"}],
@@ -349,10 +389,10 @@ def test_artists(client):
         },
         "scans": {
             "Blood Shadowed Court": (
-                "https://static.krcg.org/card/set/blood-shadowed-court/tyler.jpg"
+                "https://static.krcg.org/card/set/blood-shadowed-court/tylerg3.jpg"
             ),
             "Camarilla Edition": (
-                "https://static.krcg.org/card/set/camarilla-edition/tyler.jpg"
+                "https://static.krcg.org/card/set/camarilla-edition/tylerg3.jpg"
             ),
         },
         "title": "Primogen",
@@ -377,6 +417,7 @@ def test_artists(client):
         "id": 100106,
         "url": "https://static.krcg.org/card/ashurtablets.jpg",
         "name": "Ashur Tablets",
+        "printed_name": "Ashur Tablets",
         "_name": "Ashur Tablets",
         "rulings": {
             "text": [

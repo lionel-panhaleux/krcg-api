@@ -269,7 +269,7 @@ def candidates():
             return flask.jsonify(
                 [
                     {
-                        "card": c.name,
+                        "card": c.usual_name,
                         "score": round(s / (1 if cards else len(decks)), 4),
                         "average": round(A.average[c]),
                         "deviation": round(math.sqrt(A.variance[c]), 2),
@@ -302,7 +302,7 @@ def card_search():
     if full:
         result = [c.to_json() for c in result]
     else:
-        result = [c.name for c in result]
+        result = [c.usual_name for c in result]
     return flask.jsonify(result)
 
 

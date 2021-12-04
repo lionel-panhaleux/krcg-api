@@ -37,6 +37,7 @@ def test_dimensions(client):
             "Bob Stevlic",
             "Brad Williams",
             "Brian Ashmore",
+            "Brian Graupner",
             "Brian Horton",
             "Brian LeBlanc",
             "Brian Miskelley",
@@ -51,6 +52,7 @@ def test_dimensions(client):
             "Chris Richards",
             "Chris Stevens",
             "Christel Espenkrona",
+            "Christian Byrne",
             "Christopher Rush",
             "Christopher Shy",
             "Cliff Nielson",
@@ -92,6 +94,7 @@ def test_dimensions(client):
             "Esther Sanz",
             "Felipe Gaona",
             "Francesc Grimalt",
+            "Francisco Tébar",
             "Franz Vohwinkel",
             "Fred Harper",
             "Fred Hooper",
@@ -111,6 +114,7 @@ def test_dimensions(client):
             "Heather Hudson",
             "Heather J. McKinney",
             "Heather V. Kreiter",
+            "Helena García Huang",
             "Ian Hernaiz",
             "Imaginary Friends Studios",
             "J Frederick Y",
@@ -131,6 +135,7 @@ def test_dimensions(client):
             "Jeff Miracola",
             "Jeff Rebner",
             "Jenny Frison",
+            "Jer Carolina",
             "Jeremy C. Bills",
             "Jeremy McHugh",
             "Jesús Ybarzábal",
@@ -154,6 +159,7 @@ def test_dimensions(client):
             "Julie Collins",
             "Justin Norman",
             "Kaja Foglio",
+            "Kamilla Khaminskaya",
             "Kari Christensen",
             "Karl Waller",
             "Katie McCaskill",
@@ -162,6 +168,7 @@ def test_dimensions(client):
             "Kent Williams",
             "Kevin McCann",
             "Kieran Yanner",
+            "Kim Aldau",
             "Krasen Maximov",
             "Kyri Koniotis",
             "L. A. Williams",
@@ -304,11 +311,13 @@ def test_dimensions(client):
         "capacity": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
         "city": [
             "Addis Ababa",
+            "Algiers",
             "Amsterdam",
             "Aragon",
             "Athens",
             "Atlanta",
             "Barcelona",
+            "Belo Horizonte",
             "Berlin",
             "Birmingham",
             "Boston",
@@ -335,6 +344,7 @@ def test_dimensions(client):
             "Guatemala City",
             "Houston",
             "Istanbul",
+            "Johannesburg",
             "Lisbon",
             "London",
             "Los Angeles",
@@ -345,8 +355,10 @@ def test_dimensions(client):
             "Miami",
             "Milan",
             "Milwaukee",
+            "Mombasa",
             "Monaco",
             "Montreal",
+            "Moscow",
             "Nairobi",
             "New York",
             "Paris",
@@ -365,6 +377,7 @@ def test_dimensions(client):
             "Sydney",
             "Taipei",
             "Tampa",
+            "Thessaloniki",
             "Toronto",
             "Venice",
             "Versailles",
@@ -377,6 +390,7 @@ def test_dimensions(client):
             "Assamite",
             "Avenger",
             "Baali",
+            "Banu Haqim",
             "Blood Brother",
             "Brujah",
             "Brujah antitribu",
@@ -398,6 +412,7 @@ def test_dimensions(client):
             "Malkavian",
             "Malkavian antitribu",
             "Martyr",
+            "Ministry",
             "Nagaraja",
             "Nosferatu",
             "Nosferatu antitribu",
@@ -493,7 +508,7 @@ def test_dimensions(client):
             "vis",
             "viz",
         ],
-        "group": [1, 2, 3, 4, 5, 6],
+        "group": [1, 2, 3, 4, 5, 6, 7],
         "precon": [
             "2018 Humble Bundle: Humble Bundle",
             "Anarchs: Anarch Barons",
@@ -510,6 +525,10 @@ def test_dimensions(client):
             "Camarilla Edition: Toreador",
             "Camarilla Edition: Tremere",
             "Camarilla Edition: Ventrue",
+            "Fifth Edition (Anarch): Banu Haqim",
+            "Fifth Edition (Anarch): Brujah",
+            "Fifth Edition (Anarch): Gangrel",
+            "Fifth Edition (Anarch): Ministry",
             "Fifth Edition: Malkavian",
             "Fifth Edition: Nosferatu",
             "Fifth Edition: Toreador",
@@ -598,6 +617,7 @@ def test_dimensions(client):
             "2020 Promo Pack 2",
             "2021 Kickstarter Promo",
             "2021 Mind’s Eye Theatre Promo",
+            "2021 Promo Pack 3",
             "2021 Resellers Promo",
             "Anarch Unbound",
             "Anarchs",
@@ -617,6 +637,7 @@ def test_dimensions(client):
             "Fall 2002 Storyline promo",
             "Fall 2004 Storyline promo",
             "Fifth Edition",
+            "Fifth Edition (Anarch)",
             "Final Nights",
             "Final Nights promo",
             "First Blood",
@@ -797,7 +818,7 @@ def test_traits(client):
     response = client.post(
         "/card_search", json={"clan": ["Assamite"], "title": ["justicar"]}
     )
-    assert response.json == ["Tegyrius, Vizier (ADV)"]
+    assert response.json == ["Kasim Bayar", "Tegyrius, Vizier (ADV)"]
     # traits: black hand
     response = client.post(
         "/card_search",
@@ -816,8 +837,8 @@ def test_traits(client):
     )
     assert response.json == [
         "Al-Ashrad, Amr of Alamut (ADV)",
-        "Tegyrius, Vizier",
         "Tegyrius, Vizier (ADV)",
+        "Tegyrius, Vizier",
     ]
     # traits on library cards
     response = client.post(
@@ -850,9 +871,11 @@ def test_full(client):
             "disciplines": ["dom", "AUS", "NEC"],
             "group": "4",
             "id": 201263,
-            "url": "https://static.krcg.org/card/sennadurek.jpg",
+            "url": "https://static.krcg.org/card/sennadurekg4.jpg",
             "_name": "Sennadurek",
-            "name": "Sennadurek",
+            "name": "Sennadurek (G4)",
+            "name_variants": ["Sennadurek"],
+            "printed_name": "Sennadurek",
             "rulings": {
                 "text": [
                     "Black Hand is not a title, it is a trait unrelated to any sect. "
@@ -877,7 +900,8 @@ def test_full(client):
             },
             "scans": {
                 "Legacies of Blood": (
-                    "https://static.krcg.org/card/set/legacies-of-blood/sennadurek.jpg"
+                    "https://static.krcg.org/card/set/legacies-of-blood/"
+                    "sennadurekg4.jpg"
                 ),
             },
             "types": ["Vampire"],
@@ -912,6 +936,7 @@ def test_stealth_intercept(client):
     )
     assert response.json == [
         "Fata Morgana",
+        "Heart's Desire",
         "Mirror's Visage",
         "Smoke and Mirrors",
         "Will-o'-the-Wisp",
@@ -940,7 +965,11 @@ def test_discipline(client):
     response = client.post(
         "/card_search", json={"discipline": ["none"], "type": ["crypt"]}
     )
-    assert response.json == ["Anarch Convert", "Sandra White", "Smudge the Ignored"]
+    assert response.json == [
+        "Anarch Convert",
+        "Sandra White",
+        "Smudge the Ignored",
+    ]
     response = client.post(
         "/card_search",
         json={"discipline": ["none"], "bonus": ["intercept"], "sect": ["sabbat"]},
@@ -972,6 +1001,7 @@ def test_discipline(client):
         json={"discipline": ["multi", "ani"], "bonus": ["intercept"]},
     )
     assert response.json == [
+        "Deep Ecology",
         "Detect Authority",
         "Falcon's Eye",
         "Read the Winds",

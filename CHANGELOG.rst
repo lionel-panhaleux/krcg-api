@@ -1,8 +1,10 @@
 2.13 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Adapt to V5 Anarch
+- Additional fields for crypt cards: "has_advanced", "has_evolution", "is_evolution"
+- Standard card names now always include the group in parenthesis for crypt cards
+- Crypt cards have a new field "printed_name" (non-unique)
 
 2.12 (2021-08-27)
 -----------------
