@@ -1,7 +1,7 @@
 2.14 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Bump KRCG (2.21)
 
 
 2.13 (2021-12-04)
