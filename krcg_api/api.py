@@ -223,9 +223,14 @@ def vdb():
     if "url" not in data:
         return "Missing required parameter: url", 400
     url = data["url"]
-    if url[:32] != "https://vdb.smeea.casa/decks?id=":
-        return "VDB URL required", 400
-    return flask.jsonify(deck.Deck.from_vdb(url[32:]).to_json())
+
+    if url[:32] == "https://vdb.smeea.casa/decks?id=":
+        return flask.jsonify(deck.Deck.from_vdb(url[32:]).to_json())
+
+    if url[:24] == "https://vdb.im/decks?id=":
+        return flask.jsonify(deck.Deck.from_vdb(url[24:]).to_json())
+
+    return "VDB URL required", 400
 
 
 @base.route("/candidates", methods=["POST"])
