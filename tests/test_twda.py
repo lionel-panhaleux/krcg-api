@@ -1,5 +1,5 @@
 def test(client):
-    response = client.post("/twda")
+    response = client.post("/twda", json={})
     assert response.status_code == 200
     assert len(response.json) >= 3125
     # since Anthelios is banned, this number should stay stable
@@ -13,30 +13,8 @@ def test(client):
     response = client.post("/twda", json={"cards": [""]})
     # test deck parsing and serialization - it has both general and cards comments
     response = client.get("/twda/2020bf3hf")
-    assert response.json == {
-        "id": "2020bf3hf",
-        "event": "Black Forest Base 3",
-        "place": "Hyvinkää, Finland",
-        "date": "2020-09-05",
-        "name": "My stick is better than bacon",
-        "tournament_format": "2R+F",
-        "players_count": 14,
-        "player": "Niko Vanhatalo",
-        "score": "1gw5 + 3vp in the final",
-        "comments": """Here is a quick report by the Winner of the event Niko Vanhatalo.
-
-Just your average Ventrue grinder/stickmen with my own personal preferences
-
-Finals were pretty brutal because every deck was a bleeder in some way or the
-other and there was no clear winner even when it was down to 2 players.
-Players from 1 to 5 were Petri with Anarch stealth bleeder, Jyrkkä with
-Lasombra/Kiasyd stealth bleeder, Pauli with Ventrue grinder, me with my own
-Ventrue grinder and Lasse with Legion and Legionnaire bleeder.  My biggest
-concern was my predator who played pretty much the same deck with like 90% of
-the crypt being the same cards, but we were able to avoid unnecesary contesting
-thanks to table talk. He still contested my Lodin later in the game but was
-ousted pretty fast after that before any real damage to me was done.
-""",
+    assert response.json == {  # noqa: E501
+        "comments": "Here is a quick report by the Winner of the event Niko Vanhatalo.\n\nJust your average Ventrue grinder/stickmen with my own personal preferences\n\nFinals were pretty brutal because every deck was a bleeder in some way or the\nother and there was no clear winner even when it was down to 2 players.\nPlayers from 1 to 5 were Petri with Anarch stealth bleeder, Jyrkk\u00e4 with\nLasombra/Kiasyd stealth bleeder, Pauli with Ventrue grinder, me with my own\nVentrue grinder and Lasse with Legion and Legionnaire bleeder. My biggest\nconcern was my predator who played pretty much the same deck with like 90% of\nthe crypt being the same cards, but we were able to avoid unnecesary contesting\nthanks to table talk. He still contested my Lodin later in the game but was\nousted pretty fast after that before any real damage to me was done.\n",  # noqa: E501
         "crypt": {
             "cards": [
                 {"count": 3, "id": 200848, "name": "Lodin (Olaf Holte)"},
@@ -50,6 +28,9 @@ ousted pretty fast after that before any real damage to me was done.
             ],
             "count": 12,
         },
+        "date": "2020-09-05",
+        "event": "Black Forest Base 3",
+        "id": "2020bf3hf",
         "library": {
             "cards": [
                 {
@@ -59,17 +40,14 @@ ousted pretty fast after that before any real damage to me was done.
                         {"count": 1, "id": 100588, "name": "Dreams of the Sphinx"},
                         {"count": 1, "id": 100824, "name": "Giant's Blood"},
                         {
-                            "comments": (
-                                "Neat card, but never played. "
-                                "Should propably switch for another Dreams or Wash"
-                            ),
+                            "comments": "Neat card, but never played. Should propably switch for another Dreams or Wash",  # noqa: E501
                             "count": 1,
                             "id": 100842,
                             "name": "Golconda: Inner Peace",
                         },
                         {"count": 1, "id": 101225, "name": "Misdirection"},
                         {"count": 1, "id": 101350, "name": "Papillon"},
-                        {"count": 2, "id": 101384, "name": "Pentex™ Subversion"},
+                        {"count": 2, "id": 101384, "name": "Pentex\u2122 Subversion"},
                         {"count": 2, "id": 101388, "name": "Perfectionist"},
                         {"count": 2, "id": 102113, "name": "Vessel"},
                         {"count": 2, "id": 102121, "name": "Villein"},
@@ -113,16 +91,9 @@ ousted pretty fast after that before any real damage to me was done.
                     "cards": [
                         {"count": 8, "id": 100518, "name": "Deflection"},
                         {"count": 3, "id": 101321, "name": "On the Qui Vive"},
+                        {"count": 4, "id": 101706, "name": "Second Tradition: Domain"},
                         {
-                            "count": 4,
-                            "id": 101706,
-                            "name": "Second Tradition: Domain",
-                        },
-                        {
-                            "comments": (
-                                "This should be another On the Qui Vive "
-                                "but I was too lazy to find 1 from my collection"
-                            ),
+                            "comments": "This should be another On the Qui Vive but I was too lazy to find 1 from my collection",  # noqa: E501
                             "count": 1,
                             "id": 102137,
                             "name": "Wake with Evening's Freshness",
@@ -135,11 +106,7 @@ ousted pretty fast after that before any real damage to me was done.
                     "cards": [
                         {"count": 5, "id": 100918, "name": "Hidden Strength"},
                         {"count": 6, "id": 100973, "name": "Indomitability"},
-                        {
-                            "count": 2,
-                            "id": 101649,
-                            "name": "Rolling with the Punches",
-                        },
+                        {"count": 2, "id": 101649, "name": "Rolling with the Punches"},
                         {"count": 4, "id": 102169, "name": "Weighted Walking Stick"},
                     ],
                     "count": 17,
@@ -148,6 +115,12 @@ ousted pretty fast after that before any real damage to me was done.
             ],
             "count": 88,
         },
+        "name": "My stick is better than bacon",
+        "place": "Hyvink\u00e4\u00e4, Finland",
+        "player": "Niko Vanhatalo",
+        "players_count": 14,
+        "score": "1gw5 + 3vp in the final",
+        "tournament_format": "2R+F",
     }
     response = client.post("/twda/list", json={"cards": []})
     assert response.status_code == 200

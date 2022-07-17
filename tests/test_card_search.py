@@ -1,3 +1,6 @@
+# from itsdangerous import json
+
+
 def test_dimensions(client):
     response = client.get("/card_search")
     assert response.status_code == 200
@@ -18,7 +21,7 @@ def test_dimensions(client):
             "Andrew Hepworth",
             "Andrew Robinson",
             "Andrew Trabbold",
-            "André Freitas",
+            "Andr\u00e9 Freitas",
             "Anna Christenson",
             "Anna Evertsdotter",
             "Anson Maddocks",
@@ -28,7 +31,7 @@ def test_dimensions(client):
             "Ash Arnett",
             "Atilio Gambedotti",
             "Attila Adorjany",
-            "August Bøgedal Hansen",
+            "August B\u00f8gedal Hansen",
             "Avery Butterworth",
             "Becky Cloonan",
             "Becky Jollensten",
@@ -94,13 +97,13 @@ def test_dimensions(client):
             "Esther Sanz",
             "Felipe Gaona",
             "Francesc Grimalt",
-            "Francisco Tébar",
+            "Francisco T\u00e9bar",
             "Franz Vohwinkel",
             "Fred Harper",
             "Fred Hooper",
             "Gary Chatterton",
             "Gary Leach",
-            "Ginés Quiñonero-Santiago",
+            "Gin\u00e9s Qui\u00f1onero-Santiago",
             "Glen Osterberger",
             "Grant Garvin",
             "Grant Goleash",
@@ -108,13 +111,13 @@ def test_dimensions(client):
             "Greg Loudon",
             "Greg Simanson",
             "Grzegorz Bobrowski",
-            "Gábor Németh",
+            "G\u00e1bor N\u00e9meth",
             "Hannibal King",
             "Harold Arthur McNeill",
             "Heather Hudson",
             "Heather J. McKinney",
             "Heather V. Kreiter",
-            "Helena García Huang",
+            "Helena Garc\u00eda Huang",
             "Ian Hernaiz",
             "Imaginary Friends Studios",
             "J Frederick Y",
@@ -138,7 +141,7 @@ def test_dimensions(client):
             "Jer Carolina",
             "Jeremy C. Bills",
             "Jeremy McHugh",
-            "Jesús Ybarzábal",
+            "Jes\u00fas Ybarz\u00e1bal",
             "Jim Di Bartolo",
             "Jim Nelson",
             "Jim Pavelec",
@@ -164,6 +167,7 @@ def test_dimensions(client):
             "Karl Waller",
             "Katie McCaskill",
             "Kelly Howlett",
+            "Ken Kokoszka",
             "Ken Meyer, Jr.",
             "Kent Williams",
             "Kevin McCann",
@@ -172,7 +176,7 @@ def test_dimensions(client):
             "Krasen Maximov",
             "Kyri Koniotis",
             "L. A. Williams",
-            "Laia López Tubau",
+            "Laia L\u00f3pez Tubau",
             "Larry MacDougall",
             "Lawrence Snelly",
             "Lee Carter",
@@ -189,8 +193,8 @@ def test_dimensions(client):
             "Mark Poole",
             "Mark Tedin",
             "Marta Ruiz Anguera",
-            "Martín de Diego",
-            "María Lorén",
+            "Mart\u00edn de Diego",
+            "Mar\u00eda Lor\u00e9n",
             "Mathias Kollros",
             "Matias Tapia",
             "Matt Cavotta",
@@ -222,7 +226,7 @@ def test_dimensions(client):
             "Nilson",
             "Noah Hirka",
             "Noora Hirvonen",
-            "Né Né Thomas",
+            "N\u00e9 N\u00e9 Thomas",
             "Oliver Meinerding",
             "Oscar Salcedo",
             "Pat Loboyko",
@@ -259,7 +263,7 @@ def test_dimensions(client):
             "Ron Lemon",
             "Ron Spencer",
             "Ron Van Halen",
-            "Rubén Bravo",
+            "Rub\u00e9n Bravo",
             "Samuel Araya",
             "Sandra Chang-Adair",
             "Sandra Everingham",
@@ -289,8 +293,8 @@ def test_dimensions(client):
             "Tom Biondillo",
             "Tom Duncan",
             "Tom Gianni",
-            "Tom Wänerstrand",
-            'Tomáš "zelgaris" Zahradníček',
+            "Tom W\u00e4nerstrand",
+            'Tom\u00e1\u0161 "zelgaris" Zahradn\u00ed\u010dek',
             "Tony Harris",
             "Tony Shasteen",
             "Torstein Nordstrand",
@@ -568,6 +572,11 @@ def test_dimensions(client):
             "Lords of the Night: Followers of Set",
             "Lords of the Night: Giovanni",
             "Lords of the Night: Ravnos",
+            "New Blood: Malkavian",
+            "New Blood: Nosferatu",
+            "New Blood: Toreador",
+            "New Blood: Tremere",
+            "New Blood: Ventrue",
             "Print on Demand: DriveThruCards",
             "Sabbat Preconstructed: Den of Fiends",
             "Sabbat Preconstructed: Libertine Ball",
@@ -617,7 +626,7 @@ def test_dimensions(client):
             "2020 GP Promo",
             "2020 Promo Pack 2",
             "2021 Kickstarter Promo",
-            "2021 Mind’s Eye Theatre Promo",
+            "2021 Mind\u2019s Eye Theatre Promo",
             "2021 Promo Pack 3",
             "2021 Resellers Promo",
             "2021 SAC Promo",
@@ -654,6 +663,7 @@ def test_dimensions(client):
             "Legacies of Blood promo",
             "Lords of the Night",
             "Lost Kindred",
+            "New Blood",
             "Nights of Reckoning",
             "Print on Demand",
             "Prophecies league promo",
@@ -722,7 +732,7 @@ def test_dimensions(client):
 
 
 def test(client):
-    response = client.post("/card_search")
+    response = client.post("/card_search", json={})
     assert response.status_code == 200
     assert len(response.json) >= 3788
     # invalid dimension raise a 422
@@ -777,9 +787,10 @@ def test_traits(client):
     # city title
     response = client.post("/card_search", json={"city": ["chicago"]})
     assert response.json == [
-        "Antón de Concepción",
+        "Ant\u00f3n de Concepci\u00f3n",
         "Crusade: Chicago",
         "Horatio Ballard",
+        "Kevin Jackson",
         "Lachlan, Noddist",
         "Lodin (Olaf Holte)",
         "Maldavis (ADV)",

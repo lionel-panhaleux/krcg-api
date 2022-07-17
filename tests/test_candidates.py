@@ -1,5 +1,5 @@
 def test(client):
-    response = client.post("/candidates")
+    response = client.post("/candidates", json={})
     assert response.status_code == 200
     assert len(response.json) == 10
     response = client.post("/candidates", json={"date_from": "2019", "date_to": "2020"})
@@ -8,33 +8,33 @@ def test(client):
         {
             "average": 2,
             "card": "Dreams of the Sphinx",
-            "deviation": 0.85,
-            "score": 0.6887,
+            "deviation": 0.84,
+            "score": 0.6908,
         },
         {
             "average": 1,
-            "card": "Pentex™ Subversion",
+            "card": "Pentex\u2122 Subversion",
             "deviation": 0.45,
-            "score": 0.649,
+            "score": 0.6513,
         },
-        {"average": 3, "card": "On the Qui Vive", "deviation": 1.47, "score": 0.6026},
-        {"average": 4, "card": "Villein", "deviation": 1.91, "score": 0.5629},
-        {"average": 1, "card": "Giant's Blood", "deviation": 0.0, "score": 0.5033},
-        {"average": 1, "card": "Wider View", "deviation": 0.55, "score": 0.4106},
+        {"average": 3, "card": "On the Qui Vive", "deviation": 1.47, "score": 0.6053},
+        {"average": 4, "card": "Villein", "deviation": 1.91, "score": 0.5592},
+        {"average": 1, "card": "Giant's Blood", "deviation": 0.0, "score": 0.5066},
+        {"average": 1, "card": "Wider View", "deviation": 0.55, "score": 0.4145},
         {
             "average": 2,
             "card": "Information Highway",
             "deviation": 0.87,
-            "score": 0.3907,
+            "score": 0.3882,
         },
-        {"average": 3, "card": "Vessel", "deviation": 1.24, "score": 0.3709},
-        {"average": 5, "card": "Deflection", "deviation": 2.13, "score": 0.3444},
+        {"average": 3, "card": "Vessel", "deviation": 1.23, "score": 0.375},
         {
             "average": 5,
             "card": "Telepathic Misdirection",
-            "deviation": 1.57,
-            "score": 0.3377,
+            "deviation": 1.6,
+            "score": 0.3421,
         },
+        {"average": 5, "card": "Deflection", "deviation": 2.13, "score": 0.3421},
     ]
     response = client.post(
         "/candidates",
@@ -55,5 +55,10 @@ def test(client):
         {"average": 3, "card": "Aksinya Daclau", "deviation": 0.43, "score": 0.8},
         {"average": 2, "card": "Dreams of the Sphinx", "deviation": 0.6, "score": 0.8},
         {"average": 8, "card": "Liquidation", "deviation": 2.42, "score": 0.8},
-        {"average": 1, "card": "Pentex™ Subversion", "deviation": 0.48, "score": 0.8},
+        {
+            "average": 1,
+            "card": "Pentex\u2122 Subversion",
+            "deviation": 0.48,
+            "score": 0.8,
+        },
     ]

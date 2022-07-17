@@ -195,47 +195,27 @@ def test_sets(client):
     response = client.get("/card/The%20Line")
     assert response.status_code == 200
     assert response.json == {  # noqa: E501
-        "artists": ["Carmen Cornet"],
-        "card_text": (
-            "Unique location.\n"
-            "Lock to reduce the cost of an action card played by a vampire "
-            "you control by 1 blood (this location is not locked if that "
-            "card is canceled as it is played). Any vampire can steal this "
-            "location as a Ⓓ action."
-        ),
-        "id": 101110,
-        "url": "https://static.krcg.org/card/linethe.jpg",
-        "name": "The Line",
-        "printed_name": "The Line",
-        "name_variants": ["Line, The"],
         "_name": "Line, The",
+        "artists": ["Carmen Cornet"],
+        "card_text": "Unique location.\nLock to reduce the cost of an action card played by a vampire you control by 1 blood (this location is not locked if that card is canceled as it is played). Any vampire can steal this location as a \u24b9 action.",  # noqa: E501
+        "id": 101110,
+        "name": "The Line",
+        "name_variants": ["Line, The"],
+        "printed_name": "The Line",
         "rulings": {
+            "links": {
+                "[ANK 20170605]": "http://www.vekn.net/forum/rules-questions/75862-timing-of-the-line#82113",  # noqa: E501
+                "[ANK 20181007]": "http://www.vekn.net/forum/rules-questions/77057-quick-question-on-the-line#91020",  # noqa: E501
+                "[ANK 20200605]": "http://www.vekn.net/forum/rules-questions/78671-can-an-ally-with-play-as-a-vampire-use-the-line-to-reduce-action-costs#100015",  # noqa: E501
+            },
             "text": [
-                (
-                    "Can be locked when the action is announced or when the cost is "
-                    "paid. [ANK 20170605]"
-                ),
-                (
-                    "Can be used to reduce the cost in blood of a recruit ally (eg. "
-                    "{Shambling Hordes}) or employ retainer action. [ANK 20181007]"
-                ),
+                "Can be locked when the action is announced or when the cost is paid. [ANK 20170605]",  # noqa: E501
+                "Can reduce the cost in blood (not in pool) of any action (ally, retainer, equipment, political). [ANK 20181007]",  # noqa: E501
                 'Cannot be used by an ally acting "as a vampire". [ANK 20200605]',
             ],
-            "links": {
-                "[ANK 20170605]": (
-                    "http://www.vekn.net/forum/rules-questions/"
-                    "75862-timing-of-the-line#82113"
-                ),
-                "[ANK 20181007]": (
-                    "http://www.vekn.net/forum/rules-questions/"
-                    "77057-quick-question-on-the-line#91020"
-                ),
-                "[ANK 20200605]": (
-                    "http://www.vekn.net/forum/rules-questions/"
-                    "78671-can-an-ally-with-play-as-a-vampire-"
-                    "use-the-line-to-reduce-action-costs#100015"
-                ),
-            },
+        },
+        "scans": {
+            "Anthology": "https://static.krcg.org/card/set/anthology/linethe.jpg"
         },
         "sets": {
             "Anthology": [
@@ -246,10 +226,8 @@ def test_sets(client):
                 }
             ]
         },
-        "scans": {
-            "Anthology": "https://static.krcg.org/card/set/anthology/linethe.jpg"
-        },
         "types": ["Master"],
+        "url": "https://static.krcg.org/card/linethe.jpg",
     }
     # promo card
     response = client.get("/card/The%20Dracon")

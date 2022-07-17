@@ -191,15 +191,17 @@ def random_deck():
 @base.route("/convert/<format>", methods=["POST"])
 def convert(format="json"):
     raw_data = flask.request.get_data()
-    if flask.request.json:
-        d = deck.Deck()
-        d.from_json(flask.request.json)
-    else:
+    if flask.request.content_type == "text/plain":
         try:
             text = io.StringIO(raw_data.decode("utf-8"))
             d = deck.Deck.from_txt(text)
         except UnicodeDecodeError:
             return "Failed to decode text/plain data in utf-8", 400
+
+    if flask.request.content_type == "application/json":
+        d = deck.Deck()
+        d.from_json(flask.request.json)
+
     if format in ["twd", "lackey", "jol"]:
         return d.to_txt(format).encode("utf-8")
     else:
