@@ -90,17 +90,13 @@ def test(client):
     }
     response = client.post(
         "/vdb",
-        data={
-            "url": "https://vdb.smeea.casa/decks?id=b798e734fff7404085f7b01ad2ccb479"
-        },
+        data={"url": "https://vdb.im/decks?id=b798e734fff7404085f7b01ad2ccb479"},
     )
     assert response.status_code == 200
     assert response.json == first_blood_tremere
     response = client.post(
         "/vdb",
-        json={
-            "url": "https://vdb.smeea.casa/decks?id=b798e734fff7404085f7b01ad2ccb479"
-        },
+        json={"url": "https://vdb.im/decks?id=b798e734fff7404085f7b01ad2ccb479"},
     )
     assert response.status_code == 200
     assert response.json == first_blood_tremere

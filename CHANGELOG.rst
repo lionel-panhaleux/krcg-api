@@ -1,8 +1,9 @@
 2.15 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Bump KRCG (2.23)
+- Update VDB domain name (now vdb.im)
+- Update python version for tests (3.9)
 
 2.14 (2022-01-17)
 -----------------

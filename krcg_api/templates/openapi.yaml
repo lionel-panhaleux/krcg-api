@@ -2304,7 +2304,7 @@ paths:
       tags: [Deck]
       summary: Retrieve a deck from VDB
       description: |
-        Retrieve a deck from [VDB](https://vdb.smeea.casa) 
+        Retrieve a deck from [VDB](https://vdb.im) 
         using a share URL.
       requestBody:
         content:
@@ -2314,20 +2314,20 @@ paths:
               properties:
                 url:
                   type: string
-                  description: "[VDB](https://https://vdb.smeea.casa) share URL"
+                  description: "[VDB](https://https://vdb.im) share URL"
                   format: uri
             example:
-              url: "https://vdb.smeea.casa/decks?id=b798e734fff7404085f7b01ad2ccb479"
+              url: "https://vdb.im/decks?id=b798e734fff7404085f7b01ad2ccb479"
           application/json:
             schema:
               type: object
               properties:
                 url:
                   type: string
-                  description: "[VDB](https://vdb.smeea.casa) share URL"
+                  description: "[VDB](https://vdb.im) share URL"
                   format: uri
             example:
-              url: "https://vdb.smeea.casa/decks?id=b798e734fff7404085f7b01ad2ccb479"
+              url: "https://vdb.im/decks?id=b798e734fff7404085f7b01ad2ccb479"
       responses:
         "200":
           description: Success, returns the deck
@@ -2339,4 +2339,4 @@ paths:
         "400":
           description: |
             Malformed body. The VDB URL is expected to begin with
-            "https://vdb.smeea.casa/decks?id="
+            "https://vdb.im/decks?id="
