@@ -81,7 +81,7 @@ def card(text):
 @base.route("/twda", methods=["POST"])
 def deck_search():
     """Get decks containing cards."""
-    data = flask.request.get_json() or {}
+    data = flask.request.get_json(silent=True) or {}
     if data and data.get("player"):
         decks = [
             twda.TWDA[id_]
@@ -111,7 +111,7 @@ def deck_search():
 @base.route("/twda/list", methods=["POST"])
 def deck_list():
     """Get list of available TWDA decks"""
-    data = flask.request.get_json() or {}
+    data = flask.request.get_json(silent=True) or {}
     if data and data.get("player"):
         decks = [
             twda.TWDA[id_]
@@ -159,7 +159,7 @@ def deck_by_id(twda_id):
 @base.route("/twda/random", methods=["POST"])
 def random_deck():
     """Get TWDA decks containing cards."""
-    data = flask.request.get_json() or {}
+    data = flask.request.get_json(silent=True) or {}
     if data and data.get("player"):
         decks = [
             twda.TWDA[id_]
@@ -191,9 +191,9 @@ def random_deck():
 @base.route("/convert/<format>", methods=["POST"])
 def convert(format="json"):
     raw_data = flask.request.get_data()
-    if flask.request.json:
+    if flask.request.is_json:
         d = deck.Deck()
-        d.from_json(flask.request.json)
+        d.from_json(flask.request.get_json(silent=True))
     else:
         try:
             text = io.StringIO(raw_data.decode("utf-8"))
@@ -208,7 +208,7 @@ def convert(format="json"):
 
 @base.route("/amaranth", methods=["POST"])
 def amaranth():
-    data = flask.request.form or flask.request.json
+    data = flask.request.form or flask.request.get_json(silent=True)
     if "url" not in data:
         return "Missing required parameter: url", 400
     url = data["url"]
@@ -219,7 +219,7 @@ def amaranth():
 
 @base.route("/vdb", methods=["POST"])
 def vdb():
-    data = flask.request.form or flask.request.json
+    data = flask.request.form or flask.request.get_json(silent=True)
     if "url" not in data:
         return "Missing required parameter: url", 400
     url = data["url"]
@@ -232,7 +232,7 @@ def vdb():
 
 @base.route("/candidates", methods=["POST"])
 def candidates():
-    data = flask.request.get_json() or {}
+    data = flask.request.get_json(silent=True) or {}
     full = data.pop("mode", "") == "full"
     decks = twda.TWDA.values()
     if data and data.get("players_count"):
@@ -293,7 +293,7 @@ def complete(text):
 @base.route("/card_search", methods=["POST"])
 def card_search():
     """Card search."""
-    data = flask.request.get_json() or {}
+    data = flask.request.get_json(silent=True) or {}
     full = data.pop("mode", "") == "full"
     if data.get("lang"):
         data["lang"] = _negotiate_locale([data["lang"]])
@@ -328,7 +328,7 @@ def submit_ruling(card):
         card = vtes.VTES[card].name
     except KeyError:
         return "Card not found", 404
-    data = flask.request.get_json() or {}
+    data = flask.request.get_json(silent=True) or {}
     text = data.get("text")
     link = data.get("link")
     if not (text and link):

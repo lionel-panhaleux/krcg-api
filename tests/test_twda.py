@@ -31,7 +31,7 @@ Finals were pretty brutal because every deck was a bleeder in some way or the
 other and there was no clear winner even when it was down to 2 players.
 Players from 1 to 5 were Petri with Anarch stealth bleeder, Jyrkkä with
 Lasombra/Kiasyd stealth bleeder, Pauli with Ventrue grinder, me with my own
-Ventrue grinder and Lasse with Legion and Legionnaire bleeder.  My biggest
+Ventrue grinder and Lasse with Legion and Legionnaire bleeder. My biggest
 concern was my predator who played pretty much the same deck with like 90% of
 the crypt being the same cards, but we were able to avoid unnecesary contesting
 thanks to table talk. He still contested my Lodin later in the game but was

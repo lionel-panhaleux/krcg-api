@@ -216,8 +216,8 @@ def test_sets(client):
                     "paid. [ANK 20170605]"
                 ),
                 (
-                    "Can be used to reduce the cost in blood of a recruit ally (eg. "
-                    "{Shambling Hordes}) or employ retainer action. [ANK 20181007]"
+                    "Can reduce the cost in blood (not in pool) of any action (ally, "
+                    "retainer, equipment, political). [ANK 20181007]"
                 ),
                 'Cannot be used by an ally acting "as a vampire". [ANK 20200605]',
             ],
