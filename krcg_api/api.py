@@ -111,7 +111,7 @@ def deck_search():
 @base.route("/twda/list", methods=["POST"])
 def deck_list():
     """Get list of available TWDA decks"""
-    data = flask.request.get_json(silent=True) or {}
+    data = flask.request.get_json()
     if data and data.get("player"):
         decks = [
             twda.TWDA[id_]

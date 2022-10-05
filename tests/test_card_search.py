@@ -237,7 +237,7 @@ def test_dimensions(client):
             "Pete Venters",
             "Peter Bergting",
             "Peter Kim",
-            "Peter Morbacher",
+            "Peter Mohrbacher",
             "Peter Scholtz",
             "Phil Wohr",
             "Phillip Hilliker",
@@ -589,6 +589,10 @@ def test_dimensions(client):
             "The Unaligned: Bundle 2",
             "Third Edition: Brujah antitribu",
             "Third Edition: Malkavian antitribu",
+            "Third Edition: Starter Kit Brujah antitribu",
+            "Third Edition: Starter Kit Malkavian antitribu",
+            "Third Edition: Starter Kit Tremere antitribu",
+            "Third Edition: Starter Kit Tzimisce",
             "Third Edition: Tremere antitribu",
             "Third Edition: Tzimisce",
         ],
@@ -890,12 +894,19 @@ def test_full(client):
                 "text": [
                     "Black Hand is not a title, it is a trait unrelated to any sect. "
                     "The trait is not lost if the vampire changes sect. [LSJ "
-                    "20070322] [ANK 20180807]"
+                    "20070322] [ANK 20180807]",
+                    "The scarce penalty considers the apparent clan while "
+                    "controlled (in case of {Clan Impersonation} and "
+                    "{Banishment}). [LSJ 20011015]",
                 ],
                 "links": {
                     "[LSJ 20070322]": (
                         "https://groups.google.com/d/msg/rec.games.trading-cards.jyhad/"
                         "Ww-4rYJxi4w/P3QchWVq2o4J"
+                    ),
+                    "[LSJ 20011015]": (
+                        "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
+                        "c/ZXW0ScxTsBA/m/OvbMemV2oXUJ"
                     ),
                     "[ANK 20180807]": (
                         "http://www.vekn.net/forum/rules-questions/"

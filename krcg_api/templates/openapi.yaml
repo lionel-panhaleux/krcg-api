@@ -1991,7 +1991,6 @@ paths:
           description: Malformed body
         "404":
           description: Not found
-
   /twda/list:
     post:
       tags: [Deck]
@@ -2002,7 +2001,7 @@ paths:
             schema:
               type: object
               properties:
-                card_names:
+                cards:
                   description: |
                     Return a list of decks containing those cards.
                   type: array
@@ -2031,7 +2030,8 @@ paths:
                   default: 0
               example:
                 cards: ["François Villon"]
-                date_from: "1994-01-01"
+                date_from: "2008-01-01"
+                date_to: "2012-01-01"
                 players: 25
       responses:
         "200":
@@ -2039,7 +2039,8 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/deck_list" }
-              examples: { $ref: "#/components/examples/deck-list" }
+              examples:
+                { deck-list: { $ref: "#/components/examples/deck-list" } }
         "400":
           description: Malformed body
         "404":
@@ -2097,7 +2098,6 @@ paths:
           description: Malformed body
         "404":
           description: Not found
-
   /twda/{id}:
     get:
       tags: [Deck]

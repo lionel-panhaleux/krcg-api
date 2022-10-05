@@ -1,7 +1,8 @@
 2.16 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Bump KRCG (2.29)
+- Improve twda/list endpoint and documentation
 
 
 2.15 (2022-08-08)
