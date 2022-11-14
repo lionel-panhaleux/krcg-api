@@ -1,7 +1,7 @@
 2.17 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Bump KRCG (2.30)
 
 
 2.16 (2022-10-05)
