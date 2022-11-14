@@ -54,8 +54,8 @@ def test(client):
             },
             "text": [
                 (
-                    "If the given weapon costs blood, "
-                    "the target Alastor pays the cost. [LSJ 20040518]"
+                    "If the weapon retrieved costs blood, that cost is paid "
+                    "by the vampire chosen by the vote. [LSJ 20040518]"
                 ),
                 (
                     "Requirements do not apply. If a discipline is required "
