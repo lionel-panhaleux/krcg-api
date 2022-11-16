@@ -36,10 +36,19 @@ components:
           type: integer
           minimum: 100001
         name:
+          description: Card name. Unique and recommanded for interfaces and deck lists.
+          type: string
+          minLength: 1
+        printed_name:
+          description: Name as printed on the card. Not unique for advanced vampires.
           type: string
           minLength: 1
         _name:
-          description: Card name as listed in VEKN CSV files
+          description: Card name as listed in VEKN CSV files ("The" as prefix, not unique)
+          type: string
+          minLength: 1
+        _set:
+          description: Original VEKN list of sets and rarity. Use `sets` instead for convenience
           type: string
           minLength: 1
         url:
@@ -111,6 +120,13 @@ components:
                   type: number
                   minimum: 0.5
                   maximum: 5
+        ordered_sets:
+          type: array
+          description: Set names ordered by release date
+          minLength: 1
+          items:
+            type: string
+            minLength: 1
         scans:
           description: |
             Scanned card image URLs, by set.
@@ -327,6 +343,9 @@ components:
       value:
         id: 100029
         name: "Aid from Bats"
+        printed_name: "Aid from Bats"
+        _name: "Aid from Bats"
+        _set: "Jyhad:C, VTES:C, CE:C/PN3, Anarchs:PG2, Third:C, KoT:C, FB:PN6"
         url: "https://static.krcg.org/card/aidfrombats.jpg"
         types: ["Combat"]
         disciplines: ["ani"]
@@ -348,6 +367,14 @@ components:
           Keepers of Tradition: [{ rarity: Common }]
           Third Edition: [{ rarity: Common }]
           "Vampire: The Eternal Struggle": [{ rarity: Common }]
+        ordered_sets:
+          - "Jyhad"
+          - "Vampire: The Eternal Struggle"
+          - "Camarilla Edition"
+          - "Anarchs"
+          - "Third Edition"
+          - "Keepers of Tradition"
+          - "First Blood"
         scans:
           Anarchs: https://static.krcg.org/card/set/anarchs/aidfrombats.jpg
           Camarilla Edition: https://static.krcg.org/card/set/camarilla-edition/aidfrombats.jpg
@@ -356,7 +383,7 @@ components:
           Keepers of Tradition: https://static.krcg.org/card/set/keepers-of-tradition/aidfrombats.jpg
           Third Edition: https://static.krcg.org/card/set/third-edition/aidfrombats.jpg
           "Vampire: The Eternal Struggle": https://static.krcg.org/card/set/vampire-the-eternal-struggle/aidfrombats.jpg
-        artists: ["Eric Lofgren", "Melissa Benson"]
+        artists: ["Melissa Benson", "Eric Lofgren"]
         rulings:
           text:
             - "[ANI] The press can only be used during the current round. [TOM 19960521]"

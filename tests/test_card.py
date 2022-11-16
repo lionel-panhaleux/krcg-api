@@ -6,6 +6,7 @@ def test(client):
     assert response.json == {
         "id": 100038,
         "_name": "Alastor",
+        "_set": "Gehenna:R, KMW:PAl, KoT:R",
         "name": "Alastor",
         "printed_name": "Alastor",
         "url": "https://static.krcg.org/card/alastor.jpg",
@@ -27,6 +28,7 @@ def test(client):
                 {"copies": 1, "precon": "Alastors", "release_date": "2005-02-21"}
             ],
         },
+        "ordered_sets": ["Gehenna", "Kindred Most Wanted", "Keepers of Tradition"],
         "scans": {
             "Gehenna": "https://static.krcg.org/card/set/gehenna/alastor.jpg",
             "Keepers of Tradition": (
@@ -80,7 +82,7 @@ def test_i18n(client):
     response = client.get("/card/Aid%20from%20Bats")
     assert response.status_code == 200
     assert response.json == {  # noqa: E501
-        "artists": ["Eric Lofgren", "Melissa Benson"],
+        "artists": ["Melissa Benson", "Eric Lofgren"],
         "card_text": (
             "[ani] Strike: 1R damage, with 1 optional maneuver.\n"
             "[ANI] As above, with 1 optional press."
@@ -96,6 +98,7 @@ def test_i18n(client):
         "name": "Aid from Bats",
         "printed_name": "Aid from Bats",
         "_name": "Aid from Bats",
+        "_set": "Jyhad:C, VTES:C, CE:C/PN3, Anarchs:PG2, Third:C, KoT:C, FB:PN6",
         "rulings": {
             "text": [
                 (
@@ -130,6 +133,15 @@ def test_i18n(client):
                 {"rarity": "Common", "release_date": "1995-09-15"}
             ],
         },
+        "ordered_sets": [
+            "Jyhad",
+            "Vampire: The Eternal Struggle",
+            "Camarilla Edition",
+            "Anarchs",
+            "Third Edition",
+            "Keepers of Tradition",
+            "First Blood",
+        ],
         "scans": {
             "Anarchs": "https://static.krcg.org/card/set/anarchs/aidfrombats.jpg",
             "Camarilla Edition": (
@@ -209,6 +221,7 @@ def test_sets(client):
         "printed_name": "The Line",
         "name_variants": ["Line, The"],
         "_name": "Line, The",
+        "_set": "Anthology:LARP1",
         "rulings": {
             "text": [
                 (
@@ -246,6 +259,7 @@ def test_sets(client):
                 }
             ]
         },
+        "ordered_sets": ["Anthology"],
         "scans": {
             "Anthology": "https://static.krcg.org/card/set/anthology/linethe.jpg"
         },
@@ -276,6 +290,7 @@ def test_sets(client):
             "Dracon, The",
         ],
         "_name": "Dracon, The",
+        "_set": "Promo-20150216, Promo-20181004:HB2, Promo-20190408",
         "sets": {
             "2015 Storyline Rewards": [{"copies": 1, "release_date": "2015-02-16"}],
             "2018 Humble Bundle": [
@@ -283,6 +298,11 @@ def test_sets(client):
             ],
             "2019 Promo Pack 1": [{"copies": 1, "release_date": "2019-04-08"}],
         },
+        "ordered_sets": [
+            "2015 Storyline Rewards",
+            "2018 Humble Bundle",
+            "2019 Promo Pack 1",
+        ],
         "scans": {
             "2015 Storyline Rewards": (
                 "https://static.krcg.org/card/set/promo/dracontheg5.jpg"
@@ -314,6 +334,7 @@ def test_sets(client):
         "name": "Ophidian Gaze",
         "printed_name": "Ophidian Gaze",
         "_name": "Ophidian Gaze",
+        "_set": "TU:C/B4",
         "rulings": {
             "text": [
                 (
@@ -352,6 +373,7 @@ def test_sets(client):
                 {"copies": 4, "precon": "Bundle 2", "release_date": "2021-07-09"},
             ]
         },
+        "ordered_sets": ["The Unaligned"],
         "scans": {
             "The Unaligned": (
                 "https://static.krcg.org/card/set/the-unaligned/ophidiangaze.jpg"
@@ -383,10 +405,12 @@ def test_artists(client):
         "printed_name": "Tyler",
         "name_variants": ["Tyler"],
         "_name": "Tyler",
+        "_set": "CE:V, BSC:X",
         "sets": {
             "Blood Shadowed Court": [{"release_date": "2008-04-14"}],
             "Camarilla Edition": [{"rarity": "Vampire", "release_date": "2002-08-19"}],
         },
+        "ordered_sets": ["Camarilla Edition", "Blood Shadowed Court"],
         "scans": {
             "Blood Shadowed Court": (
                 "https://static.krcg.org/card/set/blood-shadowed-court/tylerg3.jpg"
@@ -404,8 +428,8 @@ def test_artists(client):
     assert response.status_code == 200
     assert response.json == {  # noqa: E501
         "artists": [
-            "Ginés Quiñonero-Santiago",
             "Sandra Chang-Adair",
+            "Ginés Quiñonero-Santiago",
         ],
         "card_text": (
             "Put this card in play. If you control three copies, remove all "
@@ -419,6 +443,7 @@ def test_artists(client):
         "name": "Ashur Tablets",
         "printed_name": "Ashur Tablets",
         "_name": "Ashur Tablets",
+        "_set": "KoT:C, Anthology:3",
         "rulings": {
             "text": [
                 "Can be played with no card in the ash heap. [PIB 20130119]",
@@ -442,6 +467,7 @@ def test_artists(client):
                 {"rarity": "Common", "release_date": "2008-11-19"}
             ],
         },
+        "ordered_sets": ["Keepers of Tradition", "Anthology"],
         "scans": {
             "Anthology": "https://static.krcg.org/card/set/anthology/ashurtablets.jpg",
             "Keepers of Tradition": (

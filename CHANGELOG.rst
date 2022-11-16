@@ -1,7 +1,8 @@
 2.18 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- New fields in card: `_set` and `ordered_sets`
+- Bump KRCG (2.30)
 
 
 2.17 (2022-11-14)

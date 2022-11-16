@@ -8,7 +8,7 @@ test: quality
 	pytest -vvs
 
 serve:
-	source .env && run-krcg-api
+	run-krcg-api
 
 release:
 	fullrelease

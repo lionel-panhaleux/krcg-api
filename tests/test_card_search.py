@@ -897,6 +897,7 @@ def test_full(client):
             "id": 201263,
             "url": "https://static.krcg.org/card/sennadurekg4.jpg",
             "_name": "Sennadurek",
+            "_set": "LoB:U",
             "name": "Sennadurek (G4)",
             "name_variants": ["Sennadurek"],
             "printed_name": "Sennadurek",
@@ -929,6 +930,7 @@ def test_full(client):
                     {"rarity": "Uncommon", "release_date": "2005-11-14"}
                 ]
             },
+            "ordered_sets": ["Legacies of Blood"],
             "scans": {
                 "Legacies of Blood": (
                     "https://static.krcg.org/card/set/legacies-of-blood/"
