@@ -1,4 +1,4 @@
-2.18 (unreleased)
+2.18 (2022-11-16)
 -----------------
 
 - New fields in card: `_set` and `ordered_sets`
