@@ -1,7 +1,8 @@
 2.19 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Bump KRCG (2.32)
+- Fix /vdb endpoint (new URL format)
 
 
 2.18 (2022-11-16)
