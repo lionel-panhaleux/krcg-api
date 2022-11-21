@@ -211,10 +211,7 @@ def amaranth():
     data = flask.request.form or flask.request.get_json(silent=True)
     if "url" not in data:
         return "Missing required parameter: url", 400
-    url = data["url"]
-    if url[:34] != "https://amaranth.vtes.co.nz/#deck/":
-        return "Amaranth URL required", 400
-    return flask.jsonify(deck.Deck.from_amaranth(url[34:]).to_json())
+    return flask.jsonify(deck.Deck.from_url(data["url"]).to_json())
 
 
 @base.route("/vdb", methods=["POST"])
@@ -222,12 +219,7 @@ def vdb():
     data = flask.request.form or flask.request.get_json(silent=True)
     if "url" not in data:
         return "Missing required parameter: url", 400
-    url = data["url"]
-    if url[:24] != "https://vdb.im/decks?id=":
-        if url[:32] != "https://vdb.smeea.casa/decks?id=":
-            return "VDB URL required", 400
-        return flask.jsonify(deck.Deck.from_vdb(url[32:]).to_json())
-    return flask.jsonify(deck.Deck.from_vdb(url[24:]).to_json())
+    return flask.jsonify(deck.Deck.from_url(data["url"]).to_json())
 
 
 @base.route("/candidates", methods=["POST"])
