@@ -1,4 +1,4 @@
-2.20 (unreleased)
+2.20 (2022-11-21)
 -----------------
 
 - Fix /vdb endpoint (bug)
