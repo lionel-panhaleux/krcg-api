@@ -1,4 +1,4 @@
-2.21 (unreleased)
+2.21 (2024-02-08)
 -----------------
 
 - Add OpenAPI validator
