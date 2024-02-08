@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "krcg-api"
+version = "2.21.dev0"
+authors = [
+    { name = "Lionel Panhaleux", email = "lionel.panhaleux+krcg@gmail.com" },
+]
+description = "Web API for VTES cards and TWDA"
+keywords = [
+    "vtes",
+    "Vampire: The Eternal Struggle",
+    "CCG",
+    "TWD",
+    "TWDA",
+    "api",
+    "web",
+]
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Environment :: Web Environment",
+    "Framework :: Flask",
+    "Topic :: Games/Entertainment",
+    "Topic :: Internet :: WWW/HTTP :: WSGI :: Server",
+]
+dependencies = ["arrow", "babel", "flask", "krcg >= 3.9", "requests"]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "ipython",
+    "openapi-spec-validator",
+    "pytest",
+    "ruff",
+    "yamllint",
+    "zest.releaser[recommended]",
+]
+
+[project.scripts]
+run-krcg-api = "krcg_api:main"
+
+[project.urls]
+Homepage = "https://api.krcg.org"
+Repository = "https://github.com/lionel-panhaleux/krcg-api"
+
+[tool.setuptools.packages.find]
+include = ["krcg_api*"]

@@ -1,7 +1,7 @@
 # KRCG API
 
 [![PyPI version](https://badge.fury.io/py/krcg-api.svg)](https://badge.fury.io/py/krcg-api)
-[![Validation](https://github.com/lionel-panhaleux/krcg-api/workflows/Validation/badge.svg)](https://github.com/lionel-panhaleux/krcg-api/actions)
+[![Validation](https://github.com/lionel-panhaleux/krcg-api/actions/workflows/validation.yml/badge.svg)](https://github.com/lionel-panhaleux/krcg-api/actions/workflows/validation.yml)
 [![Python version](https://img.shields.io/badge/python-3.8-blue)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/License-MIT-blue)](https://opensource.org/licenses/MIT)
 [![Code Style](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
@@ -18,7 +18,7 @@ For more information please visit [white-wolf.com](http://www.white-wolf.com).
 
 ## Online API and documentation
 
-KRCG is a free to use (and documented) [online API](https://api.v2.krcg.org/).
+KRCG is a free to use (and documented) [online API](https://api.krcg.org/).
 Anyone is free to use it, without warranty.
 
 Breaking changes will only be introduced at major version upgrades,
@@ -42,39 +42,49 @@ curl -X GET "http://127.0.0.1:8000/card/Alastor" -H  "accept: application/json"
 
 ```json
 {
-    "id": 100038,
-    "name": "Alastor",
-    "_name": "Alastor",
-    "types": ["Political Action"],
-    "url": "https://static.krcg.org/card/alastor.jpg",
-    "card_text": "Requires a justicar or Inner Circle member...",
-    "rulings": {
-        "links": {
-            "[ANK 20200901]": "http://www.vekn.net/forum/rules-questions/78830-alastor-and-ankara-citadel#100653",
-            "[LSJ 20040518]": "https://groups.google.com/d/msg/rec.games.trading-cards.jyhad/4emymfUPwAM/B2SCC7L6kuMJ"
-        },
-        "text": [
-            "If the given weapon costs blood, the target Alastor pays the cost. [LSJ 20040518]",
-            "Requirements do not apply. [ANK 20200901]"
-        ]
+  "_name": "Alastor",
+  "_set": "Gehenna:R, KMW:PAl, KoT:R",
+  "artists": [
+    "Monte Moore"
+  ],
+  "card_text": "Requires a justicar or Inner Circle member...",
+  "id": 100038,
+  "name": "Alastor",
+  "ordered_sets": [
+    "Gehenna",
+    "Kindred Most Wanted",
+    "Keepers of Tradition"
+  ],
+  "printed_name": "Alastor",
+  "rulings": {
+    "links": {
+      "[ANK 20200901]": "http://www.vekn.net/forum/rules-questions/78830-alastor-and-ankara-citadel#100653",
+      "[LSJ 20040518-2]": "https://groups.google.com/g/rec.games.trading-cards.jyhad/c/4emymfUPwAM/m/JF_o7OOoCbkJ",
+      "[LSJ 20040518]": "https://groups.google.com/d/msg/rec.games.trading-cards.jyhad/4emymfUPwAM/B2SCC7L6kuMJ"
     },
-    "artists": ["Monte Moore"],
-    "sets": {
-        "Gehenna": [{ "rarity": "Rare", "release_date": "2004-05-17" }],
-        "Keepers of Tradition": [{ "rarity": "Rare", "release_date": "2008-11-19" }],
-        "Kindred Most Wanted": [
-            {
-                "copies": 1,
-                "precon": "Alastors",
-                "release_date": "2005-02-21"
-            }
-        ]
-    },
-    "scans": {
-        "Gehenna": "https://static.krcg.org/card/set/gehenna/alastor.jpg",
-        "Keepers of Tradition": "https://static.krcg.org/card/set/keepers-of-tradition/alastor.jpg",
-        "Kindred Most Wanted": "https://static.krcg.org/card/set/kindred-most-wanted/alastor.jpg"
-    }
+    "text": [
+      "If the weapon retrieved costs blood, that cost is paid by the vampire chosen by the vote. [LSJ 20040518]",
+      "Requirements do not apply. If a discipline is required (eg. {Inscription}) and the Alastor vampire does not have it, the inferior version is used. [ANK 20200901] [LSJ 20040518-2]"
+    ]
+  },
+  "scans": {
+    "Gehenna": "https://static.krcg.org/card/set/gehenna/alastor.jpg",
+    "Keepers of Tradition": "https://static.krcg.org/card/set/keepers-of-tradition/alastor.jpg",
+    "Kindred Most Wanted": "https://static.krcg.org/card/set/kindred-most-wanted/alastor.jpg"
+  },
+  "sets": {
+    "Gehenna": [{ "rarity": "Rare", "release_date": "2004-05-17"}],
+    "Keepers of Tradition": [{ "rarity": "Rare", "release_date": "2008-11-19"}],
+    "Kindred Most Wanted": [
+      {
+        "copies": 1,
+        "precon": "Alastors",
+        "release_date": "2005-02-21"
+      }
+    ]
+  },
+  "types": ["Political Action"],
+  "url": "https://static.krcg.org/card/alastor.jpg"
 }
 ```
 
@@ -147,7 +157,7 @@ And a few other features, including:
 -   retrieving a decklist from an Amaranth share URL
 -   card name completions
 
-Check the [online documentation](https://api.v2.krcg.org/) for more.
+Check the [online documentation](https://api.krcg.org/) for more.
 
 ### Hosting the web API
 

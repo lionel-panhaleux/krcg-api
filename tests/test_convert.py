@@ -1,5 +1,6 @@
 def test(client):
     deck_json = {
+        "date": "2020-01-01",
         "crypt": {
             "cards": [
                 {"count": 1, "id": 200517, "name": "Gilbert Duane"},
@@ -100,7 +101,9 @@ def test(client):
             "count": 87,
         },
     }
-    deck_text = """Crypt (12 cards, min=7, max=24, avg=3.75)
+    deck_text = """January 1st 2020
+
+Crypt (12 cards, min=7, max=24, avg=3.75)
 -----------------------------------------
 1x Gilbert Duane          7 AUS DOM OBF      prince  Malkavian:1
 1x Mariel, Lady Thunder   7 DOM OBF aus tha          Malkavian:1

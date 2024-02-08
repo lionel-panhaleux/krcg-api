@@ -1,8 +1,11 @@
 2.21 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Add OpenAPI validator
+- Upgrade OpenAPI to 3.1
+- Use Python 3.11
+- New packaging
+- Fix tests
 
 2.20 (2022-11-21)
 -----------------

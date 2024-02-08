@@ -8,6 +8,7 @@ venv/
 
 # test
 .pytest_cache/
+.ruff_cache/
 .env
 
 # editors & OS

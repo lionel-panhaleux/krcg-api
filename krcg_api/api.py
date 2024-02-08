@@ -1,12 +1,12 @@
 import arrow
 import babel
 import flask
+import importlib.metadata
 import io
 import json
 import logging
 import math
 import os
-import pkg_resources  # part of setuptools
 import random
 import requests
 import urllib.parse
@@ -61,7 +61,7 @@ def openapi():
     """OpenAPI schema."""
     return flask.render_template(
         "openapi.yaml",
-        version=pkg_resources.require("krcg-api")[0].version,
+        version=importlib.metadata.version("krcg-api"),
     )
 
 
@@ -252,7 +252,7 @@ def candidates():
                 [
                     {
                         "card": c.to_json(),
-                        "score": round(s / (1 if cards else len(decks)), 4),
+                        "score": round(s / (len(cards) if cards else len(decks)), 4),
                         "average": round(A.average[c]),
                         "deviation": round(math.sqrt(A.variance[c]), 2),
                     }
@@ -264,7 +264,7 @@ def candidates():
                 [
                     {
                         "card": c.usual_name,
-                        "score": round(s / (1 if cards else len(decks)), 4),
+                        "score": round(s / (len(cards) if cards else len(decks)), 4),
                         "average": round(A.average[c]),
                         "deviation": round(math.sqrt(A.variance[c]), 2),
                     }

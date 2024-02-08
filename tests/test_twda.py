@@ -22,7 +22,7 @@ def test(client):
         "tournament_format": "2R+F",
         "players_count": 14,
         "player": "Niko Vanhatalo",
-        "score": "1gw5 + 3vp in the final",
+        "score": "1GW5+3",
         "comments": """Here is a quick report by the Winner of the event Niko Vanhatalo.
 
 Just your average Ventrue grinder/stickmen with my own personal preferences
@@ -290,7 +290,7 @@ def test_search(client):
             "place": "Villevaudé, France",
             "player": "Serge Cirri",
             "players_count": 22,
-            "score": "2gw9 + 1.5vp in the final",
+            "score": "2GW9+1.5",
             "tournament_format": "3R+F",
         },
     ]

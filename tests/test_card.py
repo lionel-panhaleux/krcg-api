@@ -210,9 +210,9 @@ def test_sets(client):
         "artists": ["Carmen Cornet"],
         "card_text": (
             "Unique location.\n"
-            "Lock to reduce the cost of an action card played by a vampire "
-            "you control by 1 blood (this location is not locked if that "
-            "card is canceled as it is played). Any vampire can steal this "
+            "You can lock this location to reduce the cost of an action card a vampire "
+            "you control plays by 1 blood (this location is not locked if that "
+            "card is canceled as it is played). Vampires can steal this "
             "location as a Ⓓ action."
         ),
         "id": 101110,
@@ -221,16 +221,22 @@ def test_sets(client):
         "printed_name": "The Line",
         "name_variants": ["Line, The"],
         "_name": "Line, The",
-        "_set": "Anthology:LARP1",
+        "_set": "Anthology:LARP1, SoB:1",
         "rulings": {
             "text": [
                 (
-                    "Can be locked when the action is announced or when the cost is "
-                    "paid. [ANK 20170605]"
+                    "Can be locked to reduce the cost at any point before resolution, "
+                    "from when the action is announced to just before the cost is "
+                    "paid. [ANK 20170605] [ANK 20230620]"
                 ),
                 (
                     "Can reduce the cost in blood (not in pool) of any action (ally, "
                     "retainer, equipment, political). [ANK 20181007]"
+                ),
+                (
+                    "Can reduce the cost of an action card even if it is not played as "
+                    "an action (ie. a retainer played with {Pack Alpha}). "
+                    "[RTR 20070707] [ANK 20230824]"
                 ),
                 'Cannot be used by an ally acting "as a vampire". [ANK 20200605]',
             ],
@@ -248,6 +254,19 @@ def test_sets(client):
                     "78671-can-an-ally-with-play-as-a-vampire-"
                     "use-the-line-to-reduce-action-costs#100015"
                 ),
+                "[ANK 20230620]": (
+                    "https://www.vekn.net/forum/rules-questions/"
+                    "80612-when-to-use-shard-the-line-when-action-becoems-"
+                    "to-expensive-after-announcement#108409"
+                ),
+                "[ANK 20230824]": (
+                    "https://www.vekn.net/forum/news-and-announcements/"
+                    "80782-the-line-pack-alpha?start=6#109157"
+                ),
+                "[RTR 20070707]": (
+                    "https://groups.google.com/d/msg/rec.games.trading-cards.jyhad/"
+                    "vSOt2c1uRzQ/MsRAv47Cd4YJ"
+                ),
             },
         },
         "sets": {
@@ -257,11 +276,20 @@ def test_sets(client):
                     "precon": "EC Berlin Edition",
                     "release_date": "2017-05-11",
                 }
-            ]
+            ],
+            "Shadows of Berlin": [
+                {
+                    "copies": 1,
+                    "release_date": "2023-06-30",
+                },
+            ],
         },
-        "ordered_sets": ["Anthology"],
+        "ordered_sets": ["Anthology", "Shadows of Berlin"],
         "scans": {
-            "Anthology": "https://static.krcg.org/card/set/anthology/linethe.jpg"
+            "Anthology": "https://static.krcg.org/card/set/anthology/linethe.jpg",
+            "Shadows of Berlin": (
+                "https://static.krcg.org/card/set/shadows-of-berlin/linethe.jpg"
+            ),
         },
         "types": ["Master"],
     }
@@ -273,7 +301,7 @@ def test_sets(client):
         "capacity": 11,
         "card_text": (
             "Independent: Cards requiring Vicissitude [vic] cost The Dracon "
-            "1 fewer blood. He inflicts +1 damage or steals 1 additional "
+            "-1 blood. He inflicts +1 damage or steals 1 additional "
             "blood or life with ranged strikes (even at close range). Flight "
             "[FLIGHT]. +1 bleed. +2 strength."
         ),
@@ -290,13 +318,14 @@ def test_sets(client):
             "Dracon, The",
         ],
         "_name": "Dracon, The",
-        "_set": "Promo-20150216, Promo-20181004:HB2, Promo-20190408",
+        "_set": "Promo-20150216, Promo-20181004:HB2, Promo-20190408, POD:DTC",
         "sets": {
             "2015 Storyline Rewards": [{"copies": 1, "release_date": "2015-02-16"}],
             "2018 Humble Bundle": [
                 {"copies": 2, "precon": "Humble Bundle", "release_date": "2018-10-04"}
             ],
             "2019 Promo Pack 1": [{"copies": 1, "release_date": "2019-04-08"}],
+            "Print on Demand": [{"copies": 1, "precon": "DriveThruCards"}],
         },
         "ordered_sets": [
             "2015 Storyline Rewards",
@@ -313,7 +342,11 @@ def test_sets(client):
             "2019 Promo Pack 1": (
                 "https://static.krcg.org/card/set/promo-pack-1/dracontheg5.jpg"
             ),
+            "Print on Demand": (
+                "https://static.krcg.org/card/set/print-on-demand/dracontheg5.jpg"
+            ),
         },
+        "text_change": True,
         "types": ["Vampire"],
     }
     # PDF
@@ -449,6 +482,7 @@ def test_artists(client):
                 "Can be played with no card in the ash heap. [PIB 20130119]",
                 "Is played without announcing targets: they are only chosen once "
                 "the third copy get into play. [LSJ 20091030]",
+                "You must show which one goes in hand. [LSJ 20081129]",
             ],
             "links": {
                 "[PIB 20130119]": (
@@ -458,6 +492,10 @@ def test_artists(client):
                 "[LSJ 20091030]": (
                     "https://groups.google.com/g/rec.games.trading-cards.jyhad"
                     "/c/ZKuCyTayYbc/m/5nMjLpX4DuMJ"
+                ),
+                "[LSJ 20081129]": (
+                    "https://groups.google.com/g/rec.games.trading-cards.jyhad"
+                    "/c/7fMPCYIPrag/m/_gGD-1da2N8J"
                 ),
             },
         },

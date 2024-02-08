@@ -330,7 +330,7 @@ components:
         author: { type: string }
     deck_list:
       type: object
-      required: ["count", "deck_list"]
+      required: ["count", "decks"]
       properties:
         count: { type: integer }
         decks:
@@ -460,11 +460,7 @@ components:
                 - { count: 6, name: ".44 Magnum", id: 100001 }
                 - { count: 3, name: Heart of Nizchetus, id: 100903 }
                 - { count: 1, name: Bowl of Convergence, id: 100243 }
-                - {
-                    count: 1,
-                    name: Codex of the Edenic Groundskeepers,
-                    id: 100374,
-                  }
+                - { count: 1, name: Codex of the Edenic Groundskeepers, id: 100374 }
             - type: Political Action
               count: 4
               cards:
@@ -517,19 +513,14 @@ components:
             - type: Master
               count: 9
               cards:
-                - {
-                    "count": 1,
-                    "id": 100015,
-                    "name": "Academic Hunting Ground",
-                  }
+                - { "count": 1, "id": 100015, "name": "Academic Hunting Ground" }
                 - { "count": 1, "id": 100081, "name": "Arcane Library" }
                 - { "count": 4, "id": 100199, "name": "Blood Doll" }
                 - { "count": 1, "id": 100329, "name": "Chantry" }
                 - { "count": 2, "id": 102092, "name": "Vast Wealth" }
             - type: Action
               count: 12
-              cards:
-                [{ "count": 12, "id": 100845, "name": "Govern the Unaligned" }]
+              cards: [{ "count": 12, "id": 100845, "name": "Govern the Unaligned" }]
             - type: Ally
               count: 1
               cards: [{ "count": 1, "id": 101963, "name": "Thadius Zho" }]
@@ -550,11 +541,7 @@ components:
                 - { "count": 5, "id": 101321, "name": "On the Qui Vive" }
                 - { "count": 4, "id": 101475, "name": "Precognition" }
                 - { "count": 4, "id": 101850, "name": "Spirit's Touch" }
-                - {
-                    "count": 8,
-                    "id": 101949,
-                    "name": "Telepathic Misdirection",
-                  }
+                - { "count": 8, "id": 101949, "name": "Telepathic Misdirection" }
             - type: Combat
               count: 20
               cards:
@@ -611,11 +598,7 @@ components:
                   - { count: 6, name: ".44 Magnum", id: 100001 }
                   - { count: 3, name: Heart of Nizchetus, id: 100903 }
                   - { count: 1, name: Bowl of Convergence, id: 100243 }
-                  - {
-                      count: 1,
-                      name: Codex of the Edenic Groundskeepers,
-                      id: 100374,
-                    }
+                  - { count: 1, name: Codex of the Edenic Groundskeepers, id: 100374 }
               - type: Political Action
                 count: 4
                 cards:
@@ -650,12 +633,7 @@ components:
       value:
         count: 3
         decks:
-          - {
-              author: Joe Blogs,
-              date: "2014-06-01",
-              id: 2019bolbg,
-              name: Anson’s beautifull Tongue,
-            }
+          - { author: Joe Blogs, date: "2014-06-01", id: 2019bolbg, name: Anson’s beautifull Tongue }
           - {
               author: Joe Blogs,
               date: "2014-06-01",
@@ -1603,8 +1581,7 @@ paths:
                   type: array
                   items:
                     type: string
-                    enum:
-                      ["Anarch", "Camarilla", "Independent", "Laibon", "Sabbat"]
+                    enum: ["Anarch", "Camarilla", "Independent", "Laibon", "Sabbat"]
                 title:
                   description: Title. Also matches cards requiring a title.
                   type: array
@@ -1861,66 +1838,16 @@ paths:
                         A "typical" range for copies can be computed using:
                         floor(max(1, average - deviation)), ceil(average + deviation)
               example:
-                - {
-                    "average": 14,
-                    "card": "Ashur Tablets",
-                    "deviation": 6.25,
-                    "score": 1.0,
-                  }
-                - {
-                    "average": 1,
-                    "card": "Giant's Blood",
-                    "deviation": 0.0,
-                    "score": 1.0,
-                  }
-                - {
-                    "average": 2,
-                    "card": "The Parthenon",
-                    "deviation": 0.81,
-                    "score": 1.0,
-                  }
-                - {
-                    "average": 1,
-                    "card": "Archon Investigation",
-                    "deviation": 0.0,
-                    "score": 0.9,
-                  }
-                - {
-                    "average": 5,
-                    "card": "Villein",
-                    "deviation": 1.7,
-                    "score": 0.9,
-                  }
-                - {
-                    "average": 1,
-                    "card": "Wider View",
-                    "deviation": 0.42,
-                    "score": 0.9,
-                  }
-                - {
-                    "average": 3,
-                    "card": "Aksinya Daclau",
-                    "deviation": 0.43,
-                    "score": 0.8,
-                  }
-                - {
-                    "average": 2,
-                    "card": "Dreams of the Sphinx",
-                    "deviation": 0.6,
-                    "score": 0.8,
-                  }
-                - {
-                    "average": 8,
-                    "card": "Liquidation",
-                    "deviation": 2.42,
-                    "score": 0.8,
-                  }
-                - {
-                    "average": 1,
-                    "card": "Pentex™ Subversion",
-                    "deviation": 0.48,
-                    "score": 0.8,
-                  }
+                - { "average": 14, "card": "Ashur Tablets", "deviation": 6.25, "score": 1.0 }
+                - { "average": 1, "card": "Giant's Blood", "deviation": 0.0, "score": 1.0 }
+                - { "average": 2, "card": "The Parthenon", "deviation": 0.81, "score": 1.0 }
+                - { "average": 1, "card": "Archon Investigation", "deviation": 0.0, "score": 0.9 }
+                - { "average": 5, "card": "Villein", "deviation": 1.7, "score": 0.9 }
+                - { "average": 1, "card": "Wider View", "deviation": 0.42, "score": 0.9 }
+                - { "average": 3, "card": "Aksinya Daclau", "deviation": 0.43, "score": 0.8 }
+                - { "average": 2, "card": "Dreams of the Sphinx", "deviation": 0.6, "score": 0.8 }
+                - { "average": 8, "card": "Liquidation", "deviation": 2.42, "score": 0.8 }
+                - { "average": 1, "card": "Pentex™ Subversion", "deviation": 0.48, "score": 0.8 }
         "400":
           description: |
             Malformed body, typically an invalid card name or ID
@@ -2012,8 +1939,7 @@ paths:
                 type: array
                 minLength: 1
                 items: { $ref: "#/components/schemas/deck" }
-              examples:
-                { deck-array: { $ref: "#/components/examples/deck-array" } }
+              examples: { deck-array: { $ref: "#/components/examples/deck-array" } }
         "400":
           description: Malformed body
         "404":
@@ -2066,8 +1992,7 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/deck_list" }
-              examples:
-                { deck-list: { $ref: "#/components/examples/deck-list" } }
+              examples: { deck-list: { $ref: "#/components/examples/deck-list" } }
         "400":
           description: Malformed body
         "404":
@@ -2320,8 +2245,7 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/deck" }
-              examples:
-                { deck: { $ref: "#/components/examples/first-blood-tremere" } }
+              examples: { deck: { $ref: "#/components/examples/first-blood-tremere" } }
         "400":
           description: |
             Malformed body. The Amaranth URL is expected to begin with
@@ -2361,8 +2285,7 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/deck" }
-              examples:
-                { deck: { $ref: "#/components/examples/first-blood-tremere" } }
+              examples: { deck: { $ref: "#/components/examples/first-blood-tremere" } }
         "400":
           description: |
             Malformed body. The VDB URL is expected to begin with

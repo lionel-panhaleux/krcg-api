@@ -2,7 +2,8 @@
 
 quality:
 	black --check .
-	flake8
+	ruff check
+	openapi-spec-validator krcg_api/templates/openapi.yaml
 
 test: quality
 	pytest -vvs
