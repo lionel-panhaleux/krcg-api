@@ -56,3 +56,6 @@ Repository = "https://github.com/lionel-panhaleux/krcg-api"
 
 [tool.setuptools.packages.find]
 include = ["krcg_api*"]
+
+[tool.zest-releaser]
+create-wheel = true
