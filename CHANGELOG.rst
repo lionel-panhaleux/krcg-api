@@ -1,4 +1,4 @@
-2.22 (unreleased)
+2.22 (2024-07-20)
 -----------------
 
 - Added `legality` date to cards
