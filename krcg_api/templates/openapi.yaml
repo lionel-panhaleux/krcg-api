@@ -2268,7 +2268,7 @@ paths:
                   description: "[VDB](https://https://vdb.im) share URL"
                   format: uri
             example:
-              url: "https://vdb.im/decks/b798e734fff7404085f7b01ad2ccb479"
+              url: "https://vdb.im/decks/b798e734f"
           application/json:
             schema:
               type: object
@@ -2278,7 +2278,7 @@ paths:
                   description: "[VDB](https://vdb.im) share URL"
                   format: uri
             example:
-              url: "https://vdb.im/decks/b798e734fff7404085f7b01ad2ccb479"
+              url: "https://vdb.im/decks/b798e734f"
       responses:
         "200":
           description: Success, returns the deck
