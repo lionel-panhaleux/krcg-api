@@ -465,11 +465,12 @@ def test_artists(client):
             "Ginés Quiñonero-Santiago",
         ],
         "card_text": (
-            "Put this card in play. If you control three copies, remove all "
-            "copies in play (even controlled by other Methuselahs) from the "
+            "Only one Ashur Tablets can be played each turn.\n"
+            "Put this card in play. If you control three copies of this card, "
+            "remove all copies in play (even controlled by other Methuselahs) from the "
             "game to gain 3 pool and choose up to thirteen library cards "
             "from your ash heap; move one of the chosen cards to your hand "
-            "and shuffle the others in your library."
+            "and shuffle the others into your library."
         ),
         "id": 100106,
         "url": "https://static.krcg.org/card/ashurtablets.jpg",
