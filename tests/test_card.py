@@ -6,20 +6,21 @@ def test(client):
     assert response.json == {
         "id": 100038,
         "_name": "Alastor",
-        "_set": "Gehenna:R, KMW:PAl, KoT:R",
+        "_set": "Gehenna:R, KMW:PAl, KoT:R, 30th:1",
+        "legality": "2004-05-17",
         "name": "Alastor",
         "printed_name": "Alastor",
         "url": "https://static.krcg.org/card/alastor.jpg",
         "types": ["Political Action"],
         "card_text": (
             "Requires a justicar or Inner Circle member.\n"
-            "Choose a ready Camarilla vampire. If this referendum is successful, "
-            "search your library for an equipment card and place this card "
-            "and the equipment on the chosen vampire. "
-            "Pay half the cost (round down) of the equipment. "
-            "This vampire may enter combat with any vampire "
-            "controlled by another Methuselah as a +1 stealth Ⓓ action. "
-            "This vampire cannot commit diablerie. A vampire may have only one Alastor."
+            "Choose a ready Camarilla vampire. Successful referendum means you "
+            "search your library for an equipment card and put this card "
+            "and the equipment on the chosen vampire (ignore requirements; "
+            "shuffle afterward); pay half the cost rounded down of the equipment. "
+            "The attached vampire can enter combat with a vampire "
+            "as a +1 stealth Ⓓ action. "
+            "The attached vampire cannot commit diablerie. A vampire can have only one Alastor."
         ),
         "sets": {
             "Gehenna": [{"rarity": "Rare", "release_date": "2004-05-17"}],
@@ -27,8 +28,14 @@ def test(client):
             "Kindred Most Wanted": [
                 {"copies": 1, "precon": "Alastors", "release_date": "2005-02-21"}
             ],
+            "Thirtieth Anniversary": [{"copies": 1, "release_date": "2024-07-20"}],
         },
-        "ordered_sets": ["Gehenna", "Kindred Most Wanted", "Keepers of Tradition"],
+        "ordered_sets": [
+            "Gehenna",
+            "Kindred Most Wanted",
+            "Keepers of Tradition",
+            "Thirtieth Anniversary",
+        ],
         "scans": {
             "Gehenna": "https://static.krcg.org/card/set/gehenna/alastor.jpg",
             "Keepers of Tradition": (
@@ -36,6 +43,9 @@ def test(client):
             ),
             "Kindred Most Wanted": (
                 "https://static.krcg.org/card/set/kindred-most-wanted/alastor.jpg"
+            ),
+            "Thirtieth Anniversary": (
+                "https://static.krcg.org/card/set/thirtieth-anniversary/alastor.jpg"
             ),
         },
         "artists": ["Monte Moore"],
@@ -95,6 +105,7 @@ def test_i18n(client):
         ),
         "id": 100029,
         "url": "https://static.krcg.org/card/aidfrombats.jpg",
+        "legality": "1994-08-16",
         "name": "Aid from Bats",
         "printed_name": "Aid from Bats",
         "_name": "Aid from Bats",
@@ -217,6 +228,7 @@ def test_sets(client):
         ),
         "id": 101110,
         "url": "https://static.krcg.org/card/linethe.jpg",
+        "legality": "2017-05-11",
         "name": "The Line",
         "printed_name": "The Line",
         "name_variants": ["Line, The"],
@@ -310,6 +322,7 @@ def test_sets(client):
         "group": "5",
         "id": 200385,
         "url": "https://static.krcg.org/card/dracontheg5.jpg",
+        "legality": "2015-02-16",
         "name": "The Dracon (G5)",
         "printed_name": "The Dracon",
         "name_variants": [
@@ -364,6 +377,7 @@ def test_sets(client):
         "combo": True,
         "id": 101325,
         "url": "https://static.krcg.org/card/ophidiangaze.jpg",
+        "legality": "2014-10-04",
         "name": "Ophidian Gaze",
         "printed_name": "Ophidian Gaze",
         "_name": "Ophidian Gaze",
@@ -434,6 +448,7 @@ def test_artists(client):
         "group": "3",
         "id": 201397,
         "url": "https://static.krcg.org/card/tylerg3.jpg",
+        "legality": "2002-08-19",
         "name": "Tyler (G3)",
         "printed_name": "Tyler",
         "name_variants": ["Tyler"],
@@ -474,6 +489,7 @@ def test_artists(client):
         ),
         "id": 100106,
         "url": "https://static.krcg.org/card/ashurtablets.jpg",
+        "legality": "2008-11-19",
         "name": "Ashur Tablets",
         "printed_name": "Ashur Tablets",
         "_name": "Ashur Tablets",

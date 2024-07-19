@@ -1,8 +1,9 @@
 2.22 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added `legality` date to cards
+- 30th anniversary release
+- Bump KRCG (3.12)
 
 2.21 (2024-02-08)
 -----------------

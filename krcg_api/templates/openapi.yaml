@@ -77,6 +77,12 @@ components:
         card_text:
           type: string
           minLength: 1
+        legality:
+          type: string
+          format: date
+          description: Date at which the card became legal to play
+          minLength: 10
+          maxLength: 10
         sets:
           description: Sets the card has been edited in (keys are set name in english)
           type: object
