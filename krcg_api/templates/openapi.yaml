@@ -362,6 +362,7 @@ components:
           Hanging upside down like rows of disgusting old rags
           And grinning in their sleep. Bats!
           D.H. Lawrence, "Bat"
+        legality: "1994-08-16"
         sets:
           Anarchs: [{ precon: Gangrel, copies: 2 }]
           Camarilla Edition:
@@ -499,11 +500,11 @@ components:
                 - { count: 1, name: Scourge of the Enochians, id: 101697 }
     first-blood-tremere:
       value:
-        id: "4d3aa426-70da-44b7-8cb7-92377a1a0dbd"
+        id: "b798e734f"
         name: "First Blood: Tremere"
         comments: "https://blackchantry.com/How%20to%20play%20the%20First%20Blood%20Tremere%20deck.pdf"
         author: BCP
-        date: "2020-12-13"
+        date: "2024-07-19"
         crypt:
           count: 12
           cards:
