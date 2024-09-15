@@ -1,4 +1,4 @@
-3.1 (unreleased)
+3.1 (2024-09-15)
 ----------------
 
 - Removed deprecated "submit ruling" endpoint. Direct users to https://rulings.krcg.org from now on.
