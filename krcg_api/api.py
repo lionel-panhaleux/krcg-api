@@ -3,12 +3,9 @@ import babel
 import flask
 import importlib.metadata
 import io
-import json
 import logging
 import math
-import os
 import random
-import requests
 import urllib.parse
 import urllib.request
 
@@ -304,50 +301,6 @@ def card_search():
 def card_search_dimensions():
     """Card search dimensions."""
     return flask.jsonify(vtes.VTES.search_dimensions)
-
-
-@base.route("/submit-ruling/<card>", methods=["POST"])
-def submit_ruling(card):
-    """Submit a new ruling proposal.
-
-    This posts an issue on the project Github repository.
-    """
-    try:
-        card = int(card)
-    except ValueError:
-        pass
-    try:
-        card = vtes.VTES[card].name
-    except KeyError:
-        return "Card not found", 404
-    data = flask.request.get_json(silent=True) or {}
-    text = data.get("text")
-    link = data.get("link")
-    if not (text and link):
-        return "Invalid ruling data", 400
-    if urllib.parse.urlparse(link).hostname not in {
-        "boardgamegeek.com",
-        "www.boardgamegeek.com",
-        "groups.google.com",
-        "www.vekn.net",
-    }:
-        return "Invalid ruling link", 400
-    tryout = requests.get(link, stream=True)
-    if not tryout.ok:
-        return "Invalid ruling link", tryout.status_code
-
-    url = "https://api.github.com/repos/lionel-panhaleux/krcg/issues"
-    issue = {
-        "title": card,
-        "body": f"- **text:** {text}\n- **link:** {link}",
-    }
-    session = requests.session()
-    session.auth = (os.getenv("GITHUB_USERNAME"), os.getenv("GITHUB_TOKEN"))
-    response = session.post(url, json.dumps(issue))
-    if response.ok:
-        return flask.jsonify(response.json()), response.status_code
-    else:
-        return response.text, response.status_code
 
 
 def _negotiate_locale(preferred):
