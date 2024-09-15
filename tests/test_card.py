@@ -49,33 +49,54 @@ def test(client):
             ),
         },
         "artists": ["Monte Moore"],
-        "rulings": {
-            "links": {
-                "[LSJ 20040518]": (
-                    "https://groups.google.com/d/msg/rec.games.trading-cards.jyhad/"
-                    "4emymfUPwAM/B2SCC7L6kuMJ"
-                ),
-                "[ANK 20200901]": (
-                    "http://www.vekn.net/forum/rules-questions/"
-                    "78830-alastor-and-ankara-citadel#100653"
-                ),
-                "[LSJ 20040518-2]": (
-                    "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
-                    "c/4emymfUPwAM/m/JF_o7OOoCbkJ"
-                ),
+        "rulings": [
+            {
+                "references": [
+                    {
+                        "label": "LSJ 20040518",
+                        "text": "[LSJ 20040518]",
+                        "url": (
+                            "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
+                            "c/4emymfUPwAM/m/B2SCC7L6kuMJ"
+                        ),
+                    },
+                ],
+                "text": "If the weapon retrieved costs blood, that cost is paid by the "
+                "vampire chosen by the terms. [LSJ 20040518]",
             },
-            "text": [
-                (
-                    "If the weapon retrieved costs blood, that cost is paid "
-                    "by the vampire chosen by the vote. [LSJ 20040518]"
-                ),
-                (
-                    "Requirements do not apply. If a discipline is required "
-                    "(eg. {Inscription}) and the Alastor vampire does not have it, the "
-                    "inferior version is used. [ANK 20200901] [LSJ 20040518-2]"
-                ),
-            ],
-        },
+            {
+                "cards": [
+                    {
+                        "id": 100989,
+                        "name": "Inscription",
+                        "text": "{Inscription}",
+                        "usual_name": "Inscription",
+                        "vekn_name": "Inscription",
+                    },
+                ],
+                "references": [
+                    {
+                        "label": "ANK 20200901",
+                        "text": "[ANK 20200901]",
+                        "url": (
+                            "https://www.vekn.net/forum/rules-questions/"
+                            "78830-alastor-and-ankara-citadel#100653"
+                        ),
+                    },
+                    {
+                        "label": "LSJ 20040518-2",
+                        "text": "[LSJ 20040518-2]",
+                        "url": (
+                            "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
+                            "c/4emymfUPwAM/m/JF_o7OOoCbkJ"
+                        ),
+                    },
+                ],
+                "text": "Requirements do not apply. If a discipline is required (eg. "
+                "{Inscription}) and the Alastor vampire does not have it, the "
+                "inferior version is used. [ANK 20200901] [LSJ 20040518-2]",
+            },
+        ],
     }
     id_response = client.get("/card/100038")
     assert id_response.status_code == 200
@@ -110,20 +131,30 @@ def test_i18n(client):
         "printed_name": "Aid from Bats",
         "_name": "Aid from Bats",
         "_set": "Jyhad:C, VTES:C, CE:C/PN3, Anarchs:PG2, Third:C, KoT:C, FB:PN6",
-        "rulings": {
-            "text": [
-                (
+        "rulings": [
+            {
+                "references": [
+                    {
+                        "label": "TOM 19960521",
+                        "text": "[TOM 19960521]",
+                        "url": (
+                            "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
+                            "c/poYD3n0TKGo/m/xvU5HW7lBxMJ"
+                        ),
+                    },
+                ],
+                "symbols": [
+                    {
+                        "symbol": "I",
+                        "text": "[ANI]",
+                    },
+                ],
+                "text": (
                     "[ANI] The press can only be used during the current round. "
                     "[TOM 19960521]"
-                )
-            ],
-            "links": {
-                "[TOM 19960521]": (
-                    "https://groups.google.com/d/msg/rec.games.trading-cards.jyhad/"
-                    "poYD3n0TKGo/xvU5HW7lBxMJ"
-                )
+                ),
             },
-        },
+        ],
         "sets": {
             "Anarchs": [
                 {"copies": 2, "precon": "Gangrel", "release_date": "2003-05-19"}
@@ -234,53 +265,100 @@ def test_sets(client):
         "name_variants": ["Line, The"],
         "_name": "Line, The",
         "_set": "Anthology:LARP1, SoB:1",
-        "rulings": {
-            "text": [
-                (
+        "rulings": [
+            {
+                "references": [
+                    {
+                        "label": "ANK 20170605",
+                        "text": "[ANK 20170605]",
+                        "url": (
+                            "https://www.vekn.net/forum/rules-questions/"
+                            "75862-timing-of-the-line#82113"
+                        ),
+                    },
+                    {
+                        "label": "ANK 20230620",
+                        "text": "[ANK 20230620]",
+                        "url": (
+                            "https://www.vekn.net/forum/rules-questions/"
+                            "80612-when-to-use-shard-the-line-when-action-becoems-to"
+                            "-expensive-after-announcement#108409"
+                        ),
+                    },
+                ],
+                "text": (
                     "Can be locked to reduce the cost at any point before resolution, "
                     "from when the action is announced to just before the cost is "
                     "paid. [ANK 20170605] [ANK 20230620]"
                 ),
-                (
+            },
+            {
+                "references": [
+                    {
+                        "label": "ANK 20181007",
+                        "text": "[ANK 20181007]",
+                        "url": (
+                            "https://www.vekn.net/forum/rules-questions/"
+                            "77057-quick-question-on-the-line#91020"
+                        ),
+                    },
+                ],
+                "text": (
                     "Can reduce the cost in blood (not in pool) of any action (ally, "
                     "retainer, equipment, political). [ANK 20181007]"
                 ),
-                (
+            },
+            {
+                "cards": [
+                    {
+                        "id": 101342,
+                        "name": "Pack Alpha",
+                        "text": "{Pack Alpha}",
+                        "usual_name": "Pack Alpha",
+                        "vekn_name": "Pack Alpha",
+                    },
+                ],
+                "references": [
+                    {
+                        "label": "RTR 20070707",
+                        "text": "[RTR 20070707]",
+                        "url": (
+                            "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
+                            "c/vSOt2c1uRzQ/m/MsRAv47Cd4YJ"
+                        ),
+                    },
+                    {
+                        "label": "ANK 20230824",
+                        "text": "[ANK 20230824]",
+                        "url": (
+                            "https://www.vekn.net/forum/news-and-announcements/"
+                            "80782-the-line-pack-alpha?start=6#109157"
+                        ),
+                    },
+                ],
+                "text": (
                     "Can reduce the cost of an action card even if it is not played as "
-                    "an action (ie. a retainer played with {Pack Alpha}). "
-                    "[RTR 20070707] [ANK 20230824]"
-                ),
-                'Cannot be used by an ally acting "as a vampire". [ANK 20200605]',
-            ],
-            "links": {
-                "[ANK 20170605]": (
-                    "http://www.vekn.net/forum/rules-questions/"
-                    "75862-timing-of-the-line#82113"
-                ),
-                "[ANK 20181007]": (
-                    "http://www.vekn.net/forum/rules-questions/"
-                    "77057-quick-question-on-the-line#91020"
-                ),
-                "[ANK 20200605]": (
-                    "http://www.vekn.net/forum/rules-questions/"
-                    "78671-can-an-ally-with-play-as-a-vampire-"
-                    "use-the-line-to-reduce-action-costs#100015"
-                ),
-                "[ANK 20230620]": (
-                    "https://www.vekn.net/forum/rules-questions/"
-                    "80612-when-to-use-shard-the-line-when-action-becoems-"
-                    "to-expensive-after-announcement#108409"
-                ),
-                "[ANK 20230824]": (
-                    "https://www.vekn.net/forum/news-and-announcements/"
-                    "80782-the-line-pack-alpha?start=6#109157"
-                ),
-                "[RTR 20070707]": (
-                    "https://groups.google.com/d/msg/rec.games.trading-cards.jyhad/"
-                    "vSOt2c1uRzQ/MsRAv47Cd4YJ"
+                    "an action (ie. a retainer played with {Pack Alpha}). [RTR "
+                    "20070707] [ANK 20230824]"
                 ),
             },
-        },
+            {
+                "references": [
+                    {
+                        "label": "ANK 20200605",
+                        "text": "[ANK 20200605]",
+                        "url": (
+                            "https://www.vekn.net/forum/rules-questions/"
+                            "78671-can-an-ally-with-play-as-a-vampire-use-the-line-"
+                            "to-reduce-action-costs#100015"
+                        ),
+                    },
+                ],
+                "text": (
+                    'Cannot be used by an ally acting "as a vampire". [ANK 20200605]'
+                ),
+            },
+        ],
         "sets": {
             "Anthology": [
                 {
@@ -382,38 +460,233 @@ def test_sets(client):
         "printed_name": "Ophidian Gaze",
         "_name": "Ophidian Gaze",
         "_set": "TU:C/B4",
-        "rulings": {
-            "text": [
-                (
-                    "[SER][PRE] Can be used to cancel an action modifier player "
-                    '"after the action/referendum is successful" (eg. {Voter '
-                    "Captivation} or {Freak Drive}). [ANK 20180909]"
-                ),
-                (
-                    '[SER][PRE] Cards are not replaced during the "as '
-                    'played" window. [LSJ 20061013]'
-                ),
-                (
-                    '[SER][PRE] If the canceled card had a "Do Not Replace '
-                    'Until" clause on it, that clause is canceled as well '
-                    "and the card is replaced normally. [LSJ 20011023]"
-                ),
-            ],
-            "links": {
-                "[ANK 20180909]": (
-                    "http://www.vekn.net/forum/rules-questions/"
-                    "76987-ophidian-gaze-and-post-referendum-action-modifiers#90501"
-                ),
-                "[LSJ 20011023]": (
-                    "https://groups.google.com/d/msg/rec.games.trading-cards.jyhad/"
-                    "2GOLIrXAF8M/P4T3Dj6UNL0J"
-                ),
-                "[LSJ 20061013]": (
-                    "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
-                    "c/6w8K3yDtBH0/m/M_SZH9Id8n8J"
+        "rulings": [
+            {
+                "cards": [
+                    {
+                        "id": 102131,
+                        "name": "Voter Captivation",
+                        "text": "{Voter Captivation}",
+                        "usual_name": "Voter Captivation",
+                        "vekn_name": "Voter Captivation",
+                    },
+                    {
+                        "id": 100788,
+                        "name": "Freak Drive",
+                        "text": "{Freak Drive}",
+                        "usual_name": "Freak Drive",
+                        "vekn_name": "Freak Drive",
+                    },
+                ],
+                "references": [
+                    {
+                        "label": "ANK 20180909",
+                        "text": "[ANK 20180909]",
+                        "url": (
+                            "https://www.vekn.net/forum/rules-questions/"
+                            "76987-ophidian-gaze-and-post-referendum-action-"
+                            "modifiers#90501"
+                        ),
+                    },
+                ],
+                "symbols": [
+                    {
+                        "symbol": "S",
+                        "text": "[SER]",
+                    },
+                    {
+                        "symbol": "R",
+                        "text": "[PRE]",
+                    },
+                ],
+                "text": (
+                    '[SER][PRE] Can be used to cancel an action modifier player "after '
+                    'the action/referendum is successful" (eg. {Voter Captivation} or '
+                    "{Freak Drive}). [ANK 20180909]"
                 ),
             },
-        },
+            {
+                "cards": [
+                    {
+                        "id": 100135,
+                        "name": "The Barrens",
+                        "text": "{The Barrens}",
+                        "usual_name": "The Barrens",
+                        "vekn_name": "Barrens, The",
+                    },
+                    {
+                        "id": 100588,
+                        "name": "Dreams of the Sphinx",
+                        "text": "{Dreams of the Sphinx}",
+                        "usual_name": "Dreams of the Sphinx",
+                        "vekn_name": "Dreams of the Sphinx",
+                    },
+                ],
+                "group": "Cancel",
+                "references": [
+                    {
+                        "label": "LSJ 20061207",
+                        "text": "[LSJ 20061207]",
+                        "url": (
+                            "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
+                            "c/nqcrJlhg4Ng/m/qQu7p-LLhfAJ"
+                        ),
+                    },
+                    {
+                        "label": "RBK playing-a-card",
+                        "text": "[RBK playing-a-card]",
+                        "url": "https://www.vekn.net/rulebook#playing-a-card",
+                    },
+                    {
+                        "label": "LSJ 20061013",
+                        "text": "[LSJ 20061013]",
+                        "url": (
+                            "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
+                            "c/6w8K3yDtBH0/m/M_SZH9Id8n8J"
+                        ),
+                    },
+                ],
+                "symbols": [
+                    {
+                        "symbol": "R",
+                        "text": "[PRE]",
+                    },
+                    {
+                        "symbol": "S",
+                        "text": "[SER]",
+                    },
+                ],
+                "text": (
+                    '[PRE][SER]Cards are not replaced during the "as played" window. '
+                    "The cancelation must be played immediately: no other effects can "
+                    "be used, except for wakes (eg. neither\xa0{The Barrens}\xa0nor "
+                    "{Dreams of the Sphinx}\xa0can be used). [LSJ 20061207] [RBK "
+                    "playing-a-card] [LSJ 20061013]"
+                ),
+            },
+            {
+                "cards": [
+                    {
+                        "id": 101869,
+                        "name": "Steely Tenacity",
+                        "text": "{Steely Tenacity}",
+                        "usual_name": "Steely Tenacity",
+                        "vekn_name": "Steely Tenacity",
+                    },
+                ],
+                "group": "Cancel",
+                "references": [
+                    {
+                        "label": "LSJ 20080630",
+                        "text": "[LSJ 20080630]",
+                        "url": (
+                            "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
+                            "c/nvuXBpEaKAA/m/ymiC3yAQVOwJ"
+                        ),
+                    },
+                    {
+                        "label": "LSJ 20011023",
+                        "text": "[LSJ 20011023]",
+                        "url": (
+                            "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
+                            "c/2GOLIrXAF8M/m/P4T3Dj6UNL0J"
+                        ),
+                    },
+                ],
+                "symbols": [
+                    {
+                        "symbol": "R",
+                        "text": "[PRE]",
+                    },
+                    {
+                        "symbol": "S",
+                        "text": "[SER]",
+                    },
+                ],
+                "text": '[PRE][SER]If the canceled card had a "do not replace until" '
+                "clause (or alternate replacement like {Steely Tenacity}), that "
+                "clause is canceled as well and the card is replaced normally. "
+                "[LSJ 20080630] [LSJ 20011023]",
+            },
+            {
+                "cards": [
+                    {
+                        "id": 100959,
+                        "name": "Immortal Grapple",
+                        "text": "{Immortal Grapple}",
+                        "usual_name": "Immortal Grapple",
+                        "vekn_name": "Immortal Grapple",
+                    },
+                ],
+                "group": "Cancel",
+                "references": [
+                    {
+                        "label": "ANK 20190104",
+                        "text": "[ANK 20190104]",
+                        "url": (
+                            "https://www.vekn.net/forum/rules-questions/"
+                            "77254-canceling-cards-and-bold-text?start=6#92640"
+                        ),
+                    },
+                    {
+                        "label": "RBK cancel-a-card",
+                        "text": "[RBK cancel-a-card]",
+                        "url": "https://www.vekn.net/rulebook#cancel-a-card",
+                    },
+                    {
+                        "label": "LSJ 19980212",
+                        "text": "[LSJ 19980212]",
+                        "url": (
+                            "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
+                            "c/fLFLlXZXHqA/m/ggjw8aGjdRoJ"
+                        ),
+                    },
+                ],
+                "symbols": [
+                    {
+                        "symbol": "R",
+                        "text": "[PRE]",
+                    },
+                    {
+                        "symbol": "S",
+                        "text": "[SER]",
+                    },
+                ],
+                "text": (
+                    "[PRE][SER]The canceled card has still been played. The same "
+                    "reaction or modifier cannot be played again by the same minion. "
+                    "Any card which text prohibits to play more than once cannot be "
+                    "played again (eg. {Immortal Grapple}). [ANK 20190104] [RBK "
+                    "cancel-a-card] [LSJ 19980212]"
+                ),
+            },
+            {
+                "group": "Cancel",
+                "references": [
+                    {
+                        "label": "LSJ 20030224",
+                        "text": "[LSJ 20030224]",
+                        "url": (
+                            "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
+                            "c/67261v339Ds/m/um8V7VVp2Y4J"
+                        ),
+                    },
+                ],
+                "symbols": [
+                    {
+                        "symbol": "R",
+                        "text": "[PRE]",
+                    },
+                    {
+                        "symbol": "S",
+                        "text": "[SER]",
+                    },
+                ],
+                "text": "[PRE][SER]If a limited effect is canceled (bleed, additional "
+                "strike), then the limit is not triggered and another limited "
+                "effect can be used. [LSJ 20030224]",
+            },
+        ],
         "sets": {
             "The Unaligned": [
                 {"rarity": "Common", "release_date": "2014-10-04"},
@@ -494,28 +767,50 @@ def test_artists(client):
         "printed_name": "Ashur Tablets",
         "_name": "Ashur Tablets",
         "_set": "KoT:C, Anthology:3",
-        "rulings": {
-            "text": [
-                "Can be played with no card in the ash heap. [PIB 20130119]",
-                "Is played without announcing targets: they are only chosen once "
-                "the third copy get into play. [LSJ 20091030]",
-                "You must show which one goes in hand. [LSJ 20081129]",
-            ],
-            "links": {
-                "[PIB 20130119]": (
-                    "http://www.vekn.net/forum/rules-questions/"
-                    "44197-ashur-tablets-for-zero#44229"
-                ),
-                "[LSJ 20091030]": (
-                    "https://groups.google.com/g/rec.games.trading-cards.jyhad"
-                    "/c/ZKuCyTayYbc/m/5nMjLpX4DuMJ"
-                ),
-                "[LSJ 20081129]": (
-                    "https://groups.google.com/g/rec.games.trading-cards.jyhad"
-                    "/c/7fMPCYIPrag/m/_gGD-1da2N8J"
+        "rulings": [
+            {
+                "references": [
+                    {
+                        "label": "PIB 20130119",
+                        "text": "[PIB 20130119]",
+                        "url": (
+                            "https://www.vekn.net/forum/rules-questions/"
+                            "44197-ashur-tablets-for-zero#44229"
+                        ),
+                    },
+                ],
+                "text": "Can be played with no card in the ash heap. [PIB 20130119]",
+            },
+            {
+                "references": [
+                    {
+                        "label": "LSJ 20091030",
+                        "text": "[LSJ 20091030]",
+                        "url": (
+                            "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
+                            "c/ZKuCyTayYbc/m/5nMjLpX4DuMJ"
+                        ),
+                    },
+                ],
+                "text": (
+                    "Is played without announcing targets: they are only chosen once "
+                    "the third copy get into play. [LSJ 20091030]"
                 ),
             },
-        },
+            {
+                "references": [
+                    {
+                        "label": "LSJ 20081129",
+                        "text": "[LSJ 20081129]",
+                        "url": (
+                            "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
+                            "c/7fMPCYIPrag/m/_gGD-1da2N8J"
+                        ),
+                    },
+                ],
+                "text": "You must show which one goes in hand. [LSJ 20081129]",
+            },
+        ],
         "sets": {
             "Anthology": [{"copies": 3, "release_date": "2017-05-11"}],
             "Keepers of Tradition": [

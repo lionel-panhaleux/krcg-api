@@ -468,6 +468,7 @@ def test_dimensions(client):
             "DAI",
             "DEM",
             "DOM",
+            "FLIGHT",
             "FOR",
             "MEL",
             "MYT",
@@ -499,7 +500,6 @@ def test_dimensions(client):
             "def",
             "dem",
             "dom",
-            "flight",
             "for",
             "inn",
             "jud",
@@ -942,30 +942,66 @@ def test_full(client):
             "name": "Sennadurek (G4)",
             "name_variants": ["Sennadurek"],
             "printed_name": "Sennadurek",
-            "rulings": {
-                "text": [
-                    "Black Hand is not a title, it is a trait unrelated to any sect. "
-                    "The trait is not lost if the vampire changes sect. [LSJ "
+            "rulings": [
+                {
+                    "group": "Black Hand",
+                    "references": [
+                        {
+                            "label": "LSJ 20070322",
+                            "text": "[LSJ 20070322]",
+                            "url": (
+                                "https://groups.google.com/g/"
+                                "rec.games.trading-cards.jyhad/c/Ww-4rYJxi4w/m/"
+                                "P3QchWVq2o4J"
+                            ),
+                        },
+                        {
+                            "label": "ANK 20180807",
+                            "text": "[ANK 20180807]",
+                            "url": (
+                                "https://www.vekn.net/forum/rules-questions/"
+                                "76905-going-anarch-as-black-hand#89735"
+                            ),
+                        },
+                    ],
+                    "text": "Black Hand is not a title, it is a trait unrelated to any "
+                    "sect. The trait is not lost if the vampire changes sect. [LSJ "
                     "20070322] [ANK 20180807]",
-                    "The scarce penalty considers the apparent clan while "
+                },
+                {
+                    "cards": [
+                        {
+                            "id": 100353,
+                            "name": "Clan Impersonation",
+                            "text": "{Clan Impersonation}",
+                            "usual_name": "Clan Impersonation",
+                            "vekn_name": "Clan Impersonation",
+                        },
+                        {
+                            "id": 100131,
+                            "name": "Banishment",
+                            "text": "{Banishment}",
+                            "usual_name": "Banishment",
+                            "vekn_name": "Banishment",
+                        },
+                    ],
+                    "group": "Scarce",
+                    "references": [
+                        {
+                            "label": "LSJ 20011015",
+                            "text": "[LSJ 20011015]",
+                            "url": (
+                                "https://groups.google.com/g/"
+                                "rec.games.trading-cards.jyhad/c/ZXW0ScxTsBA/m/"
+                                "OvbMemV2oXUJ"
+                            ),
+                        },
+                    ],
+                    "text": "The scarce penalty considers the apparent clan while "
                     "controlled (in case of {Clan Impersonation} and "
                     "{Banishment}). [LSJ 20011015]",
-                ],
-                "links": {
-                    "[LSJ 20070322]": (
-                        "https://groups.google.com/d/msg/rec.games.trading-cards.jyhad/"
-                        "Ww-4rYJxi4w/P3QchWVq2o4J"
-                    ),
-                    "[LSJ 20011015]": (
-                        "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
-                        "c/ZXW0ScxTsBA/m/OvbMemV2oXUJ"
-                    ),
-                    "[ANK 20180807]": (
-                        "http://www.vekn.net/forum/rules-questions/"
-                        "76905-going-anarch-as-black-hand#89735"
-                    ),
                 },
-            },
+            ],
             "sets": {
                 "Legacies of Blood": [
                     {"rarity": "Uncommon", "release_date": "2005-11-14"}

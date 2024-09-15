@@ -1,8 +1,8 @@
-2.23 (unreleased)
+3.0 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- BREAKING CHANGE: New rulings format. Now an array of objects.
+- FLIGHT is now always upper-case
 
 2.22 (2024-07-20)
 -----------------

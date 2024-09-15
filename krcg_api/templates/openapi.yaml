@@ -44,7 +44,7 @@ components:
           type: string
           minLength: 1
         _name:
-          description: Card name as listed in VEKN CSV files ("The" as prefix, not unique)
+          description: Card name as listed in VEKN CSV files ("The" as suffix, not unique)
           type: string
           minLength: 1
         _set:
@@ -236,25 +236,86 @@ components:
           default: false
         rulings:
           description: Rulings
-          type: object
-          properties:
-            text:
-              type: array
-              items:
+          type: array
+          minLength: 0
+          items:
+            type: object
+            required: ["text", "references"]
+            properties:
+              text: 
+                type: string
+                minLength: 1
+                description: Actual ruling text
+              group:
+                type: string
+                minLength: 1
                 description: |
-                  Ruling text, including ruling reference (in brackets).
-                  Inside rulings text, other card names are between braces.
-                  Ruling references are between brackets, at the end of the text.
-                type: string
+                  Only present if the ruling is applied to a group of cards.
+                  In that case, it is the name of the group.
+              references:
+                type: array
+                minLength: 1
+                items:
+                  type: object
+                  required: ["text", "label", "url"]
+                  properties:
+                    text:
+                      type: string
+                      minLength: 1
+                      description: The substring in ruling.text representing this reference
+                    label: 
+                      type: string
+                      minLength: 1
+                      description: This reference label
+                    url:
+                      type: string
+                      format: uri
+                      minLength: 1
+                      description: The reference URL
+              symbols:
+                type: array
                 minLength: 0
-            links:
-              description: |
-                Link to official rulings by Rules Directors.
-                Keys are the ruling reference (in brackets)
-              type: object
-              additionalProperties:
-                type: string
-                format: uri
+                items:
+                  type: object
+                  required: ["text", "symbol"]
+                  properties:
+                    text:
+                      type: string
+                      minLength: 1
+                      description: |
+                        The substring in ruling.text representing this symbol.
+                        There can be multiple occurences of this substring in the ruling text.
+                    symbol: 
+                      type: string
+                      minLength: 1
+                      description: |
+                        The matching symbol to use in the Ankha font
+                        https://static.krcg.org/web/ankha2.otf
+              cards:
+                type: array
+                minLength: 0
+                items:
+                  type: object
+                  required: ["text", "id", "name", "usual_name", "vekn_name"]
+                  properties:
+                    text:
+                      type: string
+                      minLength: 1
+                      description: |
+                        The substring in ruling.text representing this card.
+                        There can be multiple occurences of this substring in the ruling text.
+                    id: 
+                      type: integer
+                      description: The card ID
+                    name:
+                      type: string
+                      description: The card name
+                    usual_name:
+                      type: string
+                      description: The card usual name
+                    vekn_name:
+                      type: string
+                      description: The card VEKN name (in VEKN CSVs)
         _i18n:
           description: Card translations, keys are ISO 639-1 language codes
           type: object
