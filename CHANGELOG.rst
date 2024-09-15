@@ -1,5 +1,5 @@
-3.0 (unreleased)
------------------
+3.0 (2024-09-15)
+----------------
 
 - BREAKING CHANGE: New rulings format. Now an array of objects.
 - FLIGHT is now always upper-case
