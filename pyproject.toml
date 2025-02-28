@@ -34,7 +34,7 @@ classifiers = [
     "Topic :: Games/Entertainment",
     "Topic :: Internet :: WWW/HTTP :: WSGI :: Server",
 ]
-dependencies = ["arrow", "babel", "flask", "krcg>=4.0", "requests"]
+dependencies = ["arrow", "babel", "flask", "krcg>=4.6", "requests"]
 
 [project.optional-dependencies]
 dev = [

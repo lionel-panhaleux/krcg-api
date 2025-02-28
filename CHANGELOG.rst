@@ -1,7 +1,7 @@
 3.2 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Bump krcg (V5 Hecata)
 
 
 3.1 (2024-09-15)
