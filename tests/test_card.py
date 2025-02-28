@@ -96,6 +96,17 @@ def test(client):
                 "{Inscription}) and the Alastor vampire does not have it, the "
                 "inferior version is used. [ANK 20200901] [LSJ 20040518-2]",
             },
+            {
+                "references": [
+                    {
+                        "label": "LSJ 20050331-2",
+                        "text": "[LSJ 20050331-2]",
+                        "url": "https://groups.google.com/g/rec.games.trading-cards.jyhad/c/NLFFYNok1Ns/m/n7mHhZ_oTRQJ",
+                    },
+                ],
+                "text": "Finding equipment is optional. When no equipment is found, "
+                "alastor is still attached. [LSJ 20050331-2]",
+            },
         ],
     }
     id_response = client.get("/card/100038")
@@ -133,6 +144,7 @@ def test_i18n(client):
         "_set": "Jyhad:C, VTES:C, CE:C/PN3, Anarchs:PG2, Third:C, KoT:C, FB:PN6",
         "rulings": [
             {
+                "group": "Optional press",
                 "references": [
                     {
                         "label": "TOM 19960521",
@@ -150,8 +162,8 @@ def test_i18n(client):
                     },
                 ],
                 "text": (
-                    "[ANI] The press can only be used during the current round. "
-                    "[TOM 19960521]"
+                    "[ANI]The optional press can only be used during the current "
+                    "round. [TOM 19960521]"
                 ),
             },
         ],
@@ -609,15 +621,6 @@ def test_sets(client):
                 "[LSJ 20080630] [LSJ 20011023]",
             },
             {
-                "cards": [
-                    {
-                        "id": 100959,
-                        "name": "Immortal Grapple",
-                        "text": "{Immortal Grapple}",
-                        "usual_name": "Immortal Grapple",
-                        "vekn_name": "Immortal Grapple",
-                    },
-                ],
                 "group": "Cancel",
                 "references": [
                     {
@@ -656,8 +659,7 @@ def test_sets(client):
                     "[PRE][SER]The canceled card has still been played. The same "
                     "reaction or modifier cannot be played again by the same minion. "
                     "Any card which text prohibits to play more than once cannot be "
-                    "played again (eg. {Immortal Grapple}). [ANK 20190104] [RBK "
-                    "cancel-a-card] [LSJ 19980212]"
+                    "played again. [ANK 20190104] [RBK cancel-a-card] [LSJ 19980212]"
                 ),
             },
             {
@@ -685,6 +687,29 @@ def test_sets(client):
                 "text": "[PRE][SER]If a limited effect is canceled (bleed, additional "
                 "strike), then the limit is not triggered and another limited "
                 "effect can be used. [LSJ 20030224]",
+            },
+            {
+                "group": "Cancel as a reaction",
+                "references": [
+                    {
+                        "label": "LSJ 20021011",
+                        "text": "[LSJ 20021011]",
+                        "url": "https://groups.google.com/g/rec.games.trading-cards.jyhad/c/9WWIzxek9Nc/m/PlIwI11sNpkJ",
+                    },
+                ],
+                "symbols": [
+                    {
+                        "symbol": "R",
+                        "text": "[PRE]",
+                    },
+                    {
+                        "symbol": "S",
+                        "text": "[SER]",
+                    },
+                ],
+                "text": "[PRE][SER]Cancelation must be immediate: a wake can be used in "
+                'the "as played" window, but a reaction to "unlock and attempt to '
+                'block" cannot. [LSJ 20021011]',
             },
         ],
         "sets": {
@@ -766,7 +791,7 @@ def test_artists(client):
         "name": "Ashur Tablets",
         "printed_name": "Ashur Tablets",
         "_name": "Ashur Tablets",
-        "_set": "KoT:C, Anthology:3",
+        "_set": "KoT:C, Anthology:3, Promo:202401011",
         "rulings": [
             {
                 "references": [
@@ -816,6 +841,7 @@ def test_artists(client):
             "Keepers of Tradition": [
                 {"rarity": "Common", "release_date": "2008-11-19"}
             ],
+            "Promo": [{"copies": 1, "release_date": "2024-01-01"}],
         },
         "ordered_sets": ["Keepers of Tradition", "Anthology"],
         "scans": {
@@ -823,6 +849,7 @@ def test_artists(client):
             "Keepers of Tradition": (
                 "https://static.krcg.org/card/set/keepers-of-tradition/ashurtablets.jpg"
             ),
+            "Promo": "https://static.krcg.org/card/set/promo/ashurtablets.jpg",
         },
         "types": ["Master"],
     }

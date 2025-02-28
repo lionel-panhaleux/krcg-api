@@ -5,7 +5,7 @@ def test(client):
     # since Anthelios is banned, this number should stay stable
     response = client.post("/twda", json={"cards": ["Anthelios, The Red Star"]})
     assert response.status_code == 200
-    assert len(response.json) == 321
+    assert len(response.json) == 322
     response = client.post("/twda", json={"cards": ["Not a Card"]})
     assert response.status_code == 400
     response = client.post("/twda", json={"cards": ["Madness of the Bard"]})
