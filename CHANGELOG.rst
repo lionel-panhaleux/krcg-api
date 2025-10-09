@@ -1,4 +1,4 @@
-3.3 (unreleased)
+3.3 (2025-10-09)
 ----------------
 
 - Bump krcg (New Blood III)
