@@ -32,15 +32,15 @@ def test(client):
     # match names with special chars
     response = client.get("/complete/rot")
     assert response.status_code == 200
-    assert response.json == ["Rötschreck", "Ulrike Rothbart"]
+    assert response.json == ["Rotting Behemoth", "Rötschreck", "Ulrike Rothbart"]
     # utf8 url parameters are ok
     response = client.get("/complete/röt")
     assert response.status_code == 200
-    assert response.json == ["Rötschreck", "Ulrike Rothbart"]
+    assert response.json == ["Rotting Behemoth", "Rötschreck", "Ulrike Rothbart"]
     # as well as url-encoded ones
     response = client.get("/complete/r%C3%B6t")
     assert response.status_code == 200
-    assert response.json == ["Rötschreck", "Ulrike Rothbart"]
+    assert response.json == ["Rotting Behemoth", "Rötschreck", "Ulrike Rothbart"]
     # match omitted slashes
     response = client.get("/complete/Kpist%20m%204")
     assert response.status_code == 200
