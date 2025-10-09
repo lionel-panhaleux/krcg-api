@@ -108,26 +108,26 @@ def test(client):
                 "alastor is still attached. [LSJ 20050331-2]",
             },
             {
-                'group': 'Put card in play ignoring requirements',
-                'references': [
+                "group": "Put card in play ignoring requirements",
+                "references": [
                     {
-                        'label': 'RBK equip',
-                        'text': '[RBK equip]',
-                        'url': 'https://www.vekn.net/rulebook#equip',
+                        "label": "RBK equip",
+                        "text": "[RBK equip]",
+                        "url": "https://www.vekn.net/rulebook#equip",
                     },
                     {
-                        'label': 'RBK recruit-ally',
-                        'text': '[RBK recruit-ally]',
-                        'url': 'https://www.vekn.net/rulebook#recruit-ally',
+                        "label": "RBK recruit-ally",
+                        "text": "[RBK recruit-ally]",
+                        "url": "https://www.vekn.net/rulebook#recruit-ally",
                     },
                     {
-                        'label': 'RBK employ-retainer',
-                        'text': '[RBK employ-retainer]',
-                        'url': 'https://www.vekn.net/rulebook#employ-retainer',
+                        "label": "RBK employ-retainer",
+                        "text": "[RBK employ-retainer]",
+                        "url": "https://www.vekn.net/rulebook#employ-retainer",
                     },
                 ],
-                'text': 'Cards requiring a discipline come in play at the inferior '
-                'version. [RBK equip] [RBK recruit-ally] [RBK employ-retainer]',
+                "text": "Cards requiring a discipline come in play at the inferior "
+                "version. [RBK equip] [RBK recruit-ally] [RBK employ-retainer]",
             },
         ],
     }
@@ -166,25 +166,25 @@ def test_i18n(client):
         "_set": "Jyhad:C, VTES:C, CE:C/PN3, Anarchs:PG2, Third:C, KoT:C, FB:PN6",
         "rulings": [
             {
-                'cards': [
+                "cards": [
                     {
-                        'id': 100916,
-                        'name': 'Hidden Lurker',
-                        'text': '{Hidden Lurker}',
-                        'usual_name': 'Hidden Lurker',
-                        'vekn_name': 'Hidden Lurker',
+                        "id": 100916,
+                        "name": "Hidden Lurker",
+                        "text": "{Hidden Lurker}",
+                        "usual_name": "Hidden Lurker",
+                        "vekn_name": "Hidden Lurker",
                     },
                 ],
-                'group': 'Strikes with optional maneuver',
-                'references': [
+                "group": "Strikes with optional maneuver",
+                "references": [
                     {
-                        'label': 'LSJ 20021028',
-                        'text': '[LSJ 20021028]',
-                        'url': 'https://groups.google.com/g/rec.games.trading-cards.jyhad/c/g0GGiVIxyis/m/35WA-O9XrroJ',
+                        "label": "LSJ 20021028",
+                        "text": "[LSJ 20021028]",
+                        "url": "https://groups.google.com/g/rec.games.trading-cards.jyhad/c/g0GGiVIxyis/m/35WA-O9XrroJ",
                     },
                 ],
-                'text': 'The optional maneuver cannot be used if the strike cannot be used '
-                '(eg. {Hidden Lurker}). [LSJ 20021028]',
+                "text": "The optional maneuver cannot be used if the strike cannot be used "
+                "(eg. {Hidden Lurker}). [LSJ 20021028]",
             },
             {
                 "group": "Optional press",
@@ -354,95 +354,95 @@ def test_sets(client):
                 ),
             },
             {
-                'cards': [
+                "cards": [
                     {
-                        'id': 100545,
-                        'name': 'Direct Intervention',
-                        'text': '{Direct Intervention}',
-                        'usual_name': 'Direct Intervention',
-                        'vekn_name': 'Direct Intervention',
+                        "id": 100545,
+                        "name": "Direct Intervention",
+                        "text": "{Direct Intervention}",
+                        "usual_name": "Direct Intervention",
+                        "vekn_name": "Direct Intervention",
                     },
                 ],
-                'group': 'Lock to reduce cost',
-                'references': [
+                "group": "Lock to reduce cost",
+                "references": [
                     {
-                        'label': 'ANK 20230620',
-                        'text': '[ANK 20230620]',
-                        'url': 'https://www.vekn.net/forum/rules-questions/80612-when-to-use-shard-the-line-when-action-becoems-to-expensive-after-announcement#108409',
+                        "label": "ANK 20230620",
+                        "text": "[ANK 20230620]",
+                        "url": "https://www.vekn.net/forum/rules-questions/80612-when-to-use-shard-the-line-when-action-becoems-to-expensive-after-announcement#108409",
                     },
                     {
-                        'label': 'ANK 20170605',
-                        'text': '[ANK 20170605]',
-                        'url': 'https://www.vekn.net/forum/rules-questions/75862-timing-of-the-line#82113',
+                        "label": "ANK 20170605",
+                        "text": "[ANK 20170605]",
+                        "url": "https://www.vekn.net/forum/rules-questions/75862-timing-of-the-line#82113",
                     },
                     {
-                        'label': 'LSJ 20090705',
-                        'text': '[LSJ 20090705]',
-                        'url': 'https://groups.google.com/g/rec.games.trading-cards.jyhad/c/3Ekxk6uQ_wo/m/Y25g9tS6qSoJ',
+                        "label": "LSJ 20090705",
+                        "text": "[LSJ 20090705]",
+                        "url": "https://groups.google.com/g/rec.games.trading-cards.jyhad/c/3Ekxk6uQ_wo/m/Y25g9tS6qSoJ",
                     },
                 ],
-                'text': 'Can be locked to reduce the cost at any point before resolution, '
-                'from when the action is announced to just before the cost is '
-                'paid. If it is used when announcing an action, and the action is '
-                'cancelled as played (e.g. {Direct Intervention}), it is not '
-                'locked. [ANK 20230620] [ANK 20170605] [LSJ 20090705]',
+                "text": "Can be locked to reduce the cost at any point before resolution, "
+                "from when the action is announced to just before the cost is "
+                "paid. If it is used when announcing an action, and the action is "
+                "cancelled as played (e.g. {Direct Intervention}), it is not "
+                "locked. [ANK 20230620] [ANK 20170605] [LSJ 20090705]",
             },
             {
-                'cards': [
+                "cards": [
                     {
-                        'id': 100392,
-                        'name': 'Concealed Weapon',
-                        'text': '{Concealed Weapon}',
-                        'usual_name': 'Concealed Weapon',
-                        'vekn_name': 'Concealed Weapon',
+                        "id": 100392,
+                        "name": "Concealed Weapon",
+                        "text": "{Concealed Weapon}",
+                        "usual_name": "Concealed Weapon",
+                        "vekn_name": "Concealed Weapon",
                     },
                     {
-                        'id': 101401,
-                        'name': 'Piper',
-                        'text': '{Piper}',
-                        'usual_name': 'Piper',
-                        'vekn_name': 'Piper',
-                    },
-                ],
-                'group': 'Lock to reduce cost',
-                'references': [
-                    {
-                        'label': 'ANK 20230824',
-                        'text': '[ANK 20230824]',
-                        'url': 'https://www.vekn.net/forum/news-and-announcements/80782-the-line-pack-alpha?start=6#109157',
-                    },
-                    {
-                        'label': 'RTR 20070707',
-                        'text': '[RTR 20070707]',
-                        'url': 'https://groups.google.com/g/rec.games.trading-cards.jyhad/c/vSOt2c1uRzQ/m/MsRAv47Cd4YJ',
+                        "id": 101401,
+                        "name": "Piper",
+                        "text": "{Piper}",
+                        "usual_name": "Piper",
+                        "vekn_name": "Piper",
                     },
                 ],
-                'text': 'Can reduce the cost of an action card even if it is not played as '
-                'an action (e.g. a weapon played with {Concealed Weapon} or an '
-                'Ally with {Piper}). [ANK 20230824] [RTR 20070707]',
+                "group": "Lock to reduce cost",
+                "references": [
+                    {
+                        "label": "ANK 20230824",
+                        "text": "[ANK 20230824]",
+                        "url": "https://www.vekn.net/forum/news-and-announcements/80782-the-line-pack-alpha?start=6#109157",
+                    },
+                    {
+                        "label": "RTR 20070707",
+                        "text": "[RTR 20070707]",
+                        "url": "https://groups.google.com/g/rec.games.trading-cards.jyhad/c/vSOt2c1uRzQ/m/MsRAv47Cd4YJ",
+                    },
+                ],
+                "text": "Can reduce the cost of an action card even if it is not played as "
+                "an action (e.g. a weapon played with {Concealed Weapon} or an "
+                "Ally with {Piper}). [ANK 20230824] [RTR 20070707]",
             },
             {
-                'group': 'Lock to reduce cost',
-                'references': [
+                "group": "Lock to reduce cost",
+                "references": [
                     {
-                        'label': 'LSJ 20090705',
-                        'text': '[LSJ 20090705]',
-                        'url': 'https://groups.google.com/g/rec.games.trading-cards.jyhad/c/3Ekxk6uQ_wo/m/Y25g9tS6qSoJ',
+                        "label": "LSJ 20090705",
+                        "text": "[LSJ 20090705]",
+                        "url": "https://groups.google.com/g/rec.games.trading-cards.jyhad/c/3Ekxk6uQ_wo/m/Y25g9tS6qSoJ",
                     },
                     {
-                        'label': 'LSJ 20030917',
-                        'text': '[LSJ 20030917]',
-                        'url': 'https://groups.google.com/g/rec.games.trading-cards.jyhad/c/i3Ugq5AQWFI/m/TxPoXM78hFAJ',
+                        "label": "LSJ 20030917",
+                        "text": "[LSJ 20030917]",
+                        "url": "https://groups.google.com/g/rec.games.trading-cards.jyhad/c/i3Ugq5AQWFI/m/TxPoXM78hFAJ",
                     },
                     {
-                        'label': 'ANK 20230621',
-                        'text': '[ANK 20230621]',
-                        'url': 'https://www.vekn.net/forum/rules-questions/80691-procurer-recruiting-another-with-the-shard?start=12#108765',
+                        "label": "ANK 20230621",
+                        "text": "[ANK 20230621]",
+                        "url": "https://www.vekn.net/forum/rules-questions/80691-procurer-recruiting-another-with-the-shard?start=12#108765",
                     },
                 ],
-                'text': 'Allows to play a card that could otherwise not be afforded, in '
-                'which case, it must be locked when the action is announced. [LSJ '
-                '20090705] [LSJ 20030917] [ANK 20230621]',
+                "text": "Allows to play a card that could otherwise not be afforded, in "
+                "which case, it must be locked when the action is announced. [LSJ "
+                "20090705] [LSJ 20030917] [ANK 20230621]",
             },
         ],
         "sets": {
@@ -826,23 +826,23 @@ def test_artists(client):
         "name_variants": ["Tyler"],
         "_name": "Tyler",
         "_set": "CE:V, BSC:X",
-        'rulings': [
+        "rulings": [
             {
-                'group': 'Permanents that increase bleed amount during an action',
-                'references': [
+                "group": "Permanents that increase bleed amount during an action",
+                "references": [
                     {
-                        'label': 'ANK 20231124',
-                        'text': '[ANK 20231124]',
-                        'url': 'https://www.vekn.net/forum/rules-questions/80984-haqim-s-law-retribution-efect-during-combat?start=12#109917',
+                        "label": "ANK 20231124",
+                        "text": "[ANK 20231124]",
+                        "url": "https://www.vekn.net/forum/rules-questions/80984-haqim-s-law-retribution-efect-during-combat?start=12#109917",
                     },
                     {
-                        'label': 'LSJ 19970718',
-                        'text': '[LSJ 19970718]',
-                        'url': 'https://groups.google.com/g/rec.games.trading-cards.jyhad/c/QujjxfQHYzw/m/S4tNTm4gpi8J',
+                        "label": "LSJ 19970718",
+                        "text": "[LSJ 19970718]",
+                        "url": "https://groups.google.com/g/rec.games.trading-cards.jyhad/c/QujjxfQHYzw/m/S4tNTm4gpi8J",
                     },
                 ],
-                'text': 'The ability to increase bleed can only be used during a bleed '
-                'action before Action Resolution. [ANK 20231124] [LSJ 19970718]',
+                "text": "The ability to increase bleed can only be used during a bleed "
+                "action before Action Resolution. [ANK 20231124] [LSJ 19970718]",
             },
         ],
         "sets": {
