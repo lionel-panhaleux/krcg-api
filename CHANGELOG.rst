@@ -1,7 +1,7 @@
 3.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Bump krcg (New Blood III)
 
 
 3.2 (2025-02-28)
