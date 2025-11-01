@@ -92,8 +92,7 @@ def test(client):
         "/amaranth",
         data={
             "url": (
-                "https://amaranth.vtes.co.nz/#deck/"
-                "4d3aa426-70da-44b7-8cb7-92377a1a0dbd"
+                "https://amaranth.vtes.co.nz/#deck/4d3aa426-70da-44b7-8cb7-92377a1a0dbd"
             )
         },
     )
@@ -103,8 +102,7 @@ def test(client):
         "/amaranth",
         json={
             "url": (
-                "https://amaranth.vtes.co.nz/#deck/"
-                "4d3aa426-70da-44b7-8cb7-92377a1a0dbd"
+                "https://amaranth.vtes.co.nz/#deck/4d3aa426-70da-44b7-8cb7-92377a1a0dbd"
             )
         },
     )

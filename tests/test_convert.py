@@ -88,7 +88,7 @@ def test(client):
                         {
                             "count": 1,
                             "id": 100709,
-                            "name": "FBI Special Affairs " "Division",
+                            "name": "FBI Special Affairs Division",
                         },
                         {"count": 1, "id": 100944, "name": "Hunger Moon"},
                         {"count": 1, "id": 101614, "name": "Restricted Vitae"},

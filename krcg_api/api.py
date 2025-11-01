@@ -1,3 +1,5 @@
+from typing import Iterable
+
 import arrow
 import babel
 import flask
@@ -36,8 +38,10 @@ logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO, format="[%(levelname)7s] %(message)s")
 base = flask.Blueprint("base", "krcg")
 
+KRCGResponse = flask.Response | tuple[str, int] | str
 
-def create_app():
+
+def create_app() -> KRCG:
     vtes.VTES.load()
     twda.TWDA.load()
     logger.info("launching app")
@@ -48,13 +52,13 @@ def create_app():
 
 @base.route("/")
 @base.route("/index.html")
-def swagger():
+def swagger() -> KRCGResponse:
     """Swagger doc display."""
     return flask.render_template("index.html")
 
 
 @base.route("/openapi.yaml")
-def openapi():
+def openapi() -> KRCGResponse:
     """OpenAPI schema."""
     return flask.render_template(
         "openapi.yaml",
@@ -63,20 +67,21 @@ def openapi():
 
 
 @base.route("/card/<text>")
-def card(text):
+def card(text: str) -> KRCGResponse:
     """Get a card."""
+    card_id: int | str = text
     try:
-        text = int(text)
+        card_id = int(text)
     except ValueError:
-        text = urllib.parse.unquote(text)
+        card_id = urllib.parse.unquote(text)
     try:
-        return flask.jsonify(vtes.VTES[text].to_json())
+        return flask.jsonify(vtes.VTES[card_id].to_json())
     except KeyError:
         return "Card not found", 404
 
 
 @base.route("/twda", methods=["POST"])
-def deck_search():
+def deck_search() -> KRCGResponse:
     """Get decks containing cards."""
     data = flask.request.get_json(silent=True) or {}
     if data and data.get("player"):
@@ -85,7 +90,7 @@ def deck_search():
             for id_ in twda.TWDA.by_author[krcg_utils.normalize(data["player"])]
         ]
     else:
-        decks = twda.TWDA.values()
+        decks = list(twda.TWDA.values())
     if data and data.get("players_count"):
         decks = [
             d for d in decks if (d.players_count or 0) >= int(data["players_count"])
@@ -106,24 +111,28 @@ def deck_search():
 
 
 @base.route("/twda/list", methods=["POST"])
-def deck_list():
+def deck_list() -> KRCGResponse:
     """Get list of available TWDA decks"""
     data = flask.request.get_json()
     if data and data.get("player"):
-        decks = [
+        decks: list[deck.Deck] = [
             twda.TWDA[id_]
             for id_ in twda.TWDA.by_author[krcg_utils.normalize(data["player"])]
         ]
     else:
-        decks = twda.TWDA.values()
+        decks = list(twda.TWDA.values())
     if data and data.get("players_count"):
         decks = [
             d for d in decks if (d.players_count or 0) >= int(data["players_count"])
         ]
     if data and data.get("date_from"):
-        decks = [d for d in decks if d.date >= arrow.get(data["date_from"]).date()]
+        decks = [
+            d for d in decks if d.date and d.date >= arrow.get(data["date_from"]).date()
+        ]
     if data and data.get("date_to"):
-        decks = [d for d in decks if d.date < arrow.get(data["date_to"]).date()]
+        decks = [
+            d for d in decks if d.date and d.date < arrow.get(data["date_to"]).date()
+        ]
     if data and data.get("cards"):
         try:
             cards = set(vtes.VTES[c] for c in data["cards"])
@@ -144,7 +153,7 @@ def deck_list():
 
 
 @base.route("/twda/<twda_id>")
-def deck_by_id(twda_id):
+def deck_by_id(twda_id: str) -> KRCGResponse:
     """Get a deck given its ID."""
     if not twda_id:
         return "Bad Request", 400
@@ -154,7 +163,7 @@ def deck_by_id(twda_id):
 
 
 @base.route("/twda/random", methods=["POST"])
-def random_deck():
+def random_deck() -> KRCGResponse:
     """Get TWDA decks containing cards."""
     data = flask.request.get_json(silent=True) or {}
     if data and data.get("player"):
@@ -186,11 +195,11 @@ def random_deck():
 
 @base.route("/convert", methods=["POST"])
 @base.route("/convert/<format>", methods=["POST"])
-def convert(format="json"):
+def convert(format: str = "json") -> KRCGResponse:
     raw_data = flask.request.get_data()
     if flask.request.is_json:
         d = deck.Deck()
-        d.from_json(flask.request.get_json(silent=True))
+        d.from_json(flask.request.get_json(silent=True) or {})
     else:
         try:
             text = io.StringIO(raw_data.decode("utf-8"))
@@ -198,42 +207,42 @@ def convert(format="json"):
         except UnicodeDecodeError:
             return "Failed to decode text/plain data in utf-8", 400
     if format in ["twd", "lackey", "jol"]:
-        return d.to_txt(format).encode("utf-8")
+        return d.to_txt(format), 200
     else:
         return flask.jsonify(d.to_json())
 
 
 @base.route("/amaranth", methods=["POST"])
-def amaranth():
-    data = flask.request.form or flask.request.get_json(silent=True)
+def amaranth() -> KRCGResponse:
+    data = flask.request.form or flask.request.get_json(silent=True) or {}
     if "url" not in data:
         return "Missing required parameter: url", 400
     return flask.jsonify(deck.Deck.from_url(data["url"]).to_json())
 
 
 @base.route("/vdb", methods=["POST"])
-def vdb():
-    data = flask.request.form or flask.request.get_json(silent=True)
+def vdb() -> KRCGResponse:
+    data = flask.request.form or flask.request.get_json(silent=True) or {}
     if "url" not in data:
         return "Missing required parameter: url", 400
     return flask.jsonify(deck.Deck.from_url(data["url"]).to_json())
 
 
 @base.route("/candidates", methods=["POST"])
-def candidates():
+def candidates() -> KRCGResponse:
     data = flask.request.get_json(silent=True) or {}
     full = data.pop("mode", "") == "full"
-    decks = twda.TWDA.values()
+    decks: list[deck.Deck] = list(twda.TWDA.values())
     if data and data.get("players_count"):
         decks = [
             d for d in decks if (d.players_count or 0) >= int(data.pop("players_count"))
         ]
     if data and data.get("date_from"):
         date = data.pop("date_from")
-        decks = [d for d in decks if d.date >= arrow.get(date).date()]
+        decks = [d for d in decks if d.date and d.date >= arrow.get(date).date()]
     if data and data.get("date_to"):
         date = data.pop("date_to")
-        decks = [d for d in decks if d.date < arrow.get(date).date()]
+        decks = [d for d in decks if d.date and d.date < arrow.get(date).date()]
     try:
         cards = [vtes.VTES[c] for c in data.pop("cards", [])]
         A = analyzer.Analyzer(decks)
@@ -273,14 +282,14 @@ def candidates():
 
 
 @base.route("/complete/<text>")
-def complete(text):
+def complete(text: str) -> KRCGResponse:
     """Card name completion."""
     lang = _negotiate_locale(flask.request.accept_languages.values())
     return flask.jsonify(vtes.VTES.complete(urllib.parse.unquote(text), lang))
 
 
 @base.route("/card_search", methods=["POST"])
-def card_search():
+def card_search() -> KRCGResponse:
     """Card search."""
     data = flask.request.get_json(silent=True) or {}
     full = data.pop("mode", "") == "full"
@@ -291,19 +300,17 @@ def card_search():
     except ValueError as e:
         return str(e), 400
     if full:
-        result = [c.to_json() for c in result]
-    else:
-        result = [c.usual_name for c in result]
-    return flask.jsonify(result)
+        return flask.jsonify([c.to_json() for c in result])
+    return flask.jsonify([c.usual_name for c in result])
 
 
 @base.route("/card_search", methods=["GET"])
-def card_search_dimensions():
+def card_search_dimensions() -> KRCGResponse:
     """Card search dimensions."""
     return flask.jsonify(vtes.VTES.search_dimensions)
 
 
-def _negotiate_locale(preferred):
+def _negotiate_locale(preferred: Iterable[str]) -> str:
     res = babel.negotiate_locale(
         [x.replace("_", "-") for x in preferred],
         ["en"] + list(config.SUPPORTED_LANGUAGES),
@@ -312,4 +319,4 @@ def _negotiate_locale(preferred):
     # negotiation is case-insensitive but the result uses the case of the first argument
     if res:
         res = res[:2]
-    return res
+    return res or "en"

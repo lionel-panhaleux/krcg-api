@@ -214,7 +214,7 @@ def test_search(client):
                             {
                                 "count": 1,
                                 "id": 100632,
-                                "name": "Elysium: The Palace of " "Versailles",
+                                "name": "Elysium: The Palace of Versailles",
                             },
                             {"count": 2, "id": 100984, "name": "Information Highway"},
                             {"count": 1, "id": 101238, "name": "Monastery of Shadows"},

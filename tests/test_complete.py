@@ -28,6 +28,7 @@ def test(client):
     assert response.json == [
         "The Rumor Mill, Tabloid Newspaper",
         "Darvag, The Butcher of Rus",
+        "Loyiso, The Ruthless",
     ]
     # match names with special chars
     response = client.get("/complete/rot")

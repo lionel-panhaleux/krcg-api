@@ -1,4 +1,4 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# This workflow will install Python dependencies, run tests and lint
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
 name: Validation
@@ -9,27 +9,43 @@ on:
     branches: [master]
 jobs:
   test:
+    name: Test
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.14"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Python
+      - name: Set up Python ${{ matrix.python-version }}
+        id: setup-python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v1
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -e .[dev]
-      - name: Format
+          uv sync --dev
+      - name: Format check
         run: |
-          black --check .
+          uv run ruff format --check .
       - name: Lint
         run: |
-          ruff check
+          uv run ruff check
+      - name: Type check
+        run: |
+          uv run mypy krcg_api
+      - name: Test
+        env:
+          LOCAL_CARDS: 1
+        run: |
+          uv run coverage run -m pytest
+          uv run coverage xml
       - name: OAS
         run: |
-          openapi-spec-validator krcg_api/templates/openapi.yaml
+          uv run openapi-spec-validator krcg_api/templates/openapi.yaml
       - name: Test
         run: |
-          pytest
+          uv run coverage run -m pytest

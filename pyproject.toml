@@ -1,10 +1,11 @@
 [build-system]
-requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "krcg-api"
-version = "3.4.dev0"
+version = "3.3"
+license = "MIT"
 authors = [
     { name = "Lionel Panhaleux", email = "lionel.panhaleux+krcg@gmail.com" },
 ]
@@ -24,7 +25,8 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Natural Language :: English",
@@ -34,16 +36,17 @@ classifiers = [
     "Topic :: Games/Entertainment",
     "Topic :: Internet :: WWW/HTTP :: WSGI :: Server",
 ]
-dependencies = ["arrow", "babel", "flask", "krcg>=4.14", "requests"]
+dependencies = ["arrow", "babel", "flask", "krcg>=4.16", "requests"]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
-    "black",
+    "coverage",
     "ipython",
+    "mypy",
     "openapi-spec-validator",
     "pytest",
     "ruff",
-    "zest.releaser[recommended]",
+    "types-requests",
 ]
 
 [project.scripts]
@@ -53,8 +56,13 @@ run-krcg-api = "krcg_api:main"
 Homepage = "https://api.krcg.org"
 Repository = "https://github.com/lionel-panhaleux/krcg-api"
 
-[tool.setuptools.packages.find]
-include = ["krcg_api*"]
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
-[tool.zest-releaser]
-create-wheel = true
+[tool.mypy]
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true

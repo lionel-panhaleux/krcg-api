@@ -161,9 +161,11 @@ Check the [online documentation](https://api.krcg.org/) for more.
 
 ### Hosting the web API
 
-To host the web API, you can use pip to install it:
+To host the web API, you can use uv or pip to install it:
 
 ```bash
+uv pip install "krcg-api"
+# or
 pip install "krcg-api"
 ```
 
@@ -192,12 +194,12 @@ on how to generate a personal token for the account you want KRCG to use.
 
 #### Development
 
-The development version of KRCG installs uWSGI to serve the API,
-this is the preferred WSGI server for now.
+The development version of KRCG uses [uv](https://github.com/astral-sh/uv) for package management
+and installs uWSGI to serve the API, this is the preferred WSGI server for now.
 
 ```bash
-$ pip install -e ".[dev]"
-$ make serve
+$ uv pip install -e ".[dev]"
+$ just serve
 ...
 uwsgi socket 0 bound to TCP address 127.0.0.1:8000
 ```

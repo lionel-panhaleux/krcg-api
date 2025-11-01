@@ -3,5 +3,5 @@ from . import api
 application = api.create_app()
 
 
-def main():
+def main() -> None:
     application.run()
