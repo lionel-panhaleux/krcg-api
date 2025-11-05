@@ -2323,3 +2323,43 @@ paths:
           description: |
             Malformed body. The VDB URL is expected to begin with
             "https://vdb.im/decks?id="
+  /vtesdecks:
+    post:
+      tags: [Deck]
+      summary: Retrieve a deck from VTES Decks
+      description: |
+        Retrieve a deck from [VTES Decks](https://vtesdecks.com) 
+        using a share URL.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  description: "[VTES Decks](https://vtesdecks.com) share URL"
+                  format: uri
+            example:
+              url: "https://vtesdecks.com/deck/tournament-11320"
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  description: "[VTES Decks](https://vtesdecks.com) share URL"
+                  format: uri
+            example:
+              url: "https://vtesdecks.com/deck/tournament-11320"
+      responses:
+        "200":
+          description: Success, returns the deck
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/deck" }
+              examples: { deck: { $ref: "#/components/examples/first-blood-tremere" } }
+        "400":
+          description: |
+            Malformed body. The VTES Decks URL is expected to begin with
+            "https://vtesdecks.com/deck/"
