@@ -226,12 +226,15 @@ def vdb() -> KRCGResponse:
     if "url" not in data:
         return "Missing required parameter: url", 400
     return flask.jsonify(deck.Deck.from_url(data["url"]).to_json())
+
+
 @base.route("/vtesdecks", methods=["POST"])
 def vtesdecks() -> KRCGResponse:
     data = flask.request.form or flask.request.get_json(silent=True) or {}
     if "url" not in data:
         return "Missing required parameter: url", 400
     return flask.jsonify(deck.Deck.from_url(data["url"]).to_json())
+
 
 @base.route("/candidates", methods=["POST"])
 def candidates() -> KRCGResponse:
