@@ -65,38 +65,6 @@ def test(client):
                 "vampire chosen by the terms. [LSJ 20040518]",
             },
             {
-                "cards": [
-                    {
-                        "id": 100989,
-                        "name": "Inscription",
-                        "text": "{Inscription}",
-                        "usual_name": "Inscription",
-                        "vekn_name": "Inscription",
-                    },
-                ],
-                "references": [
-                    {
-                        "label": "ANK 20200901",
-                        "text": "[ANK 20200901]",
-                        "url": (
-                            "https://www.vekn.net/forum/rules-questions/"
-                            "78830-alastor-and-ankara-citadel#100653"
-                        ),
-                    },
-                    {
-                        "label": "LSJ 20040518-2",
-                        "text": "[LSJ 20040518-2]",
-                        "url": (
-                            "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
-                            "c/4emymfUPwAM/m/JF_o7OOoCbkJ"
-                        ),
-                    },
-                ],
-                "text": "Requirements do not apply. If a discipline is required (eg. "
-                "{Inscription}) and the Alastor vampire does not have it, the "
-                "inferior version is used. [ANK 20200901] [LSJ 20040518-2]",
-            },
-            {
                 "references": [
                     {
                         "label": "LSJ 20050331-2",
@@ -128,6 +96,42 @@ def test(client):
                 ],
                 "text": "Cards requiring a discipline come in play at the inferior "
                 "version. [RBK equip] [RBK recruit-ally] [RBK employ-retainer]",
+            },
+            {
+                "cards": [
+                    {
+                        "id": 101563,
+                        "name": "Reanimated Corpse",
+                        "text": "{Reanimated Corpse}",
+                        "usual_name": "Reanimated Corpse",
+                        "vekn_name": "Reanimated Corpse",
+                    },
+                ],
+                "group": "Put card in play ignoring requirements",
+                "references": [
+                    {
+                        "label": "LSJ 20100204",
+                        "text": "[LSJ 20100204]",
+                        "url": "https://groups.google.com/g/rec.games.trading-cards.jyhad/c/o5Xnzc8G774/m/yovVizGngKsJ",
+                    },
+                    {
+                        "label": "LSJ 20040518-2",
+                        "text": "[LSJ 20040518-2]",
+                        "url": (
+                            "https://groups.google.com/g/rec.games.trading-cards.jyhad/"
+                            "c/4emymfUPwAM/m/JF_o7OOoCbkJ"
+                        ),
+                    },
+                    {
+                        "label": "LSJ 20100302-1",
+                        "text": "[LSJ 20100302-1]",
+                        "url": "https://groups.google.com/g/rec.games.trading-cards.jyhad/c/jmmm0WRUPvs/m/ny5F1OnSUsEJ",
+                    },
+                ],
+                "text": "Requirements do not apply. If the cost is X (e.g. "
+                "{Reanimated Corpse}), X is zero. If the effect puts/moves a minion "
+                "into the ready region, that minion can act this turn. [LSJ 20100204] "
+                "[LSJ 20040518-2] [LSJ 20100302-1]",
             },
         ],
     }
@@ -163,7 +167,7 @@ def test_i18n(client):
         "name": "Aid from Bats",
         "printed_name": "Aid from Bats",
         "_name": "Aid from Bats",
-        "_set": "Jyhad:C, VTES:C, CE:C/PN3, Anarchs:PG2, Third:C, KoT:C, FB:PN6",
+        "_set": "Jyhad:C, VTES:C, CE:C/PN3, Anarchs:PG2, Third:C, KoT:C, FB:PN6, NB3C:PR3",
         "rulings": [
             {
                 "cards": [
@@ -225,6 +229,9 @@ def test_i18n(client):
             "Keepers of Tradition": [
                 {"rarity": "Common", "release_date": "2008-11-19"}
             ],
+            "New Blood III": [
+                {"copies": 3, "precon": "Ravnos", "release_date": "2026-02-28"}
+            ],
             "Third Edition": [{"rarity": "Common", "release_date": "2006-09-04"}],
             "Vampire: The Eternal Struggle": [
                 {"rarity": "Common", "release_date": "1995-09-15"}
@@ -238,6 +245,7 @@ def test_i18n(client):
             "Third Edition",
             "Keepers of Tradition",
             "First Blood",
+            "New Blood III",
         ],
         "scans": {
             "Anarchs": "https://static.krcg.org/card/set/anarchs/aidfrombats.jpg",
@@ -250,6 +258,9 @@ def test_i18n(client):
             "Jyhad": "https://static.krcg.org/card/set/jyhad/aidfrombats.jpg",
             "Keepers of Tradition": (
                 "https://static.krcg.org/card/set/keepers-of-tradition/aidfrombats.jpg"
+            ),
+            "New Blood III": (
+                "https://static.krcg.org/card/set/new-blood-iii/aidfrombats.jpg"
             ),
             "Third Edition": (
                 "https://static.krcg.org/card/set/third-edition/aidfrombats.jpg"
@@ -523,6 +534,37 @@ def test_sets(client):
                 "https://static.krcg.org/card/set/print-on-demand/dracontheg5.jpg"
             ),
         },
+        "rulings": [
+            {
+                "group": "Adding damage to strikes",
+                "references": [
+                    {
+                        "label": "RTR 19960221",
+                        "text": "[RTR 19960221]",
+                        "url": "https://groups.google.com/g/rec.games.trading-cards.jyhad/c/UdU535eVm0Y/m/AQGxbaznHL0J",
+                    },
+                ],
+                "text": "Adding damage to a strike that does not deal damage has no "
+                "effect, so the strike still will not do damage. [RTR 19960221]",
+            },
+            {
+                "group": "Adding damage to strikes",
+                "references": [
+                    {
+                        "label": "RTR 19970630",
+                        "text": "[RTR 19970630]",
+                        "url": "https://groups.google.com/g/rec.games.trading-cards.jyhad/c/KireUeOYY3c/m/t6ifm9lur1kJ",
+                    },
+                    {
+                        "label": "TOM 19960225",
+                        "text": "[TOM 19960225]",
+                        "url": "https://groups.google.com/g/rec.games.trading-cards.jyhad/c/0LLTOfvyVbM/m/ih72_C-LriwJ",
+                    },
+                ],
+                "text": "Additional damage inherits all of the properties of the base "
+                "damage. [RTR 19970630] [TOM 19960225]",
+            },
+        ],
         "text_change": True,
         "types": ["Vampire"],
     }

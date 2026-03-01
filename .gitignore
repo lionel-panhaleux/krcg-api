@@ -16,3 +16,4 @@ uv.lock
 .vscode/
 *.DS_Store
 .idea/
+.claude/

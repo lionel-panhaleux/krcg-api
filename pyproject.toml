@@ -36,17 +36,16 @@ classifiers = [
     "Topic :: Games/Entertainment",
     "Topic :: Internet :: WWW/HTTP :: WSGI :: Server",
 ]
-dependencies = ["arrow", "babel", "flask", "krcg>=4.16", "requests"]
+dependencies = ["arrow", "babel", "flask", "krcg>=4.17", "requests"]
 
 [dependency-groups]
 dev = [
     "coverage",
     "ipython",
-    "mypy",
     "openapi-spec-validator",
     "pytest",
     "ruff",
-    "types-requests",
+    "ty",
 ]
 
 [project.scripts]
@@ -59,10 +58,5 @@ Repository = "https://github.com/lionel-panhaleux/krcg-api"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
-[tool.mypy]
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
-no_implicit_optional = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_return_any = true
+[tool.ty.rules]
+all = "error"

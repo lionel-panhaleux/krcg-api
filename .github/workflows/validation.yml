@@ -36,7 +36,7 @@ jobs:
           uv run ruff check
       - name: Type check
         run: |
-          uv run mypy krcg_api
+          uv run ty check krcg_api
       - name: Test
         env:
           LOCAL_CARDS: 1

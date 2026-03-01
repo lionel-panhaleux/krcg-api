@@ -18,7 +18,7 @@ quality:
     @echo "🔍 Running quality checks..."
     uv run ruff check
     uv run ruff format --check
-    uv run mypy krcg_api
+    uv run ty check krcg_api
     uv run openapi-spec-validator krcg_api/templates/openapi.yaml
     @echo "✅ Quality checks passed!"
 
@@ -41,7 +41,7 @@ clean-build:
 # Clean build and cache artifacts
 clean: clean-build
     @echo "🧹 Cleaning cache..."
-    rm -rf .pytest_cache .mypy_cache .ruff_cache
+    rm -rf .pytest_cache .ruff_cache
     @echo "✅ Cleaned!"
 
 # Build the package
@@ -76,4 +76,4 @@ release: clean-build check test
 
 # Update all dependencies to latest versions
 update:
-    uv pip install --upgrade --upgrade-strategy eager -e ".[dev]"
+    uv sync --upgrade
