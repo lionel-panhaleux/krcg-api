@@ -32,17 +32,23 @@ classifiers = [
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Environment :: Web Environment",
-    "Framework :: Flask",
     "Topic :: Games/Entertainment",
-    "Topic :: Internet :: WWW/HTTP :: WSGI :: Server",
 ]
-dependencies = ["arrow", "babel", "flask", "krcg>=4.17", "requests"]
+dependencies = [
+    "arrow",
+    "babel",
+    "fastapi",
+    "krcg>=4.17",
+    "python-multipart",
+    "requests",
+    "uvicorn[standard]",
+]
 
 [dependency-groups]
 dev = [
     "coverage",
+    "httpx",
     "ipython",
-    "openapi-spec-validator",
     "pytest",
     "ruff",
     "ty",

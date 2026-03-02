@@ -2,7 +2,9 @@ import pytest
 import requests
 
 from krcg import config
-from krcg_api import api
+from krcg_api import create_app
+
+from fastapi.testclient import TestClient
 
 
 def pytest_sessionstart(session):
@@ -19,7 +21,6 @@ def pytest_sessionstart(session):
 
 @pytest.fixture(scope="session")
 def client():
-    app = api.create_app()
-    app.config["TESTING"] = True
-    with app.test_client() as client:
+    app = create_app()
+    with TestClient(app) as client:
         yield client

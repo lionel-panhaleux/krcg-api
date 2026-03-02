@@ -97,7 +97,7 @@ def test(client):
         },
     )
     assert response.status_code == 200
-    assert response.json == first_blood_tremere
+    assert response.json() == first_blood_tremere
     response = client.post(
         "/amaranth",
         json={
@@ -107,4 +107,4 @@ def test(client):
         },
     )
     assert response.status_code == 200
-    assert response.json == first_blood_tremere
+    assert response.json() == first_blood_tremere

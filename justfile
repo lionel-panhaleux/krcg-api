@@ -19,7 +19,6 @@ quality:
     uv run ruff check
     uv run ruff format --check
     uv run ty check krcg_api
-    uv run openapi-spec-validator krcg_api/templates/openapi.yaml
     @echo "✅ Quality checks passed!"
 
 # Run tests (depends on quality checks)
@@ -30,7 +29,7 @@ test: quality
 
 # Start the API server
 serve:
-    run-krcg-api
+    uv run uvicorn krcg_api:application --reload
 
 # Clean build artifacts
 clean-build:

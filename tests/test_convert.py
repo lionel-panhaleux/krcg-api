@@ -161,9 +161,13 @@ Event (4)
 1x Hunger Moon
 1x Restricted Vitae
 1x Unmasking, The"""
-    response = client.post("/convert/lackey", data=deck_text, content_type="text/plain")
+    response = client.post(
+        "/convert/lackey",
+        content=deck_text.encode("utf-8"),
+        headers={"Content-Type": "text/plain"},
+    )
     assert response.status_code == 200
-    assert response.data == (
+    assert response.content == (
         b"1\tChannel 10\n"
         b"2\tCharisma\n"
         b"1\tCreepshow Casino\n"
@@ -207,9 +211,13 @@ Event (4)
         b"1\tSamson\n"
         b"1\tBasil"
     )
-    response = client.post("/convert/jol", data=deck_text, content_type="text/plain")
+    response = client.post(
+        "/convert/jol",
+        content=deck_text.encode("utf-8"),
+        headers={"Content-Type": "text/plain"},
+    )
     assert response.status_code == 200
-    assert response.data == (
+    assert response.content == (
         b"1x Gilbert Duane\n"
         b"1x Mariel, Lady Thunder\n"
         b"1x Badr al-Budur\n"
@@ -253,15 +261,27 @@ Event (4)
         b"1x Restricted Vitae\n"
         b"1x Unmasking, The"
     )
-    response = client.post("/convert/twd", data=deck_text, content_type="text/plain")
+    response = client.post(
+        "/convert/twd",
+        content=deck_text.encode("utf-8"),
+        headers={"Content-Type": "text/plain"},
+    )
     assert response.status_code == 200
-    assert response.data == deck_text.encode("utf-8")
-    response = client.post("/convert/json", data=deck_text, content_type="text/plain")
+    assert response.content == deck_text.encode("utf-8")
+    response = client.post(
+        "/convert/json",
+        content=deck_text.encode("utf-8"),
+        headers={"Content-Type": "text/plain"},
+    )
     assert response.status_code == 200
-    assert response.json == deck_json
-    response = client.post("/convert", data=deck_text, content_type="text/plain")
+    assert response.json() == deck_json
+    response = client.post(
+        "/convert",
+        content=deck_text.encode("utf-8"),
+        headers={"Content-Type": "text/plain"},
+    )
     assert response.status_code == 200
-    assert response.json == deck_json
+    assert response.json() == deck_json
     response = client.post("/convert/twd", json=deck_json)
     assert response.status_code == 200
-    assert response.data == deck_text.encode("utf-8")
+    assert response.content == deck_text.encode("utf-8")

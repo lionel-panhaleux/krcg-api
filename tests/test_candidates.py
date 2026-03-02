@@ -1,10 +1,10 @@
 def test(client):
     response = client.post("/candidates")
     assert response.status_code == 200
-    assert len(response.json) == 10
+    assert len(response.json()) == 10
     response = client.post("/candidates", json={"date_from": "2019", "date_to": "2020"})
     assert response.status_code == 200
-    assert response.json == [
+    assert response.json() == [
         {
             "average": 2,
             "card": "Dreams of the Sphinx",
@@ -45,7 +45,7 @@ def test(client):
         },
     )
     assert response.status_code == 200
-    assert response.json == [
+    assert response.json() == [
         {"average": 14, "card": "Ashur Tablets", "deviation": 6.25, "score": 1.0},
         {"average": 1, "card": "Giant's Blood", "deviation": 0.0, "score": 1.0},
         {"average": 2, "card": "The Parthenon", "deviation": 0.81, "score": 1.0},

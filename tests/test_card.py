@@ -3,7 +3,7 @@ def test(client):
     assert response.status_code == 404
     response = client.get("/card/Alastor")
     assert response.status_code == 200
-    assert response.json == {
+    assert response.json() == {
         "id": 100038,
         "_name": "Alastor",
         "_set": "Gehenna:R, KMW:PAl, KoT:R, 30th:1",
@@ -137,7 +137,7 @@ def test(client):
     }
     id_response = client.get("/card/100038")
     assert id_response.status_code == 200
-    assert id_response.json == response.json
+    assert id_response.json() == response.json()
 
 
 def test_slashes(client):
@@ -149,7 +149,7 @@ def test_slashes(client):
 def test_i18n(client):
     response = client.get("/card/Aid%20from%20Bats")
     assert response.status_code == 200
-    assert response.json == {  # noqa: E501
+    assert response.json() == {  # noqa: E501
         "artists": ["Melissa Benson", "Eric Lofgren"],
         "card_text": (
             "[ani] Strike: 1R damage, with 1 optional maneuver.\n"
@@ -314,7 +314,7 @@ def test_sets(client):
     # sets serialization (prom, POD, PDF sets, ...)
     response = client.get("/card/The%20Line")
     assert response.status_code == 200
-    assert response.json == {  # noqa: E501
+    assert response.json() == {  # noqa: E501
         "artists": ["Carmen Cornet"],
         "card_text": (
             "Unique location.\n"
@@ -483,7 +483,7 @@ def test_sets(client):
     # promo card
     response = client.get("/card/The%20Dracon")
     assert response.status_code == 200
-    assert response.json == {  # noqa: E501
+    assert response.json() == {  # noqa: E501
         "artists": ["Ginés Quiñonero-Santiago"],
         "capacity": 11,
         "card_text": (
@@ -571,7 +571,7 @@ def test_sets(client):
     # PDF
     response = client.get("/card/Ophidian%20Gaze")
     assert response.status_code == 200
-    assert response.json == {  # noqa: E501
+    assert response.json() == {  # noqa: E501
         "artists": ["Ginés Quiñonero-Santiago"],
         "card_text": (
             "[pre][ser] Reduce a bleed against you by 2.\n"
@@ -849,7 +849,7 @@ def test_artists(client):
     # L. Snelly -> Lawrence Snelly
     response = client.get("/card/Tyler")
     assert response.status_code == 200
-    assert response.json == {  # noqa: E501
+    assert response.json() == {  # noqa: E501
         "artists": ["Lawrence Snelly"],
         "capacity": 9,
         "card_text": (
@@ -907,7 +907,7 @@ def test_artists(client):
     # Ginés Quiñonero -> Ginés Quiñonero-Santiago
     response = client.get("/card/Ashur%20Tablets")
     assert response.status_code == 200
-    assert response.json == {  # noqa: E501
+    assert response.json() == {  # noqa: E501
         "artists": [
             "Sandra Chang-Adair",
             "Ginés Quiñonero-Santiago",

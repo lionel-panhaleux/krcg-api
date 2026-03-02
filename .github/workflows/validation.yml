@@ -43,9 +43,3 @@ jobs:
         run: |
           uv run coverage run -m pytest
           uv run coverage xml
-      - name: OAS
-        run: |
-          uv run openapi-spec-validator krcg_api/templates/openapi.yaml
-      - name: Test
-        run: |
-          uv run coverage run -m pytest

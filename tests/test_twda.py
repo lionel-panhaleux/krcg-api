@@ -1,11 +1,11 @@
 def test(client):
     response = client.post("/twda")
     assert response.status_code == 200
-    assert len(response.json) >= 3125
+    assert len(response.json()) >= 3125
     # since Anthelios is banned, this number should stay stable
     response = client.post("/twda", json={"cards": ["Anthelios, The Red Star"]})
     assert response.status_code == 200
-    assert len(response.json) == 322
+    assert len(response.json()) == 322
     response = client.post("/twda", json={"cards": ["Not a Card"]})
     assert response.status_code == 400
     response = client.post("/twda", json={"cards": ["Madness of the Bard"]})
@@ -13,7 +13,7 @@ def test(client):
     response = client.post("/twda", json={"cards": [""]})
     # test deck parsing and serialization - it has both general and cards comments
     response = client.get("/twda/2020bf3hf")
-    assert response.json == {
+    assert response.json() == {
         "id": "2020bf3hf",
         "event": "Black Forest Base 3",
         "place": "Hyvinkää, Finland",
@@ -151,7 +151,7 @@ ousted pretty fast after that before any real damage to me was done.
     }
     response = client.post("/twda/list", json={"cards": []})
     assert response.status_code == 200
-    assert response.json["count"] >= 3125
+    assert response.json()["count"] >= 3125
 
     response = client.post("/twda/random", json={"cards": ["Anthelios, The Red Star"]})
     assert response.status_code == 200
@@ -167,7 +167,7 @@ def test_search(client):
             "cards": ["Al-Ashrad, Amr of Alamut (ADV)"],
         },
     )
-    assert response.json == [
+    assert response.json() == [
         {
             "author": "Orpheus",
             "comments": (
@@ -302,7 +302,7 @@ def test_search(client):
             "cards": ["Al-Ashrad, Amr of Alamut (ADV)"],
         },
     )
-    assert len(response.json) == 1
+    assert len(response.json()) == 1
     response = client.post(
         "/twda",
         json={
@@ -312,7 +312,7 @@ def test_search(client):
             "cards": ["Al-Ashrad, Amr of Alamut (ADV)"],
         },
     )
-    assert len(response.json) == 1
+    assert len(response.json()) == 1
     response = client.post(
         "/twda",
         json={

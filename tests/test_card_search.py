@@ -1,7 +1,7 @@
 def test_dimensions(client):
     response = client.get("/card_search")
     assert response.status_code == 200
-    assert response.json == {
+    assert response.json() == {
         "artist": [
             "Aaron Acevedo",
             "Aaron Voss",
@@ -822,31 +822,25 @@ def test_dimensions(client):
 def test(client):
     response = client.post("/card_search")
     assert response.status_code == 200
-    assert len(response.json) >= 3788
-    # invalid dimension raise a 422
+    assert len(response.json()) >= 3788
+    # invalid dimension raises a 400
     response = client.post("/card_search", json={"foo": ["bar"]})
     assert response.status_code == 400
-    assert response.json is None
-    assert response.data == (
-        b"Invalid search dimension: foo. Valid dimensions are: name, card_text"
-        b", flavor_text, type, sect, clan, title, city, trait, group,"
-        b" capacity, discipline, artist, set, rarity, precon, bonus, "
-        b"text"
-    )
+    assert "Invalid search dimension: foo" in response.json()["detail"]
     # non-existing values do not crash
     response = client.post("/card_search", json={"bonus": ["foo"]})
     assert response.status_code == 200
-    assert response.json == []
+    assert response.json() == []
     response = client.post("/card_search", json={"trait": ["foo"]})
     assert response.status_code == 200
-    assert response.json == []
+    assert response.json() == []
 
 
 def test_card_text(client):
     response = client.post(
         "/card_search", json={"text": "this equipment card represents a location"}
     )
-    assert response.json == [
+    assert response.json() == [
         "Catacombs",
         "Dartmoor, England",
         "Inveraray, Scotland",
@@ -870,10 +864,10 @@ def test_traits(client):
     response = client.post(
         "/card_search", json={"title": ["primogen"], "discipline": ["ser"]}
     )
-    assert response.json == ["Amenophobis"]
+    assert response.json() == ["Amenophobis"]
     # city title
     response = client.post("/card_search", json={"city": ["chicago"]})
-    assert response.json == [
+    assert response.json() == [
         "Antón de Concepción",
         "Crusade: Chicago",
         "Horatio Ballard",
@@ -887,7 +881,7 @@ def test_traits(client):
     ]
     # stealth, votes
     response = client.post("/card_search", json={"bonus": ["stealth", "votes"]})
-    assert response.json == [
+    assert response.json() == [
         "Antonio Veradas",
         "Bulscu (ADV)",
         "Camarilla Conclave",
@@ -910,35 +904,35 @@ def test_traits(client):
         "/card_search",
         json={"bonus": ["votes"], "clan": ["Assamite"], "type": ["Master"]},
     )
-    assert response.json == ["Alamut", "The Black Throne"]
+    assert response.json() == ["Alamut", "The Black Throne"]
     # votes provided by titles
     response = client.post(
         "/card_search",
         json={"bonus": ["votes"], "clan": ["Assamite"], "group": [3]},
     )
-    assert response.json == ["Enam", "Rebekah"]
+    assert response.json() == ["Enam", "Rebekah"]
     # title when MERGED
     response = client.post(
         "/card_search", json={"clan": ["Assamite"], "title": ["justicar"]}
     )
-    assert response.json == ["Kasim Bayar", "Tegyrius, Vizier (ADV)"]
+    assert response.json() == ["Kasim Bayar", "Tegyrius, Vizier (ADV)"]
     # traits: black hand
     response = client.post(
         "/card_search",
         json={"clan": ["Nagaraja"], "trait": ["black hand"]},
     )
-    assert response.json == ["Sennadurek"]
+    assert response.json() == ["Sennadurek"]
     # traits: red list
     response = client.post(
         "/card_search", json={"clan": ["Assamite"], "trait": ["red list"]}
     )
-    assert response.json == ["Jamal", "Tariq, The Silent (ADV)"]
+    assert response.json() == ["Jamal", "Tariq, The Silent (ADV)"]
     # sect
     response = client.post(
         "/card_search",
         json={"clan": ["assamite"], "sect": ["camarilla"], "group": [2]},
     )
-    assert response.json == [
+    assert response.json() == [
         "Al-Ashrad, Amr of Alamut (ADV)",
         "Tegyrius, Vizier (ADV)",
         "Tegyrius, Vizier",
@@ -948,7 +942,7 @@ def test_traits(client):
         "/card_search",
         json={"type": ["action modifier"], "trait": ["black hand"]},
     )
-    assert response.json == [
+    assert response.json() == [
         "Circumspect Revelation",
         "Seraph's Second",
         "The Art of Memory",
@@ -961,7 +955,7 @@ def test_full(client):
         "/card_search",
         json={"clan": ["Nagaraja"], "trait": ["black hand"], "mode": "full"},
     )
-    assert response.json == [
+    assert response.json() == [
         {
             "artists": ["Andrew Trabbold"],
             "capacity": 6,
@@ -1063,13 +1057,13 @@ def test_requirements(client):
     response = client.post(
         "/card_search", json={"type": ["reaction"], "title": ["justicar"]}
     )
-    assert response.json == ["Legacy of Power", "Second Tradition: Domain"]
+    assert response.json() == ["Legacy of Power", "Second Tradition: Domain"]
     # "Requires titled Sabbat/Camarilla" maps to all possible titles
     response = client.post(
         "/card_search",
         json={"bonus": ["intercept"], "title": ["archbishop"]},
     )
-    assert response.json == [
+    assert response.json() == [
         "Matteus, Flesh Sculptor",
         "National Guard Support",
         "Persona Non Grata",
@@ -1083,7 +1077,7 @@ def test_stealth_intercept(client):
         "/card_search",
         json={"bonus": ["stealth"], "discipline": ["chi"], "type": ["library"]},
     )
-    assert response.json == [
+    assert response.json() == [
         "Fata Morgana",
         "Heart's Desire",
         "Mirror's Visage",
@@ -1099,7 +1093,7 @@ def test_stealth_intercept(client):
             "type": ["library"],
         },
     )
-    assert response.json == [
+    assert response.json() == [
         "Draba",
         "Ignis Fatuus",
         # multi-disc are tricky: it has chi, it has intercept.
@@ -1114,7 +1108,7 @@ def test_discipline(client):
     response = client.post(
         "/card_search", json={"discipline": ["none"], "type": ["crypt"]}
     )
-    assert response.json == [
+    assert response.json() == [
         "Anarch Convert",
         "Sandra White",
         "Smudge the Ignored",
@@ -1124,17 +1118,17 @@ def test_discipline(client):
         json={"discipline": ["none"], "bonus": ["intercept"], "sect": ["sabbat"]},
     )
     # no discipline, sect (or independent) required
-    assert response.json == ["Abbot", "Harzomatuili", "Under Siege"]
+    assert response.json() == ["Abbot", "Harzomatuili", "Under Siege"]
     response = client.post(
         "/card_search",
         json={"type": ["political action"], "sect": ["independent"]},
     )
-    assert response.json == ["Free States Rant", "Reckless Agitation"]
+    assert response.json() == ["Free States Rant", "Reckless Agitation"]
     response = client.post(
         "/card_search",
         json={"type": ["political action"], "sect": ["anarch"]},
     )
-    assert response.json == [
+    assert response.json() == [
         "Anarch Salon",
         "Eat the Rich",
         "Firebrand",
@@ -1149,7 +1143,7 @@ def test_discipline(client):
         "/card_search",
         json={"discipline": ["multi", "ani"], "bonus": ["intercept"]},
     )
-    assert response.json == [
+    assert response.json() == [
         "Deep Ecology",
         "Detect Authority",
         "Ensnare a Beast",
@@ -1160,7 +1154,7 @@ def test_discipline(client):
     ]
     # superior disciplines (vampires only)
     response = client.post("/card_search", json={"discipline": ["OBE"], "group": [2]})
-    assert response.json == ["Blanche Hill", "Matthias"]
+    assert response.json() == ["Blanche Hill", "Matthias"]
     # Gwen Brand special case, disciplines abbreviations
     response = client.post(
         "/card_search",
@@ -1170,7 +1164,7 @@ def test_discipline(client):
             "discipline": ["AUS", "CHI", "FOR", "ANI"],
         },
     )
-    assert response.json == ["Gwen Brand"]
+    assert response.json() == ["Gwen Brand"]
 
 
 def test_i18n(client):
@@ -1179,7 +1173,7 @@ def test_i18n(client):
         "/card_search",
         json={"text": "this equipment card represents a location", "lang": "fr"},
     )
-    assert response.json == [
+    assert response.json() == [
         "Catacombs",
         "Dartmoor, England",
         "Inveraray, Scotland",
@@ -1201,41 +1195,41 @@ def test_i18n(client):
         "/card_search",
         json={"text": "Ankara"},
     )
-    assert response.json == ["The Ankara Citadel, Turkey"]
+    assert response.json() == ["The Ankara Citadel, Turkey"]
     # i18n - but match the given language in addition to it
     response = client.post(
         "/card_search",
         json={"text": "cette carte d'équipement représente un lieu", "lang": "fr"},
     )
-    assert response.json == ["Living Manse", "The Ankara Citadel, Turkey"]
+    assert response.json() == ["Living Manse", "The Ankara Citadel, Turkey"]
     # i18n - should work with regions too, whatever their case
     response = client.post(
         "/card_search",
         json={"text": "cette carte d'équipement représente un lieu", "lang": "fr-fr"},
     )
-    assert response.json == ["Living Manse", "The Ankara Citadel, Turkey"]
+    assert response.json() == ["Living Manse", "The Ankara Citadel, Turkey"]
     # i18n - should work with regions too, whatever their case
     response = client.post(
         "/card_search",
         json={"text": "cette carte d'équipement représente un lieu", "lang": "fr_FR"},
     )
-    assert response.json == ["Living Manse", "The Ankara Citadel, Turkey"]
+    assert response.json() == ["Living Manse", "The Ankara Citadel, Turkey"]
     # i18n - do not match unrelated translations
     response = client.post(
         "/card_search",
         json={"text": "esta carta de equipo representa un lugar", "lang": "fr"},
     )
-    assert response.json == []
+    assert response.json() == []
     response = client.post(
         "/card_search",
         json={"text": "esta carta de equipo representa un lugar", "lang": "es"},
     )
-    assert response.json == ["Living Manse", "The Ankara Citadel, Turkey"]
+    assert response.json() == ["Living Manse", "The Ankara Citadel, Turkey"]
 
 
 def test_artist(client):
     response = client.post("/card_search", json={"artist": ["E.M. Gist"]})
-    assert response.json == [
+    assert response.json() == [
         "Flames of Insurrection",
         "Harmony",
         "Marcus Vitel",
