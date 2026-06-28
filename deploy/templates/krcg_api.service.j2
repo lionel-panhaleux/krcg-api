@@ -1,0 +1,26 @@
+[Unit]
+Description=KRCG API (FastAPI / uvicorn)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User={{ krcg_api_user }}
+Group={{ krcg_api_user }}
+ExecStart={{ krcg_api_home }}/venv/bin/uvicorn krcg_api:application \
+    --host 127.0.0.1 --port {{ krcg_api_port }} --workers {{ krcg_api_workers }}
+Restart=on-failure
+RestartSec=5
+# data is loaded in memory at startup (one copy per worker) — allow time for it
+TimeoutStartSec=120
+# journald shows up under the shared `krcg_api` tag (nginx site + this service)
+SyslogIdentifier={{ service_name }}
+# hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths={{ krcg_api_home }}
+
+[Install]
+WantedBy=multi-user.target

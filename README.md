@@ -32,9 +32,13 @@ This API is an offspring of the [KRCG](https://github.com/lionel-panhaleux/krcg)
 python package, so please refer to that repository for issues, discussions
 and contributions guidelines.
 
+Cards and decks are served in the
+[KRCG v5](https://github.com/lionel-panhaleux/krcg) JSON format.
+
 ## Examples
 
-Query a card by name or ID, get text, rulings and image URL:
+Query a card by name or ID, get text, rulings, prints and image URL
+(`prints` and `rulings` truncated here for brevity):
 
 ```bash
 curl -X GET "http://127.0.0.1:8000/card/Alastor" -H  "accept: application/json"
@@ -42,49 +46,35 @@ curl -X GET "http://127.0.0.1:8000/card/Alastor" -H  "accept: application/json"
 
 ```json
 {
-  "_name": "Alastor",
-  "_set": "Gehenna:R, KMW:PAl, KoT:R",
-  "artists": [
-    "Monte Moore"
-  ],
-  "card_text": "Requires a justicar or Inner Circle member...",
   "id": 100038,
-  "name": "Alastor",
-  "ordered_sets": [
-    "Gehenna",
-    "Kindred Most Wanted",
-    "Keepers of Tradition"
-  ],
   "printed_name": "Alastor",
-  "rulings": {
-    "links": {
-      "[ANK 20200901]": "http://www.vekn.net/forum/rules-questions/78830-alastor-and-ankara-citadel#100653",
-      "[LSJ 20040518-2]": "https://groups.google.com/g/rec.games.trading-cards.jyhad/c/4emymfUPwAM/m/JF_o7OOoCbkJ",
-      "[LSJ 20040518]": "https://groups.google.com/d/msg/rec.games.trading-cards.jyhad/4emymfUPwAM/B2SCC7L6kuMJ"
-    },
-    "text": [
-      "If the weapon retrieved costs blood, that cost is paid by the vampire chosen by the vote. [LSJ 20040518]",
-      "Requirements do not apply. If a discipline is required (eg. {Inscription}) and the Alastor vampire does not have it, the inferior version is used. [ANK 20200901] [LSJ 20040518-2]"
-    ]
-  },
-  "scans": {
-    "Gehenna": "https://static.krcg.org/card/set/gehenna/alastor.jpg",
-    "Keepers of Tradition": "https://static.krcg.org/card/set/keepers-of-tradition/alastor.jpg",
-    "Kindred Most Wanted": "https://static.krcg.org/card/set/kindred-most-wanted/alastor.jpg"
-  },
-  "sets": {
-    "Gehenna": [{ "rarity": "Rare", "release_date": "2004-05-17"}],
-    "Keepers of Tradition": [{ "rarity": "Rare", "release_date": "2008-11-19"}],
-    "Kindred Most Wanted": [
-      {
-        "copies": 1,
-        "precon": "Alastors",
-        "release_date": "2005-02-21"
-      }
-    ]
-  },
+  "kind": "Library",
   "types": ["Political Action"],
-  "url": "https://static.krcg.org/card/alastor.jpg"
+  "url": "https://static.krcg.org/card/alastor.jpg",
+  "text": "Requires a justicar or Inner Circle member...",
+  "legal": "2004-06-16",
+  "artists": ["Monte Moore"],
+  "prints": [
+    {
+      "set": { "id": 300012, "code": "Gehenna" },
+      "occurrences": [{ "type": "Rarity", "frequency": "R", "multiplier": 1.0 }],
+      "url": "https://static.krcg.org/card/set/gehenna/alastor.jpg"
+    }
+  ],
+  "rulings": [
+    {
+      "text": "If the weapon retrieved costs blood, that cost is paid by the vampire chosen by the terms. [LSJ 20040518]",
+      "references": [
+        {
+          "text": "[LSJ 20040518]",
+          "label": "LSJ 20040518",
+          "url": "https://groups.google.com/g/rec.games.trading-cards.jyhad/c/4emymfUPwAM/m/B2SCC7L6kuMJ"
+        }
+      ]
+    }
+  ],
+  "i18n": {},
+  "variants": []
 }
 ```
 
@@ -169,48 +159,45 @@ uv pip install "krcg-api"
 pip install "krcg-api"
 ```
 
-No wsgi server is installed by default, you need to install one.
-HTTP web servers can then easily be configured to serve WSGI applications,
-check the documentation of your web server.
-
-The API can be served with [uWSGI](https://uwsgi-docs.readthedocs.io):
+`krcg-api` is an ASGI application served by [uvicorn](https://www.uvicorn.org)
+(installed as a dependency). The ASGI entrypoint is `krcg_api:application`:
 
 ```bash
-uwsgi --module krcg_api.wsgi:application
+uvicorn krcg_api:application --host 127.0.0.1 --port 8000
 ```
 
-or [Gunicorn](https://gunicorn.org):
+For production you can run several uvicorn workers behind a reverse proxy
+(see [Deployment](#deployment) below).
 
-```bash
-gunicorn krcg_api.wsgi:application
-```
-
-Two environment variables are expected: `GITHUB_USERNAME` and `GITHUB_TOKEN`,
-to allow the API to connect to Github as a user in order to post new rulings
-as issues on the repository (`/submit-ruling` endpoint).
-
-See the [Github help](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
-on how to generate a personal token for the account you want KRCG to use.
+The API loads all card and deck data in memory at startup (no database). It
+needs no configuration nor environment variables.
 
 #### Development
 
-The development version of KRCG uses [uv](https://github.com/astral-sh/uv) for package management
-and installs uWSGI to serve the API, this is the preferred WSGI server for now.
+The development version uses [uv](https://github.com/astral-sh/uv) for package
+management. Requires Python 3.12+.
 
 ```bash
-$ uv pip install -e ".[dev]"
+$ just install
 $ just serve
 ...
-uwsgi socket 0 bound to TCP address 127.0.0.1:8000
+Uvicorn running on http://127.0.0.1:8000
 ```
 
 You can check the API is running by using your browser
 on the provided address [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
-The environment variables `GITHUB_USERNAME` and `GITHUB_TOKEN` can be provided
-by a personal `.env` file at the root of the krcg folder (ignored by git):
+`just test` runs the quality checks (ruff, ty) and the test suite. The tests
+load the bundled card/deck snapshot, so they run offline; the deck-provider
+tests (Amaranth, VDB, VTES Decks) reach external sites and skip when offline.
 
-```bash
-export GITHUB_USERNAME="dedicated_github_username_for_the_api"
-export GITHUB_TOKEN="the_matching_github_token"
-```
+### Deployment
+
+The API is deployed to a server with Ansible, reusing the shared roles from
+[server-setup](https://github.com/lionel-panhaleux/server-setup). A systemd
+service runs uvicorn on a local port and the `nginx_site` role fronts it with
+nginx + Let's Encrypt. See [`deploy/README.md`](deploy/README.md) for details.
+
+Deployment runs from GitHub Actions
+([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)) via
+`workflow_dispatch`, and automatically on every published release.

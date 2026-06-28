@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "krcg-api"
-version = "3.4"
+version = "4.0"
 license = "MIT"
 authors = [
     { name = "Lionel Panhaleux", email = "lionel.panhaleux+krcg@gmail.com" },
@@ -20,13 +20,12 @@ keywords = [
     "web",
 ]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Natural Language :: English",
@@ -35,10 +34,12 @@ classifiers = [
     "Topic :: Games/Entertainment",
 ]
 dependencies = [
+    "aiohttp",
     "arrow",
     "babel",
     "fastapi",
-    "krcg>=4.17",
+    "krcg>=5",
+    "msgspec",
     "python-multipart",
     "uvicorn[standard]",
 ]

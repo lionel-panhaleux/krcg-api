@@ -1,27 +1,40 @@
-import urllib.request
+from unittest.mock import patch
 
 import pytest
 
-from krcg import config
-from krcg_api import create_app
+import krcg
+from krcg import twda
 
 from fastapi.testclient import TestClient
+from krcg_api import create_app
 
 
-def pytest_sessionstart(session):
-    # Do not launch tests is there is no proper Internet connection.
-    try:
-        urllib.request.urlopen("http://www.google.com", timeout=1)
-    except OSError:
-        pytest.fail("No internet connection")
-    try:
-        urllib.request.urlopen(config.KRCG_STATIC_SERVER, timeout=1)
-    except OSError:
-        pytest.fail("KRCG website not available")
+@pytest.fixture(scope="session")
+def cards():
+    """The cards library, loaded from the bundled snapshot (offline, deterministic)."""
+    return krcg.load_local()
+
+
+@pytest.fixture(scope="session")
+def TWDA():
+    """The TWDA, loaded from the bundled snapshot (offline, deterministic)."""
+    return twda.load_local()
 
 
 @pytest.fixture(scope="session")
 def client():
-    app = create_app()
-    with TestClient(app) as client:
-        yield client
+    """A TestClient backed by the bundled snapshot (no network at startup)."""
+
+    async def _load_cards(session):
+        return krcg.load_local()
+
+    async def _load_twda(session):
+        return twda.load_local()
+
+    with (
+        patch("krcg.load_online", _load_cards),
+        patch("krcg.twda.load_online", _load_twda),
+    ):
+        app = create_app()
+        with TestClient(app) as test_client:
+            yield test_client

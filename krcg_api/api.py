@@ -1,35 +1,139 @@
 from collections.abc import Iterable
+from typing import Annotated, Any
 
-import arrow
-import babel
 import io
 import math
 import random
 import urllib.parse
 
-from fastapi import APIRouter, Header, HTTPException, Request
+import aiohttp
+import arrow
+import babel
+import msgspec
+from fastapi import APIRouter, Depends, Header, HTTPException, Request
 from fastapi.responses import PlainTextResponse, RedirectResponse
 
 from krcg import analyzer
-from krcg import deck
-from krcg import twda
+from krcg import collections as krcg_collections
+from krcg import models
+from krcg import parser
+from krcg import providers
+from krcg import twda as krcg_twda
 from krcg import utils as krcg_utils
-from krcg import vtes
 
 from . import config
 from .models import (
-    CandidateFullResponse,
-    CandidateNameResponse,
     CandidatesRequest,
-    CardResponse,
-    CardSearchDimensionsResponse,
     CardSearchRequest,
-    DeckListResponse,
-    DeckResponse,
     DeckSearchRequest,
 )
 
 router = APIRouter()
+
+#: search keys understood by krcg (everything else in a request is ignored)
+SEARCH_DIMENSIONS = {dimension.value for dimension in models.SearchDimension}
+#: trie dimensions a free-text "text" query is unioned over
+TEXT_DIMENSIONS = ["name", "card_text", "flavor_text"]
+#: dimensions matched case-sensitively (everything else is case-insensitive)
+CASE_SENSITIVE_DIMENSIONS = {"discipline", *TEXT_DIMENSIONS}
+
+
+def get_cards(request: Request) -> krcg_collections.CardDict:
+    """Dependency: the loaded cards library."""
+    return request.app.state.cards
+
+
+def get_twda(request: Request) -> krcg_twda.DecksArchive:
+    """Dependency: the loaded TWDA."""
+    return request.app.state.twda
+
+
+def get_http(request: Request) -> aiohttp.ClientSession:
+    """Dependency: the shared aiohttp session (deck providers)."""
+    return request.app.state.http
+
+
+Cards = Annotated[krcg_collections.CardDict, Depends(get_cards)]
+Twda = Annotated[krcg_twda.DecksArchive, Depends(get_twda)]
+Http = Annotated[aiohttp.ClientSession, Depends(get_http)]
+
+
+def _card_json(card: models.Card) -> dict[str, Any]:
+    """Serialize a card to the krcg v5 JSON shape."""
+    return msgspec.to_builtins(card, str_keys=True)
+
+
+def _deck_json(deck: models.Deck) -> dict[str, Any]:
+    """Serialize a deck to the krcg v5 JSON shape."""
+    return msgspec.to_builtins(deck, str_keys=True)
+
+
+def _resolve_card_ids(
+    cards: krcg_collections.CardDict, names: Iterable[str | int]
+) -> set[int]:
+    """Resolve card names or ids to their integer ids (400 on an unknown name)."""
+    try:
+        return {cards[name].id for name in names}
+    except KeyError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid card name: {e.args}")
+
+
+def _filter_decks(
+    decks: Iterable[models.Deck],
+    cards: krcg_collections.CardDict,
+    data: DeckSearchRequest | CandidatesRequest,
+) -> list[models.Deck]:
+    """Filter a deck collection by the request's common filters."""
+    result = list(decks)
+    player = getattr(data, "player", None)
+    if player:
+        norm = krcg_utils.normalize(player)
+        result = [d for d in result if norm in krcg_utils.normalize(d.author or "")]
+    if data.players_count:
+        count = int(data.players_count)
+        result = [d for d in result if d.event and d.event.players_count >= count]
+    if data.date_from:
+        date_from = arrow.get(data.date_from).date()
+        result = [
+            d for d in result if d.event and d.event.date and d.event.date >= date_from
+        ]
+    if data.date_to:
+        date_to = arrow.get(data.date_to).date()
+        result = [
+            d for d in result if d.event and d.event.date and d.event.date < date_to
+        ]
+    if data.cards:
+        ids = _resolve_card_ids(cards, data.cards)
+        result = [d for d in result if ids <= {entry.id for entry in d.cards}]
+    return result
+
+
+def _canonicalize_criteria(
+    cards: krcg_collections.CardDict, criteria: dict[str, Any]
+) -> dict[str, Any]:
+    """Make set-dimension values case-insensitive (krcg matches case-sensitively).
+
+    Each value is expanded to the dimension choices it matches case-insensitively
+    (an OR), so ``sect=["anarch"]`` finds the ``Anarch`` cards. The case-sensitive
+    dimensions (``discipline`` and the text tries) pass through untouched.
+    """
+    dimensions: dict[str, Any] | None = None
+    result: dict[str, Any] = {}
+    for key, value in criteria.items():
+        if key in CASE_SENSITIVE_DIMENSIONS or not isinstance(value, list):
+            result[key] = value
+            continue
+        if dimensions is None:
+            dimensions = cards.search_dimensions
+        folded: dict[str, list[str]] = {}
+        for choice in dimensions.get(key, []):
+            if isinstance(choice, str):
+                folded.setdefault(choice.lower(), []).append(choice)
+        expanded: list[str] = []
+        for item in value:
+            expanded.extend(folded.get(item.lower(), [item]))
+        result[key] = expanded
+    return result
 
 
 @router.get("/", include_in_schema=False)
@@ -42,20 +146,19 @@ def root() -> RedirectResponse:
     tags=["Card"],
     summary="Get card information",
     description=(
-        "Return the matching card information. "
-        "Also works with **translated** card names."
+        "Return the matching card in the krcg v5 JSON format. "
+        "Accepts a card **id** or a card **name** (also **translated** names)."
     ),
-    response_model=CardResponse,
-    response_model_exclude_none=True,
+    response_model=None,
 )
-def card(text: str) -> dict:
-    card_id: int | str = text
+def card(text: str, cards: Cards) -> dict[str, Any]:
+    card_id: int | str
     try:
         card_id = int(text)
     except ValueError:
         card_id = urllib.parse.unquote(text)
     try:
-        return vtes.VTES[card_id].to_json()
+        return _card_json(cards[card_id])
     except KeyError:
         raise HTTPException(status_code=404, detail="Card not found")
 
@@ -64,73 +167,38 @@ def card(text: str) -> dict:
     "/twda",
     tags=["Deck"],
     summary="Get TWDA decks matching given filters",
-    response_model=list[DeckResponse],
-    response_model_exclude_none=True,
+    response_model=None,
 )
-def deck_search(data: DeckSearchRequest | None = None) -> list[dict]:
-    if data is None:
-        data = DeckSearchRequest()
-    if data.player:
-        decks = [
-            twda.TWDA[id_]
-            for id_ in twda.TWDA.by_author[krcg_utils.normalize(data.player)]
-        ]
-    else:
-        decks = list(twda.TWDA.values())
-    if data.players_count:
-        decks = [d for d in decks if (d.players_count or 0) >= int(data.players_count)]
-    if data.date_from:
-        decks = [d for d in decks if d.date >= arrow.get(data.date_from).date()]
-    if data.date_to:
-        decks = [d for d in decks if d.date < arrow.get(data.date_to).date()]
-    if data.cards:
-        try:
-            cards = set(vtes.VTES[c] for c in data.cards)
-        except KeyError as e:
-            raise HTTPException(status_code=400, detail=f"Invalid card name: {e.args}")
-        decks = [d for d in decks if all(c in d for c in cards)]
+def deck_search(
+    cards: Cards, twda: Twda, data: DeckSearchRequest | None = None
+) -> list[Any]:
+    decks = _filter_decks(twda.values(), cards, data or DeckSearchRequest())
     if not decks:
         raise HTTPException(status_code=404, detail="No result in TWDA")
-    return [d.to_json() for d in decks]
+    return [_deck_json(d) for d in decks]
 
 
 @router.post(
     "/twda/list",
     tags=["Deck"],
     summary="Get list of TWDA decks matching given filters",
-    response_model=DeckListResponse,
-    response_model_exclude_none=True,
+    response_model=None,
 )
-def deck_list(data: DeckSearchRequest | None = None) -> dict:
-    if data is None:
-        data = DeckSearchRequest()
-    if data.player:
-        decks: list[deck.Deck] = [
-            twda.TWDA[id_]
-            for id_ in twda.TWDA.by_author[krcg_utils.normalize(data.player)]
-        ]
-    else:
-        decks = list(twda.TWDA.values())
-    if data.players_count:
-        decks = [d for d in decks if (d.players_count or 0) >= int(data.players_count)]
-    if data.date_from:
-        decks = [
-            d for d in decks if d.date and d.date >= arrow.get(data.date_from).date()
-        ]
-    if data.date_to:
-        decks = [d for d in decks if d.date and d.date < arrow.get(data.date_to).date()]
-    if data.cards:
-        try:
-            cards = set(vtes.VTES[c] for c in data.cards)
-        except KeyError as e:
-            raise HTTPException(status_code=400, detail=f"Invalid card name: {e.args}")
-        decks = [d for d in decks if all(c in d for c in cards)]
+def deck_list(
+    cards: Cards, twda: Twda, data: DeckSearchRequest | None = None
+) -> dict[str, Any]:
+    decks = _filter_decks(twda.values(), cards, data or DeckSearchRequest())
     if not decks:
         raise HTTPException(status_code=404, detail="No result in TWDA")
     return {
         "count": len(decks),
         "decks": [
-            {"name": d.name, "id": d.id, "date": d.date, "author": d.author}
+            {
+                "name": d.name,
+                "id": d.id,
+                "date": d.event.date if d.event else None,
+                "author": d.author,
+            }
             for d in decks
         ],
     }
@@ -141,49 +209,29 @@ def deck_list(data: DeckSearchRequest | None = None) -> dict:
     tags=["Deck"],
     summary="Get a deck by its TWDA ID",
     description="Returns the deck with the given ID in the TWDA.",
-    response_model=DeckResponse,
-    response_model_exclude_none=True,
+    response_model=None,
 )
-def deck_by_id(twda_id: str) -> dict:
+def deck_by_id(twda_id: str, twda: Twda) -> dict[str, Any]:
     if not twda_id:
         raise HTTPException(status_code=400, detail="Bad Request")
-    if twda_id not in twda.TWDA:
+    if twda_id not in twda:
         raise HTTPException(status_code=404, detail="Not Found")
-    return twda.TWDA[twda_id].to_json()
+    return _deck_json(twda[twda_id])
 
 
 @router.post(
     "/twda/random",
     tags=["Deck"],
     summary="Get a random TWDA deck matching given filters",
-    response_model=DeckResponse,
-    response_model_exclude_none=True,
+    response_model=None,
 )
-def random_deck(data: DeckSearchRequest | None = None) -> dict:
-    if data is None:
-        data = DeckSearchRequest()
-    if data.player:
-        decks = [
-            twda.TWDA[id_]
-            for id_ in twda.TWDA.by_author[krcg_utils.normalize(data.player)]
-        ]
-    else:
-        decks = list(twda.TWDA.values())
-    if data.players_count:
-        decks = [d for d in decks if (d.players_count or 0) >= int(data.players_count)]
-    if data.date_from:
-        decks = [d for d in decks if d.date >= arrow.get(data.date_from).date()]
-    if data.date_to:
-        decks = [d for d in decks if d.date < arrow.get(data.date_to).date()]
-    if data.cards:
-        try:
-            cards = set(vtes.VTES[c] for c in data.cards)
-        except KeyError as e:
-            raise HTTPException(status_code=400, detail=f"Invalid card name: {e.args}")
-        decks = [d for d in decks if all(c in d for c in cards)]
+def random_deck(
+    cards: Cards, twda: Twda, data: DeckSearchRequest | None = None
+) -> dict[str, Any]:
+    decks = _filter_decks(twda.values(), cards, data or DeckSearchRequest())
     if not decks:
         raise HTTPException(status_code=404, detail="No result in TWDA")
-    return random.choice(decks).to_json()
+    return _deck_json(random.choice(decks))
 
 
 @router.post(
@@ -191,133 +239,48 @@ def random_deck(data: DeckSearchRequest | None = None) -> dict:
     tags=["Deck"],
     summary="Convert a deck list format",
     description=(
-        "Provide a text/plain or application/json deck list, "
-        "returns the decklist in the requested format (defaults to json)."
+        "Provide a text/plain or application/json (krcg v5 deck) deck list, "
+        "returns the decklist in the requested format (defaults to json). "
+        "Plain-text formats: twd, txt, lackey, jol, vdb."
     ),
     response_model=None,
-    openapi_extra={
-        "requestBody": {
-            "required": True,
-            "content": {
-                "application/json": {
-                    "schema": {"$ref": "#/components/schemas/DeckResponse"},
-                    "example": {
-                        "crypt": {
-                            "count": 12,
-                            "cards": [
-                                {
-                                    "count": 1,
-                                    "id": 200517,
-                                    "name": "Gilbert Duane",
-                                },
-                                {
-                                    "count": 1,
-                                    "id": 200929,
-                                    "name": "Mariel, Lady Thunder",
-                                },
-                            ],
-                        },
-                        "library": {
-                            "count": 19,
-                            "cards": [
-                                {
-                                    "type": "Master",
-                                    "count": 3,
-                                    "cards": [
-                                        {
-                                            "count": 3,
-                                            "id": 102113,
-                                            "name": "Vessel",
-                                        }
-                                    ],
-                                }
-                            ],
-                        },
-                    },
-                },
-                "text/plain": {
-                    "schema": {"type": "string"},
-                    "example": (
-                        "Crypt (12 cards)\n"
-                        "1x Gilbert Duane\n"
-                        "1x Mariel, Lady Thunder\n\n"
-                        "Library (19 cards)\n"
-                        "Master (3)\n"
-                        "3x Vessel"
-                    ),
-                },
-            },
-        }
-    },
-    responses={
-        200: {
-            "content": {
-                "application/json": {
-                    "schema": {"$ref": "#/components/schemas/DeckResponse"},
-                    "example": {
-                        "crypt": {
-                            "count": 12,
-                            "cards": [
-                                {
-                                    "count": 3,
-                                    "id": 200848,
-                                    "name": "Lodin (Olaf Holte)",
-                                }
-                            ],
-                        },
-                        "library": {
-                            "count": 88,
-                            "cards": [
-                                {
-                                    "type": "Master",
-                                    "count": 16,
-                                    "cards": [
-                                        {
-                                            "count": 2,
-                                            "id": 102121,
-                                            "name": "Villein",
-                                        }
-                                    ],
-                                }
-                            ],
-                        },
-                    },
-                },
-                "text/plain": {
-                    "example": (
-                        "3x Lodin (Olaf Holte)\n"
-                        "2x Graham Gottesman\n\n"
-                        "2x Villein\n"
-                        "11x Govern the Unaligned"
-                    )
-                },
-            }
-        }
-    },
 )
 @router.post("/convert", tags=["Deck"], include_in_schema=False, response_model=None)
-async def convert(request: Request, format: str = "json") -> dict | PlainTextResponse:
+async def convert(
+    request: Request, cards: Cards, format: str = "json"
+) -> dict[str, Any] | PlainTextResponse:
     raw_data = await request.body()
     content_type = request.headers.get("content-type", "")
     if "application/json" in content_type:
-        d = deck.Deck()
-        d.from_json(await request.json())
+        try:
+            deck = msgspec.convert(await request.json(), models.Deck)
+        except (msgspec.ValidationError, msgspec.DecodeError) as e:
+            raise HTTPException(status_code=400, detail=f"Invalid deck: {e}")
     else:
         try:
             text = io.StringIO(raw_data.decode("utf-8"))
-            d = deck.Deck.from_txt(text)
         except UnicodeDecodeError:
             raise HTTPException(
                 status_code=400,
                 detail="Failed to decode text/plain data in utf-8",
             )
-    if format in ["twd", "lackey", "jol"]:
-        return PlainTextResponse(d.to_txt(format), status_code=200)
-    else:
-        return d.to_json()
+        deck = parser.deck_from_txt(text, cards)
+    match format:
+        case "twd":
+            return PlainTextResponse(providers.serialize_twd(deck, cards))
+        case "txt":
+            return PlainTextResponse(providers.serialize_txt(deck))
+        case "lackey":
+            return PlainTextResponse(providers.serialize_lackey(deck))
+        case "jol":
+            return PlainTextResponse(providers.serialize_jol(deck))
+        case "vdb":
+            return PlainTextResponse(providers.serialize_vdb(deck))
+        case _:
+            return _deck_json(deck)
 
 
-def _url_request_body(example_url: str) -> dict:
+def _url_request_body(example_url: str) -> dict[str, Any]:
     """OpenAPI extra for endpoints that accept a URL via raw Request."""
     return {
         "requestBody": {
@@ -341,6 +304,25 @@ def _url_request_body(example_url: str) -> dict:
     }
 
 
+async def _fetch_deck(request: Request, cards: Cards, session: Http) -> dict[str, Any]:
+    """Read a `url` from the request body and fetch the matching deck."""
+    content_type = request.headers.get("content-type", "")
+    if "application/json" in content_type:
+        data = await request.json()
+    else:
+        form = await request.form()
+        data = dict(form)
+    if "url" not in data:
+        raise HTTPException(status_code=400, detail="Missing required parameter: url")
+    try:
+        deck = await providers.fetch(session, str(data["url"]), cards)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except aiohttp.ClientError as e:
+        raise HTTPException(status_code=502, detail=f"Failed to fetch the deck: {e}")
+    return _deck_json(deck)
+
+
 @router.post(
     "/amaranth",
     tags=["Deck"],
@@ -349,43 +331,25 @@ def _url_request_body(example_url: str) -> dict:
         "Retrieve a deck from [Amaranth](https://amaranth.vtes.co.nz/) "
         "using a share URL."
     ),
-    response_model=DeckResponse,
-    response_model_exclude_none=True,
+    response_model=None,
     openapi_extra=_url_request_body(
         "https://amaranth.vtes.co.nz/#deck/4d3aa426-70da-44b7-8cb7-92377a1a0dbd"
     ),
 )
-async def amaranth(request: Request) -> dict:
-    content_type = request.headers.get("content-type", "")
-    if "application/json" in content_type:
-        data = await request.json()
-    else:
-        form = await request.form()
-        data = dict(form)
-    if "url" not in data:
-        raise HTTPException(status_code=400, detail="Missing required parameter: url")
-    return deck.Deck.from_url(str(data["url"])).to_json()
+async def amaranth(request: Request, cards: Cards, session: Http) -> dict[str, Any]:
+    return await _fetch_deck(request, cards, session)
 
 
 @router.post(
     "/vdb",
     tags=["Deck"],
     summary="Retrieve a deck from VDB",
-    description=("Retrieve a deck from [VDB](https://vdb.im) using a share URL."),
-    response_model=DeckResponse,
-    response_model_exclude_none=True,
+    description="Retrieve a deck from [VDB](https://vdb.im) using a share URL.",
+    response_model=None,
     openapi_extra=_url_request_body("https://vdb.im/decks/b798e734f"),
 )
-async def vdb(request: Request) -> dict:
-    content_type = request.headers.get("content-type", "")
-    if "application/json" in content_type:
-        data = await request.json()
-    else:
-        form = await request.form()
-        data = dict(form)
-    if "url" not in data:
-        raise HTTPException(status_code=400, detail="Missing required parameter: url")
-    return deck.Deck.from_url(str(data["url"])).to_json()
+async def vdb(request: Request, cards: Cards, session: Http) -> dict[str, Any]:
+    return await _fetch_deck(request, cards, session)
 
 
 @router.post(
@@ -395,20 +359,11 @@ async def vdb(request: Request) -> dict:
     description=(
         "Retrieve a deck from [VTES Decks](https://vtesdecks.com) using a share URL."
     ),
-    response_model=DeckResponse,
-    response_model_exclude_none=True,
+    response_model=None,
     openapi_extra=_url_request_body("https://vtesdecks.com/deck/example-deck-id"),
 )
-async def vtesdecks(request: Request) -> dict:
-    content_type = request.headers.get("content-type", "")
-    if "application/json" in content_type:
-        data = await request.json()
-    else:
-        form = await request.form()
-        data = dict(form)
-    if "url" not in data:
-        raise HTTPException(status_code=400, detail="Missing required parameter: url")
-    return deck.Deck.from_url(str(data["url"])).to_json()
+async def vtesdecks(request: Request, cards: Cards, session: Http) -> dict[str, Any]:
+    return await _fetch_deck(request, cards, session)
 
 
 @router.post(
@@ -417,114 +372,49 @@ async def vtesdecks(request: Request) -> dict:
     summary="Given a list of cards, returns likely additional candidates for a deck",
     description=(
         "Only 10 candidates are returned. If there are less than 4 decks in the TWDA "
-        "that resemble the cards list provided, 404 is returned. "
+        "that play all the cards provided, 404 is returned. "
         "If no card is provided, it will simply output the list of most played cards."
     ),
-    response_model=list[CandidateNameResponse] | list[CandidateFullResponse],
-    response_model_exclude_none=True,
-    responses={
-        200: {
-            "content": {
-                "application/json": {
-                    "examples": {
-                        "name_mode": {
-                            "summary": "Name mode (default)",
-                            "value": [
-                                {
-                                    "card": "Ashur Tablets",
-                                    "score": 1.0,
-                                    "average": 14,
-                                    "deviation": 6.25,
-                                },
-                                {
-                                    "card": "Giant's Blood",
-                                    "score": 1.0,
-                                    "average": 1,
-                                    "deviation": 0.0,
-                                },
-                            ],
-                        },
-                        "full_mode": {
-                            "summary": "Full mode (mode=full)",
-                            "value": [
-                                {
-                                    "card": {
-                                        "id": 100106,
-                                        "name": "Ashur Tablets",
-                                        "printed_name": "Ashur Tablets",
-                                        "url": "https://static.krcg.org/card/ashurtablets.jpg",
-                                        "types": ["Master"],
-                                        "card_text": "Only one Ashur Tablets can be played each turn...",
-                                        "sets": {},
-                                        "scans": {},
-                                        "artists": ["Sandra Chang-Adair"],
-                                        "ordered_sets": ["Keepers of Tradition"],
-                                        "legality": "2008-11-19",
-                                    },
-                                    "score": 1.0,
-                                    "average": 14,
-                                    "deviation": 6.25,
-                                }
-                            ],
-                        },
-                    }
-                }
-            },
-            "description": (
-                "List of candidate cards. Shape depends on **mode**: "
-                "default returns card names as strings, "
-                "**full** returns complete card objects."
-            ),
-        }
-    },
+    response_model=None,
 )
-def candidates(data: CandidatesRequest | None = None) -> list[dict]:
+def candidates(
+    cards: Cards, twda: Twda, data: CandidatesRequest | None = None
+) -> list[Any]:
     if data is None:
         data = CandidatesRequest()
     full = data.mode == "full"
-    decks: list[deck.Deck] = list(twda.TWDA.values())
-    if data.players_count:
-        decks = [d for d in decks if (d.players_count or 0) >= int(data.players_count)]
-    if data.date_from:
-        decks = [
-            d for d in decks if d.date and d.date >= arrow.get(data.date_from).date()
-        ]
-    if data.date_to:
-        decks = [d for d in decks if d.date and d.date < arrow.get(data.date_to).date()]
+    decks = _filter_decks(twda.values(), cards, data)
+    reference = _resolve_cards(cards, data.cards or [])
+    ref_ids = {c.id for c in reference}
+    examples = [d for d in decks if ref_ids <= {entry.id for entry in d.cards}]
+    if len(examples) < 4:
+        raise HTTPException(status_code=404, detail="Too few examples in TWDA")
+    stats = analyzer.stats(decks, cards)
+    if reference:
+        ranked = analyzer.affinity(decks, cards, *reference)[:10]
+        scale = len(reference)
+        scored = [(c, score / scale) for c, score in ranked]
+    else:
+        played = analyzer.played(decks, cards)
+        scale = len(decks)
+        scored = [(c, count / scale) for c, count in played.most_common(10)]
+    return [
+        {
+            "card": _card_json(c) if full else c.unique_name,
+            "score": round(score, 4),
+            "average": round(stats[c][0]) if c in stats else 0,
+            "deviation": round(math.sqrt(stats[c][1]), 2) if c in stats else 0.0,
+        }
+        for c, score in scored
+    ]
+
+
+def _resolve_cards(
+    cards: krcg_collections.CardDict, names: Iterable[str | int]
+) -> list[models.Card]:
+    """Resolve card names or ids to cards (400 on an unknown name)."""
     try:
-        cards_list = [vtes.VTES[c] for c in (data.cards or [])]
-        A = analyzer.Analyzer(decks)
-        A.refresh(*cards_list)
-        if len(A.examples) < 4:
-            raise HTTPException(status_code=404, detail="Too few examples in TWDA")
-        if cards_list:
-            ret = A.candidates(*cards_list, spoiler_multiplier=1)[:10]
-        else:
-            ret = A.played.most_common()[:10]
-        if full:
-            return [
-                {
-                    "card": c.to_json(),
-                    "score": round(
-                        s / (len(cards_list) if cards_list else len(decks)), 4
-                    ),
-                    "average": round(A.average[c]),
-                    "deviation": round(math.sqrt(A.variance[c]), 2),
-                }
-                for c, s in ret
-            ]
-        else:
-            return [
-                {
-                    "card": c.usual_name,
-                    "score": round(
-                        s / (len(cards_list) if cards_list else len(decks)), 4
-                    ),
-                    "average": round(A.average[c]),
-                    "deviation": round(math.sqrt(A.variance[c]), 2),
-                }
-                for c, s in ret
-            ]
+        return [cards[name] for name in names]
     except KeyError as e:
         raise HTTPException(status_code=400, detail=f"Invalid card name: {e.args}")
 
@@ -541,22 +431,28 @@ def candidates(data: CandidatesRequest | None = None) -> list[dict]:
     responses={
         200: {
             "content": {
-                "application/json": {
-                    "example": [
-                        "Pentex\u2122 Subversion",
-                        "Pentagon, The",
-                    ]
-                }
+                "application/json": {"example": ["Pentex™ Subversion", "Pentagon, The"]}
             }
         }
     },
 )
 def complete(
     text: str,
+    cards: Cards,
     accept_language: str | None = Header(None, alias="Accept-Language"),
 ) -> list[str]:
     lang = _negotiate_locale(_parse_accept_language(accept_language))
-    return vtes.VTES.complete(urllib.parse.unquote(text), lang)
+    matches = cards.complete(urllib.parse.unquote(text), lang)
+    return [_display_name(c, lang) for c in matches]
+
+
+def _display_name(card: models.Card, lang: str) -> str:
+    """The card name in the requested language, falling back to English."""
+    if lang != models.Lang.EN:
+        translation = card.i18n.get(models.Lang(lang))
+        if translation:
+            return translation.name
+    return card.unique_name
 
 
 @router.post(
@@ -567,104 +463,55 @@ def complete(
         "If multiple filters are specified, only get cards matching **all filters**. "
         "If no filter is specified, get all cards. "
         "Only the *discipline* field is case sensitive.\n\n"
-        "Filtering on the text fields *text*, *card_text*, *flavor_text* and *name* "
-        "is done using a case insensitive prefix search in full text. "
-        "It will match two separated words, but only match words from start, "
-        "not parts of them. It will not match any other enum field (eg. *type*).\n\n"
-        "When multiple values are provided for a given filter, it matches any value, "
-        'except for the "trait", "bonus" and "discipline" dimensions, where it must '
-        "match all values.\n\n"
-        "Note that:\n\n"
-        "- Crypt & Library are included in *type*.\n"
-        "- Independent titles are registered as *1 vote* and *2 votes*.\n"
-        "- City titles are also registered in the *city* dimension.\n"
-        '- Crypt cards in the "any" group are registered in all groups.\n'
-        "- Disciplines are case-sensitive: "
-        "UPPERCASE trigram (eg. *AUS*) to denote the **superior** version "
-        "and lowercase trigram (eg. *aus*) to denote the **inferior** version.\n"
-        "- Virtues are listed as disciplines. "
-        "*vin* is used as trigram for the Vision virtue, so as to not mix it with "
-        "*vis* Visceratika.\n"
-        "- Only crypt cards register superior disciplines.\n"
-        "- *flight*, *striga* and *maleficia* are registered as disciplines.\n"
-        "- Multi-disciplines cards are registered in the *multi* discipline, "
-        "then in the *combo* or *choice* discipline, depending on the case. "
-        "In contrast, mono discipline cards are registered in the *mono* discipline. "
-        "Cards requiring no discipline are registered in the *none* discipline. "
-        "This allows for search like *discipline: [mono, ani]*."
+        "The *text* filter matches card names, card text and flavor text "
+        "(case insensitive prefix search). When multiple values are provided for a "
+        "given filter, it matches any value, except for the *trait*, *bonus* and "
+        "*discipline* dimensions, where it must match all values.\n\n"
+        "Use `mode=full` to get full card objects (krcg v5 JSON) instead of names."
     ),
     response_model=None,
-    responses={
-        200: {
-            "content": {
-                "application/json": {
-                    "schema": {
-                        "anyOf": [
-                            {
-                                "type": "array",
-                                "title": "Name mode (default)",
-                                "items": {"type": "string"},
-                            },
-                            {
-                                "type": "array",
-                                "title": "Full mode (mode=full)",
-                                "items": {"$ref": "#/components/schemas/CardResponse"},
-                            },
-                        ]
-                    },
-                    "examples": {
-                        "name_mode": {
-                            "summary": "Name mode (default)",
-                            "value": [
-                                "Eat the Rich",
-                                "Firebrand",
-                                "Free States Rant",
-                                "Reckless Agitation",
-                            ],
-                        },
-                        "full_mode": {
-                            "summary": "Full mode (mode=full)",
-                            "value": [
-                                {
-                                    "id": 100038,
-                                    "name": "Alastor",
-                                    "printed_name": "Alastor",
-                                    "url": "https://static.krcg.org/card/alastor.jpg",
-                                    "types": ["Political Action"],
-                                    "card_text": "Requires a justicar or Inner Circle member...",
-                                    "sets": {},
-                                    "scans": {},
-                                    "artists": ["Monte Moore"],
-                                    "ordered_sets": ["Gehenna"],
-                                    "legality": "2004-05-17",
-                                }
-                            ],
-                        },
-                    },
-                }
-            },
-            "description": (
-                "List of matching cards. Shape depends on **mode**: "
-                "default returns card names as strings, "
-                "**full** returns complete card objects."
-            ),
-        }
-    },
 )
-def card_search(data: CardSearchRequest | None = None) -> list:
+def card_search(cards: Cards, data: CardSearchRequest | None = None) -> list[Any]:
     if data is None:
         data = CardSearchRequest()
     search_data = data.model_dump(exclude_none=True)
     full = search_data.pop("mode", "") == "full"
-    if search_data.get("lang"):
-        search_data["lang"] = _negotiate_locale([search_data["lang"]])
+    lang_req = search_data.pop("lang", None)
+    text_val = search_data.pop("text", None)
+    lang = _negotiate_locale([lang_req]) if lang_req else "en"
+    search_lang = models.Lang(lang)
+    criteria: dict[str, Any] = {}
+    for key, value in search_data.items():
+        if key not in SEARCH_DIMENSIONS:
+            continue
+        if not isinstance(value, list):
+            criteria[key] = value
+        elif key == "group":
+            # krcg groups are "G1".."G7"/"Any"; accept bare numbers too
+            criteria[key] = [f"G{v}" if str(v).isdigit() else str(v) for v in value]
+        else:
+            criteria[key] = [str(v) for v in value]
+    criteria = _canonicalize_criteria(cards, criteria)
     try:
-        result = sorted(vtes.VTES.search(**search_data), key=lambda c: c.name)
+        if criteria:
+            result = set(cards.search(n=None, lang=search_lang, **criteria))
+        elif text_val:
+            result = set(cards.cards())
+        else:
+            result = set(cards.cards())
+        if text_val:
+            matches: set[models.Card] = set()
+            for dimension in TEXT_DIMENSIONS:
+                matches |= set(
+                    cards.search(n=None, lang=search_lang, **{dimension: text_val})
+                )
+            result &= matches
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    ordered = sorted(result, key=lambda c: c.unique_name)
     if full:
-        return [c.to_json() for c in result]
-    return [c.usual_name for c in result]
+        return [_card_json(c) for c in ordered]
+    return [c.unique_name for c in ordered]
 
 
 @router.get(
@@ -673,14 +520,13 @@ def card_search(data: CardSearchRequest | None = None) -> list:
     summary="Get available search dimensions",
     description=(
         "Returns a JSON dictionary of search dimensions. "
-        "Note that the text dimensions *text*, *name*, *card_text* and *flavor_text* "
+        "Note that the text dimensions *name*, *card_text* and *flavor_text* "
         "are not included in the response."
     ),
-    response_model=CardSearchDimensionsResponse,
-    response_model_exclude_none=True,
+    response_model=None,
 )
-def card_search_dimensions() -> dict:
-    return vtes.VTES.search_dimensions
+def card_search_dimensions(cards: Cards) -> dict[str, Any]:
+    return cards.search_dimensions
 
 
 def _parse_accept_language(header: str | None) -> list[str]:

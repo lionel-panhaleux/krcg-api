@@ -1,0 +1,79 @@
+---
+# Deploy krcg-api: a uvicorn systemd service fronted by nginx (server-setup's
+# nginx_site role, reverse-proxy mode, with Let's Encrypt). The app is a pure
+# Python package pulled from PyPI; uv provisions Python 3.12 and the venv.
+- name: Deploy krcg-api
+  hosts: all
+  become: true
+  vars:
+    service_name: krcg_api  # nginx syslog tag + service identifier
+    krcg_api_domain: api.krcg.org
+    krcg_api_user: krcg_api
+    krcg_api_home: /opt/krcg-api
+    krcg_api_port: 8000
+    krcg_api_workers: 2
+  handlers:
+    - name: Restart krcg-api
+      ansible.builtin.systemd:
+        name: "{{ service_name }}"
+        state: restarted
+        daemon_reload: true
+
+  tasks:
+    - name: Create the service user
+      ansible.builtin.user:
+        name: "{{ krcg_api_user }}"
+        system: true
+        shell: /usr/sbin/nologin
+        home: "{{ krcg_api_home }}"
+        create_home: true
+
+    - name: Install uv (provisions Python and the venv)
+      ansible.builtin.shell:
+        cmd: >-
+          curl -LsSf https://astral.sh/uv/install.sh
+          | env UV_INSTALL_DIR=/usr/local/bin INSTALLER_NO_MODIFY_PATH=1 sh
+        creates: /usr/local/bin/uv
+
+    - name: Create the virtualenv on Python 3.12
+      ansible.builtin.command:
+        cmd: /usr/local/bin/uv venv --python 3.12 {{ krcg_api_home }}/venv
+        creates: "{{ krcg_api_home }}/venv/bin/python"
+
+    - name: Install / upgrade krcg-api
+      ansible.builtin.command:
+        cmd: >-
+          /usr/local/bin/uv pip install --upgrade
+          --python {{ krcg_api_home }}/venv/bin/python krcg-api
+      register: krcg_api_install
+      changed_when: "'Installed' in krcg_api_install.stdout or '+ krcg-api' in krcg_api_install.stdout"
+      notify: Restart krcg-api
+
+    - name: Own the install tree
+      ansible.builtin.file:
+        path: "{{ krcg_api_home }}"
+        owner: "{{ krcg_api_user }}"
+        group: "{{ krcg_api_user }}"
+        recurse: true
+
+    - name: Install the systemd unit
+      ansible.builtin.template:
+        src: krcg_api.service.j2
+        dest: /etc/systemd/system/{{ service_name }}.service
+        mode: "0644"
+      notify: Restart krcg-api
+
+    - name: Enable and start krcg-api
+      ansible.builtin.systemd:
+        name: "{{ service_name }}"
+        enabled: true
+        state: started
+        daemon_reload: true
+
+    - name: Front the app with nginx (reverse proxy + Let's Encrypt)
+      ansible.builtin.include_role:
+        name: lionel_panhaleux.server_setup.nginx_site
+      vars:
+        nginx_site_domain: "{{ krcg_api_domain }}"
+        nginx_site_type: proxy
+        nginx_site_upstream: "http://127.0.0.1:{{ krcg_api_port }}"

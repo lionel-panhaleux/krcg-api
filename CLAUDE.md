@@ -1,12 +1,14 @@
 # CLAUDE.md
 
-FastAPI REST API for VTES card game data (VEKN card texts + TWDA). Built on the `krcg` package. No database — all data loaded in-memory at startup.
+FastAPI REST API for VTES card game data (VEKN card texts + TWDA). Built on the `krcg` package (v5). No database — all data loaded in-memory at startup. Requires Python 3.12+.
+
+Cards and decks are served in the **krcg v5 JSON format** (`msgspec.to_builtins` of the krcg dataclasses); this API is a thin HTTP layer over the krcg library. A major version aligns with that format (breaking change vs the pre-v5 `to_json` shape).
 
 ## Commands
 
 `uv` + `just`: `just install`, `just quality`, `just test`, `just serve`
-Single test: `uv run pytest tests/test_card.py::test_card -vvs`
-Tests require internet access.
+Single test: `uv run pytest tests/test_card.py::test_card_by_name -vvs`
+Tests load the bundled snapshot (offline); the deck-provider tests reach external sites and skip when offline.
 
 ## Code Quality
 
@@ -14,6 +16,12 @@ ruff (format+lint), ty (type checker, all rules set to error). OpenAPI spec is a
 
 ## Architecture
 
-All routes in `krcg_api/api.py` on a single `APIRouter`. CORS via `CORSMiddleware`. `create_app()` in `__init__.py` creates the FastAPI app; lifespan loads `vtes.VTES`/`twda.TWDA` data. ASGI entrypoint: `krcg_api:application`. Swagger UI auto-served at `/docs` (root `/` redirects there). Request models in `krcg_api/models.py`.
+All routes in `krcg_api/api.py` on a single `APIRouter`. CORS via `CORSMiddleware`. `create_app()` in `__init__.py` creates the FastAPI app; the lifespan opens one shared `aiohttp` session and loads the cards (`krcg.load_online`) and TWDA (`krcg.twda.load_online`) onto `app.state` (falling back to the bundled snapshot offline). Handlers reach that data through the `get_cards`/`get_twda`/`get_http` FastAPI dependencies (`Cards`/`Twda`/`Http` annotated types) — no module-level singletons. ASGI entrypoint: `krcg_api:application`. Swagger UI auto-served at `/docs` (root `/` redirects there). Request models in `krcg_api/models.py`; responses are raw v5 JSON (`response_model=None`).
+
+Cards/decks are serialized with `_card_json`/`_deck_json` (`msgspec.to_builtins(..., str_keys=True)`). krcg set-dimension search is case-sensitive; `card_search` restores case-insensitive matching (except `discipline`) via `_canonicalize_criteria`, and maps numeric `group` to krcg's `G2` form.
 
 New endpoints: add handler in `api.py`, tests in `tests/`, run `just test`.
+
+## Deployment
+
+Ansible deploy under `deploy/`, consuming the `lionel_panhaleux.server_setup` collection (see `deploy/README.md`). CI deploys via `.github/workflows/deploy.yml`.
