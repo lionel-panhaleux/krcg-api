@@ -198,6 +198,7 @@ The API is deployed to a server with Ansible, reusing the shared roles from
 service runs uvicorn on a local port and the `nginx_site` role fronts it with
 nginx + Let's Encrypt. See [`deploy/README.md`](deploy/README.md) for details.
 
-Deployment runs from GitHub Actions
-([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)) via
-`workflow_dispatch`, and automatically on every published release.
+Deployment runs from GitHub Actions via `workflow_dispatch` and automatically
+on every published release. The workflow ships in
+[`deploy/ci/deploy.yml`](deploy/ci/deploy.yml) and must be moved under
+`.github/workflows/` by a maintainer (see [`deploy/ci/README.md`](deploy/ci/README.md)).

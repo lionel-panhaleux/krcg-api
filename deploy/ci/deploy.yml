@@ -1,0 +1,40 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Ansible
+        run: pip install ansible
+
+      - name: Install Ansible collections
+        working-directory: deploy
+        run: ansible-galaxy collection install -r requirements.yml
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy
+          chmod 600 ~/.ssh/deploy
+          printf '%s\n' "${{ vars.DEPLOY_HOST_KEY }}" >> ~/.ssh/known_hosts
+
+      - name: Run deploy playbook
+        working-directory: deploy
+        run: |
+          ansible-playbook deploy.yml \
+            -i "${{ vars.DEPLOY_HOST }}," \
+            --user deploy --private-key ~/.ssh/deploy

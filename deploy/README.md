@@ -37,9 +37,13 @@ Override at the play/CLI level as needed:
 
 ## Running from CI
 
-The [`deploy.yml` workflow](../.github/workflows/deploy.yml) runs on every
-published release and via `workflow_dispatch`. It targets the `production`
-GitHub environment and reads, from that environment:
+> The CI workflow lives in [`ci/deploy.yml`](ci/deploy.yml) and must be moved to
+> `.github/workflows/deploy.yml` by a maintainer — see [`ci/README.md`](ci/README.md).
+
+
+The deploy workflow runs on every published release and via
+`workflow_dispatch`. It targets the `production` GitHub environment and reads,
+from that environment:
 
 - `DEPLOY_HOST` (variable) — the target server IP;
 - `DEPLOY_HOST_KEY` (variable) — the server's SSH host key line;
