@@ -40,6 +40,7 @@ dependencies = [
     "fastapi",
     "krcg>=4.17",
     "python-multipart",
+    "scalar-fastapi>=1.8.2",
     "uvicorn[standard]",
 ]
 

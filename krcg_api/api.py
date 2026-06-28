@@ -1,4 +1,5 @@
 from collections.abc import Iterable
+from typing import Any
 
 import arrow
 import babel
@@ -34,7 +35,7 @@ router = APIRouter()
 
 @router.get("/", include_in_schema=False)
 def root() -> RedirectResponse:
-    return RedirectResponse(url="/docs")
+    return RedirectResponse(url="/scalar")
 
 
 @router.get(
@@ -48,7 +49,7 @@ def root() -> RedirectResponse:
     response_model=CardResponse,
     response_model_exclude_none=True,
 )
-def card(text: str) -> dict:
+def card(text: str) -> dict[str, Any]:
     card_id: int | str = text
     try:
         card_id = int(text)
@@ -67,7 +68,7 @@ def card(text: str) -> dict:
     response_model=list[DeckResponse],
     response_model_exclude_none=True,
 )
-def deck_search(data: DeckSearchRequest | None = None) -> list[dict]:
+def deck_search(data: DeckSearchRequest | None = None) -> list[dict[str, Any]]:
     if data is None:
         data = DeckSearchRequest()
     if data.player:
@@ -101,7 +102,7 @@ def deck_search(data: DeckSearchRequest | None = None) -> list[dict]:
     response_model=DeckListResponse,
     response_model_exclude_none=True,
 )
-def deck_list(data: DeckSearchRequest | None = None) -> dict:
+def deck_list(data: DeckSearchRequest | None = None) -> dict[str, Any]:
     if data is None:
         data = DeckSearchRequest()
     if data.player:
@@ -144,7 +145,7 @@ def deck_list(data: DeckSearchRequest | None = None) -> dict:
     response_model=DeckResponse,
     response_model_exclude_none=True,
 )
-def deck_by_id(twda_id: str) -> dict:
+def deck_by_id(twda_id: str) -> dict[str, Any]:
     if not twda_id:
         raise HTTPException(status_code=400, detail="Bad Request")
     if twda_id not in twda.TWDA:
@@ -159,7 +160,7 @@ def deck_by_id(twda_id: str) -> dict:
     response_model=DeckResponse,
     response_model_exclude_none=True,
 )
-def random_deck(data: DeckSearchRequest | None = None) -> dict:
+def random_deck(data: DeckSearchRequest | None = None) -> dict[str, Any]:
     if data is None:
         data = DeckSearchRequest()
     if data.player:
@@ -296,7 +297,9 @@ def random_deck(data: DeckSearchRequest | None = None) -> dict:
     },
 )
 @router.post("/convert", tags=["Deck"], include_in_schema=False, response_model=None)
-async def convert(request: Request, format: str = "json") -> dict | PlainTextResponse:
+async def convert(
+    request: Request, format: str = "json"
+) -> dict[str, Any] | PlainTextResponse:
     raw_data = await request.body()
     content_type = request.headers.get("content-type", "")
     if "application/json" in content_type:
@@ -317,7 +320,7 @@ async def convert(request: Request, format: str = "json") -> dict | PlainTextRes
         return d.to_json()
 
 
-def _url_request_body(example_url: str) -> dict:
+def _url_request_body(example_url: str) -> dict[str, Any]:
     """OpenAPI extra for endpoints that accept a URL via raw Request."""
     return {
         "requestBody": {
@@ -355,7 +358,7 @@ def _url_request_body(example_url: str) -> dict:
         "https://amaranth.vtes.co.nz/#deck/4d3aa426-70da-44b7-8cb7-92377a1a0dbd"
     ),
 )
-async def amaranth(request: Request) -> dict:
+async def amaranth(request: Request) -> dict[str, Any]:
     content_type = request.headers.get("content-type", "")
     if "application/json" in content_type:
         data = await request.json()
@@ -376,7 +379,7 @@ async def amaranth(request: Request) -> dict:
     response_model_exclude_none=True,
     openapi_extra=_url_request_body("https://vdb.im/decks/b798e734f"),
 )
-async def vdb(request: Request) -> dict:
+async def vdb(request: Request) -> dict[str, Any]:
     content_type = request.headers.get("content-type", "")
     if "application/json" in content_type:
         data = await request.json()
@@ -399,7 +402,7 @@ async def vdb(request: Request) -> dict:
     response_model_exclude_none=True,
     openapi_extra=_url_request_body("https://vtesdecks.com/deck/example-deck-id"),
 )
-async def vtesdecks(request: Request) -> dict:
+async def vtesdecks(request: Request) -> dict[str, Any]:
     content_type = request.headers.get("content-type", "")
     if "application/json" in content_type:
         data = await request.json()
@@ -478,7 +481,7 @@ async def vtesdecks(request: Request) -> dict:
         }
     },
 )
-def candidates(data: CandidatesRequest | None = None) -> list[dict]:
+def candidates(data: CandidatesRequest | None = None) -> list[dict[str, Any]]:
     if data is None:
         data = CandidatesRequest()
     full = data.mode == "full"
@@ -651,7 +654,7 @@ def complete(
         }
     },
 )
-def card_search(data: CardSearchRequest | None = None) -> list:
+def card_search(data: CardSearchRequest | None = None) -> list[Any]:
     if data is None:
         data = CardSearchRequest()
     search_data = data.model_dump(exclude_none=True)
@@ -679,7 +682,7 @@ def card_search(data: CardSearchRequest | None = None) -> list:
     response_model=CardSearchDimensionsResponse,
     response_model_exclude_none=True,
 )
-def card_search_dimensions() -> dict:
+def card_search_dimensions() -> dict[str, Any]:
     return vtes.VTES.search_dimensions
 
 

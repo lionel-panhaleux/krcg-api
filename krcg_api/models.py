@@ -102,6 +102,9 @@ class CardSearchRequest(BaseModel):
     clan: list[str] | None = Field(
         default=None, description="Clan/Creed or required clan/creed (or none)."
     )
+    path: list[str] | None = Field(
+        default=None, description="Path (eg. Caine, Cathari, Death and the Soul)."
+    )
     group: list[int] | None = Field(
         default=None, description="Group (crypt cards only)."
     )
