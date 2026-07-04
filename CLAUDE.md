@@ -24,4 +24,4 @@ New endpoints: add handler in `api.py`, tests in `tests/`, run `just test`.
 
 ## Deployment
 
-Ansible deploy under `deploy/`, consuming the `lionel_panhaleux.server_setup` collection (see `deploy/README.md`). CI deploy workflow is staged in `deploy/ci/` (move to `.github/workflows/`; the branch token lacks GitHub `workflow` scope).
+Ansible deploy under `deploy/`, consuming the `lionel_panhaleux.server_setup` collection (see `deploy/README.md`). The deploy workflow (`.github/workflows/deploy.yml`) runs it on every published release. Releases: notes accumulate in `CHANGES.md`; `just release [major|minor]` bumps/tags/pushes and CI publishes to PyPI + creates the GitHub release.
