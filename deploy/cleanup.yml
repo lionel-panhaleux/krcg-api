@@ -4,6 +4,7 @@
 #   ansible-playbook cleanup.yml -i "HOST," --user deploy --private-key ~/.ssh/deploy
 - name: Clean up old Flask deployment for api.krcg.org
   hosts: all
+  become: true
   tasks:
     - name: Stop old systemd service
       ansible.builtin.systemd:
