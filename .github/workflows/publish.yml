@@ -30,11 +30,20 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      actions: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
       - name: Create release
         run: gh release create "${{ github.ref_name }}" --notes-file CHANGES.md
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      # a release created with the workflow token does not emit a workflow
+      # event (GitHub anti-recursion rule), so deploy.yml's `release` trigger
+      # never fires from here — dispatch it explicitly (dispatch is exempt)
+      - name: Trigger deploy
+        run: gh workflow run deploy.yml --ref "${{ github.ref_name }}"
         env:
           GH_TOKEN: ${{ github.token }}
