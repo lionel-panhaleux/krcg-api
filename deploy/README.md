@@ -14,7 +14,9 @@ Ansible deploy for the KRCG API, built on the shared roles from
 - a `krcg_api.service` systemd unit running uvicorn on `127.0.0.1:8000`
   (data is loaded in memory per worker, so `krcg_api_workers` defaults to 2);
 - an nginx reverse-proxy vhost for `api.krcg.org` with automatic Let's Encrypt
-  issuance, via the `nginx_site` role in `proxy` mode.
+  issuance, via the `nginx_site` role in `proxy` mode. nginx serves permissive
+  CORS headers on the whole site (`open_api_paths: ["/"]`) — the app itself
+  has no CORS middleware.
 
 All app logs (the uvicorn service and the nginx site) land in journald under the
 shared `krcg_api` tag:

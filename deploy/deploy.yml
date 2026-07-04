@@ -77,3 +77,6 @@
         nginx_site_domain: "{{ krcg_api_domain }}"
         nginx_site_type: proxy
         nginx_site_upstream: "http://127.0.0.1:{{ krcg_api_port }}"
+        # public API: permissive CORS on the whole site (the app itself
+        # serves no CORS headers)
+        nginx_site_open_api_paths: ["/"]

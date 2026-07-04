@@ -7,7 +7,6 @@ import aiohttp
 import krcg
 import uvicorn
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from krcg import twda
 
 from . import api
@@ -51,12 +50,8 @@ def create_app() -> FastAPI:
             {"name": "Deck", "description": "Operations on VTES decks"},
         ],
     )
-    app.add_middleware(
-        CORSMiddleware,  # type: ignore[arg-type]
-        allow_origins=["*"],
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+    # CORS is not handled here: the production reverse proxy serves permissive
+    # CORS headers for the whole site (nginx_site role, open_api_paths)
     app.include_router(api.router)
     return app
 

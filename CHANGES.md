@@ -10,4 +10,7 @@
 - Requires Python 3.12+.
 - New Ansible deploy under `deploy/` (server-setup collection): uvicorn systemd
   service behind nginx with Let's Encrypt, run by CI on every published release.
+- CORS moved out of the app: api.krcg.org serves permissive CORS headers from
+  nginx for the whole site. If you self-host, add CORS at your reverse proxy
+  (or wrap the ASGI app in a CORS middleware) for browser clients.
 - Releases are now published by CI (PyPI trusted publishing + GitHub release).
