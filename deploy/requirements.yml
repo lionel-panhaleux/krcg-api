@@ -1,0 +1,7 @@
+---
+# Shared roles (nginx_site, …) from the server-setup repo. Installing the git
+# collection pulls its own galaxy dependencies (community.postgresql).
+collections:
+  - name: https://github.com/lionel-panhaleux/server-setup.git
+    type: git
+    version: main

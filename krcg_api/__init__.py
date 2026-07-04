@@ -3,10 +3,12 @@ import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
+import aiohttp
+import krcg
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from krcg import twda, vtes
+from krcg import twda
 
 from . import api
 
@@ -16,10 +18,13 @@ logging.basicConfig(level=logging.INFO, format="[%(levelname)7s] %(message)s")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    vtes.VTES.load()
-    twda.TWDA.load()
-    logger.info("launching app")
-    yield
+    # one shared aiohttp session: loads the v5 data and serves the deck providers
+    async with aiohttp.ClientSession() as session:
+        app.state.http = session
+        app.state.cards = await krcg.load_online(session)
+        app.state.twda = await twda.load_online(session)
+        logger.info("launching app")
+        yield
 
 
 def create_app() -> FastAPI:
@@ -27,7 +32,9 @@ def create_app() -> FastAPI:
         title="KRCG API",
         description=(
             "**V:tES** cards and decks based on VEKN resources, "
-            "including the [TWDA](http://www.vekn.fr/decks/twd.htm)."
+            "including the [TWDA](http://www.vekn.fr/decks/twd.htm).\n\n"
+            "Cards and decks are served in the "
+            "[KRCG v5](https://github.com/lionel-panhaleux/krcg) JSON format."
         ),
         version=importlib.metadata.version("krcg-api"),
         contact={

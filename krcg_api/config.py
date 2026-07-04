@@ -1,4 +1,5 @@
-from krcg import config
+from krcg import models
 
-SUPPORTED_LANGUAGES = list(config.SUPPORTED_LANGUAGES)
-KRCG_STATIC_SERVER = config.KRCG_STATIC_SERVER
+#: languages krcg ships translated data for (used for content negotiation)
+SUPPORTED_LANGUAGES = [lang.value for lang in models.Lang]
+KRCG_STATIC_SERVER = "https://static.krcg.org"
