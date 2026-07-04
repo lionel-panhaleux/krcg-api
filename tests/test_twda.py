@@ -50,3 +50,13 @@ def test_random_deck(client):
     response = client.post("/twda/random", json={"cards": ["Cybele", "Nana Buruku"]})
     assert response.status_code == 200
     assert "cards" in response.json()
+
+
+def test_deck_list_no_result(client):
+    response = client.post("/twda/list", json={"date_from": "3000-01-01"})
+    assert response.status_code == 404
+
+
+def test_random_deck_no_result(client):
+    response = client.post("/twda/random", json={"date_from": "3000-01-01"})
+    assert response.status_code == 404

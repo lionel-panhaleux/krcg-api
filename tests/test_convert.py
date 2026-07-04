@@ -51,3 +51,12 @@ def test_convert_json_to_text_formats(client):
 def test_convert_invalid_json(client):
     response = client.post("/convert/json", json={"cards": [{"bogus": 1}]})
     assert response.status_code == 400
+
+
+def test_convert_invalid_utf8(client):
+    response = client.post(
+        "/convert/txt",
+        content=b"\xff\xfe\xfa",
+        headers={"content-type": "text/plain"},
+    )
+    assert response.status_code == 400

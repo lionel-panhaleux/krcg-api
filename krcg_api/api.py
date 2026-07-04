@@ -360,7 +360,9 @@ async def vdb(request: Request, cards: Cards, session: Http) -> dict[str, Any]:
         "Retrieve a deck from [VTES Decks](https://vtesdecks.com) using a share URL."
     ),
     response_model=None,
-    openapi_extra=_url_request_body("https://vtesdecks.com/deck/example-deck-id"),
+    openapi_extra=_url_request_body(
+        "https://vtesdecks.com/deck/user-lionelpx-bf26e06e078348e8b5852d4e86dbdf6c"
+    ),
 )
 async def vtesdecks(request: Request, cards: Cards, session: Http) -> dict[str, Any]:
     return await _fetch_deck(request, cards, session)

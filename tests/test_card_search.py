@@ -71,3 +71,10 @@ def test_search_dimensions(client):
         "G6",
         "G7",
     ]
+
+
+def test_search_no_body(client, cards):
+    # posting without a body at all returns all cards, like an empty filter
+    response = client.post("/card_search")
+    assert response.status_code == 200
+    assert len(response.json()) == len(set(cards.cards()))

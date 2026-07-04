@@ -46,3 +46,10 @@ def test_candidates_too_few_examples(client, cards, TWDA):
     assert played[rare] < 4
     response = client.post("/candidates", json={"cards": [rare.id]})
     assert response.status_code == 404
+
+
+def test_candidates_no_body(client):
+    # posting without a body at all behaves like an empty filter
+    response = client.post("/candidates")
+    assert response.status_code == 200
+    assert len(response.json()) == 10
