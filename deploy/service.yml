@@ -1,0 +1,38 @@
+---
+# Provision one API version (ver: {name, pins, port, server, nginx_cors}).
+- name: Create the virtualenv on Python 3.12 ({{ ver.name }})
+  ansible.builtin.command:
+    cmd: >-
+      /usr/local/bin/uv venv --python 3.12
+      {{ krcg_api_home }}/{{ ver.name }}/venv
+    creates: "{{ krcg_api_home }}/{{ ver.name }}/venv/bin/python"
+
+- name: Install / upgrade krcg-api ({{ ver.name }})
+  ansible.builtin.command:
+    argv: >-
+      {{ ['/usr/local/bin/uv', 'pip', 'install', '--upgrade', '--python',
+          krcg_api_home ~ '/' ~ ver.name ~ '/venv/bin/python'] + ver.pins }}
+  register: krcg_api_install
+  changed_when: >-
+    'Installed' in (krcg_api_install.stdout + krcg_api_install.stderr)
+
+- name: Install the systemd unit ({{ ver.name }})
+  ansible.builtin.template:
+    src: krcg_api.service.j2
+    dest: /etc/systemd/system/krcg_api_{{ ver.name }}.service
+    mode: "0644"
+  register: krcg_api_unit
+
+- name: Enable and start krcg-api ({{ ver.name }})
+  ansible.builtin.systemd:
+    name: "krcg_api_{{ ver.name }}"
+    enabled: true
+    state: started
+    daemon_reload: true
+
+- name: Restart krcg-api on upgrade ({{ ver.name }})
+  ansible.builtin.systemd:
+    name: "krcg_api_{{ ver.name }}"
+    state: restarted
+    daemon_reload: true
+  when: krcg_api_install.changed or krcg_api_unit.changed

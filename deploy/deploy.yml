@@ -1,23 +1,37 @@
 ---
-# Deploy krcg-api: a uvicorn systemd service fronted by nginx (server-setup's
-# nginx_site role, reverse-proxy mode, with Let's Encrypt). The app is a pure
-# Python package pulled from PyPI; uv provisions Python 3.12 and the venv.
+# Deploy krcg-api: two API versions run side by side, each a systemd service
+# fronted by nginx (server-setup's nginx_site role, with Let's Encrypt):
+#
+#   v3 — legacy krcg-api 3.x from PyPI (Flask/WSGI, pre-v5 JSON), gunicorn.
+#        The Flask app serves its own CORS headers, so its nginx site adds none.
+#   v4 — current krcg-api 4.x from PyPI (FastAPI/ASGI, krcg v5 JSON), uvicorn.
+#        The app serves no CORS headers; nginx adds them (open_api_paths).
+#
+# Each version serves on <name>.api.krcg.org; the apex api.krcg.org is an
+# alias on the site selected by krcg_api_live. Flip krcg_api_live to v4 to
+# end the migration window (the role expands the TLS cert automatically).
 - name: Deploy krcg-api
   hosts: all
   become: true
   vars:
-    service_name: krcg_api  # nginx syslog tag + service identifier
     krcg_api_domain: api.krcg.org
+    krcg_api_live: v3  # version serving the apex domain
     krcg_api_user: krcg_api
     krcg_api_home: /opt/krcg-api
-    krcg_api_port: 8000
     krcg_api_workers: 2
-  handlers:
-    - name: Restart krcg-api
-      ansible.builtin.systemd:
-        name: "{{ service_name }}"
-        state: restarted
-        daemon_reload: true
+    krcg_api_versions:
+      - name: v3
+        # krcg-api 3.x declares krcg>=4.16 without an upper bound, and
+        # krcg 5 removed the modules it imports — the krcg<5 pin is required
+        pins: ["krcg-api<4", "krcg<5", "gunicorn"]
+        port: 8003
+        server: gunicorn
+        nginx_cors: false
+      - name: v4
+        pins: ["krcg-api>=4,<5"]
+        port: 8004
+        server: uvicorn
+        nginx_cors: true
 
   tasks:
     - name: Create the service user
@@ -28,26 +42,19 @@
         home: "{{ krcg_api_home }}"
         create_home: true
 
-    - name: Install uv (provisions Python and the venv)
+    - name: Install uv (provisions Python and the venvs)
       ansible.builtin.shell:
         cmd: >-
           curl -LsSf https://astral.sh/uv/install.sh
           | env UV_INSTALL_DIR=/usr/local/bin INSTALLER_NO_MODIFY_PATH=1 sh
         creates: /usr/local/bin/uv
 
-    - name: Create the virtualenv on Python 3.12
-      ansible.builtin.command:
-        cmd: /usr/local/bin/uv venv --python 3.12 {{ krcg_api_home }}/venv
-        creates: "{{ krcg_api_home }}/venv/bin/python"
-
-    - name: Install / upgrade krcg-api
-      ansible.builtin.command:
-        cmd: >-
-          /usr/local/bin/uv pip install --upgrade
-          --python {{ krcg_api_home }}/venv/bin/python krcg-api
-      register: krcg_api_install
-      changed_when: "'Installed' in krcg_api_install.stdout or '+ krcg-api' in krcg_api_install.stdout"
-      notify: Restart krcg-api
+    - name: Deploy each API version
+      ansible.builtin.include_tasks: service.yml
+      loop: "{{ krcg_api_versions }}"
+      loop_control:
+        loop_var: ver
+        label: "{{ ver.name }}"
 
     - name: Own the install tree
       ansible.builtin.file:
@@ -56,27 +63,17 @@
         group: "{{ krcg_api_user }}"
         recurse: true
 
-    - name: Install the systemd unit
-      ansible.builtin.template:
-        src: krcg_api.service.j2
-        dest: /etc/systemd/system/{{ service_name }}.service
-        mode: "0644"
-      notify: Restart krcg-api
-
-    - name: Enable and start krcg-api
-      ansible.builtin.systemd:
-        name: "{{ service_name }}"
-        enabled: true
-        state: started
-        daemon_reload: true
-
-    - name: Front the app with nginx (reverse proxy + Let's Encrypt)
+    - name: Front each version with nginx (reverse proxy + Let's Encrypt)
       ansible.builtin.include_role:
         name: lionel_panhaleux.server_setup.nginx_site
+      loop: "{{ krcg_api_versions }}"
+      loop_control:
+        loop_var: ver
+        label: "{{ ver.name }}"
       vars:
-        nginx_site_domain: "{{ krcg_api_domain }}"
+        nginx_site_name: "krcg_api_{{ ver.name }}"
+        nginx_site_domain: "{{ ver.name }}.{{ krcg_api_domain }}"
         nginx_site_type: proxy
-        nginx_site_upstream: "http://127.0.0.1:{{ krcg_api_port }}"
-        # public API: permissive CORS on the whole site (the app itself
-        # serves no CORS headers)
-        nginx_site_open_api_paths: ["/"]
+        nginx_site_upstream: "http://127.0.0.1:{{ ver.port }}"
+        nginx_site_aliases: "{{ [krcg_api_domain] if krcg_api_live == ver.name else [] }}"
+        nginx_site_open_api_paths: "{{ ['/'] if ver.nginx_cors else [] }}"

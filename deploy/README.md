@@ -6,36 +6,43 @@ Ansible deploy for the KRCG API, built on the shared roles from
 
 ## What it does
 
-`deploy.yml` (run against a single host) provisions:
+`deploy.yml` (run against a single host) provisions **two API versions side by
+side**, each with its own venv (Python 3.12, provisioned with
+[uv](https://docs.astral.sh/uv/)), systemd service and nginx vhost with
+automatic Let's Encrypt issuance:
 
-- a `krcg_api` system user and an `/opt/krcg-api` virtualenv on Python 3.12
-  (provisioned with [uv](https://docs.astral.sh/uv/));
-- the latest `krcg-api` release from PyPI installed into that venv;
-- a `krcg_api.service` systemd unit running uvicorn on `127.0.0.1:8000`
-  (data is loaded in memory per worker, so `krcg_api_workers` defaults to 2);
-- an nginx reverse-proxy vhost for `api.krcg.org` with automatic Let's Encrypt
-  issuance, via the `nginx_site` role in `proxy` mode. nginx serves permissive
-  CORS headers on the whole site (`open_api_paths: ["/"]`) — the app itself
-  has no CORS middleware.
+| version | package (PyPI)      | stack             | domain             | CORS            |
+| ------- | ------------------- | ----------------- | ------------------ | --------------- |
+| `v3`    | `krcg-api<4, krcg<5`| Flask / gunicorn  | `v3.api.krcg.org`  | served by app   |
+| `v4`    | `krcg-api>=4,<5`    | FastAPI / uvicorn | `v4.api.krcg.org`  | served by nginx |
 
-All app logs (the uvicorn service and the nginx site) land in journald under the
-shared `krcg_api` tag:
+The apex `api.krcg.org` is an nginx alias on the version selected by
+`krcg_api_live` (currently `v3`). To switch the apex to v4 at the end of the
+migration window, set `krcg_api_live: v4` and re-run the playbook — the
+nginx_site role expands the v4 TLS certificate automatically.
+
+DNS for `v3.api.krcg.org`, `v4.api.krcg.org` and `api.krcg.org` must point at
+the server before the first run (Let's Encrypt HTTP-01).
+
+Logs land in journald, one tag per version:
 
 ```bash
-journalctl -t krcg_api -f
+journalctl -t krcg_api_v3 -f
+journalctl -t krcg_api_v4 -f
 ```
 
 ## Variables
 
 Override at the play/CLI level as needed:
 
-| variable             | default          | meaning                                   |
-| -------------------- | ---------------- | ----------------------------------------- |
-| `krcg_api_domain`    | `api.krcg.org`   | public hostname (nginx + Let's Encrypt)   |
-| `krcg_api_port`      | `8000`           | local port uvicorn binds (proxied)        |
-| `krcg_api_workers`   | `2`              | uvicorn worker processes                  |
-| `krcg_api_user`      | `krcg_api`       | service user                              |
-| `krcg_api_home`      | `/opt/krcg-api`  | install tree (venv lives here)            |
+| variable             | default          | meaning                                    |
+| -------------------- | ---------------- | ------------------------------------------ |
+| `krcg_api_domain`    | `api.krcg.org`   | apex hostname (versions serve `vN.` + it)  |
+| `krcg_api_live`      | `v3`             | version the apex domain is an alias of     |
+| `krcg_api_versions`  | see playbook     | per-version pins, port, server, CORS       |
+| `krcg_api_workers`   | `2`              | worker processes per version               |
+| `krcg_api_user`      | `krcg_api`       | service user                               |
+| `krcg_api_home`      | `/opt/krcg-api`  | install tree (one venv per version inside) |
 
 ## Running from CI
 
@@ -60,3 +67,6 @@ ansible-playbook deploy.yml -i "1.2.3.4," --user deploy --private-key ~/.ssh/dep
 
 (Run from this `deploy/` directory so `ansible.cfg` is picked up. Add
 `--check --diff` for a dry run.)
+
+Before the first run, decommission the old Flask/uWSGI deployment once with
+[`cleanup.yml`](cleanup.yml).

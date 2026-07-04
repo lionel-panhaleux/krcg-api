@@ -8,8 +8,11 @@
   - `/convert` JSON input/output now uses the v5 deck shape; added `txt` and
     `vdb` plain-text output formats.
 - Requires Python 3.12+.
-- New Ansible deploy under `deploy/` (server-setup collection): uvicorn systemd
-  service behind nginx with Let's Encrypt, run by CI on every published release.
+- New Ansible deploy under `deploy/` (server-setup collection), run by CI on
+  every published release. Two API versions run side by side during the
+  migration window: `v3.api.krcg.org` (legacy 3.x, pre-v5 JSON) and
+  `v4.api.krcg.org` (this version). `api.krcg.org` stays on v3 for now and
+  will switch to v4 at the end of the window.
 - CORS moved out of the app: api.krcg.org serves permissive CORS headers from
   nginx for the whole site. If you self-host, add CORS at your reverse proxy
   (or wrap the ASGI app in a CORS middleware) for browser clients.

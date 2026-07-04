@@ -1,5 +1,5 @@
 [Unit]
-Description=KRCG API (FastAPI / uvicorn)
+Description=KRCG API {{ ver.name }} ({{ "Flask / gunicorn" if ver.server == "gunicorn" else "FastAPI / uvicorn" }})
 After=network-online.target
 Wants=network-online.target
 
@@ -7,8 +7,14 @@ Wants=network-online.target
 Type=simple
 User={{ krcg_api_user }}
 Group={{ krcg_api_user }}
-ExecStart={{ krcg_api_home }}/venv/bin/uvicorn krcg_api:application \
-    --host 127.0.0.1 --port {{ krcg_api_port }} --workers {{ krcg_api_workers }}
+{% if ver.server == "gunicorn" %}
+ExecStart={{ krcg_api_home }}/{{ ver.name }}/venv/bin/gunicorn krcg_api:application \
+    --preload --bind 127.0.0.1:{{ ver.port }} --workers {{ krcg_api_workers }} \
+    --timeout 60 --graceful-timeout 30
+{% else %}
+ExecStart={{ krcg_api_home }}/{{ ver.name }}/venv/bin/uvicorn krcg_api:application \
+    --host 127.0.0.1 --port {{ ver.port }} --workers {{ krcg_api_workers }}
+{% endif %}
 Restart=always
 RestartSec=5
 # data is loaded in memory at startup (one copy per worker) — allow time for it
@@ -17,8 +23,8 @@ TimeoutStopSec=30
 # daily restart refreshes the in-memory card texts and TWDA
 RuntimeMaxSec=1d
 OOMScoreAdjust=-500
-# journald shows up under the shared `krcg_api` tag (nginx site + this service)
-SyslogIdentifier={{ service_name }}
+# journald: filter with journalctl -t krcg_api_{{ ver.name }}
+SyslogIdentifier=krcg_api_{{ ver.name }}
 # hardening
 NoNewPrivileges=true
 ProtectSystem=strict
