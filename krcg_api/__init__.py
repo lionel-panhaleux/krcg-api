@@ -106,7 +106,7 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="KRCG API",
         description=DESCRIPTION,
-        # Scalar (served at /scalar) is the only docs UI
+        # Scalar (served at /docs below) replaces the built-in docs UIs
         docs_url=None,
         redoc_url=None,
         version=importlib.metadata.version("krcg-api"),
@@ -144,7 +144,7 @@ def create_app() -> FastAPI:
 
     app.openapi = openapi_with_enums  # ty: ignore[invalid-assignment]
 
-    @app.get("/scalar", include_in_schema=False)
+    @app.get("/docs", include_in_schema=False)
     def scalar_html() -> HTMLResponse:
         return get_scalar_api_reference(
             openapi_url=app.openapi_url or "/openapi.json",

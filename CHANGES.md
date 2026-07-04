@@ -8,10 +8,9 @@
   - `/convert` JSON input/output now uses the v5 deck shape; added `txt` and
     `vdb` plain-text output formats.
 - Requires Python 3.12+.
-- API reference served with [Scalar](https://scalar.com) at `/scalar` (root
-  redirects there; the previous Swagger UI at `/docs` is gone). Card search
-  filter values are enumerated in the OpenAPI schema and operation ids match
-  handler names, for clean generated SDKs.
+- API reference served with [Scalar](https://scalar.com) at `/docs` (root
+  redirects there). Card search filter values are enumerated in the OpenAPI
+  schema and operation ids match handler names, for clean generated SDKs.
 - New Ansible deploy under `deploy/` (server-setup collection), run by CI on
   every published release. Two API versions run side by side during the
   migration window: `v3.api.krcg.org` (legacy 3.x, pre-v5 JSON) and
