@@ -76,4 +76,7 @@
         nginx_site_type: proxy
         nginx_site_upstream: "http://127.0.0.1:{{ ver.port }}"
         nginx_site_aliases: "{{ [krcg_api_domain] if krcg_api_live == ver.name else [] }}"
+        # every version's cert covers the apex, so flipping krcg_api_live is a
+        # pure server_name change — no certificate operation at switch time
+        nginx_site_cert_extra_domains: "{{ [] if krcg_api_live == ver.name else [krcg_api_domain] }}"
         nginx_site_open_api_paths: "{{ ['/'] if ver.nginx_cors else [] }}"

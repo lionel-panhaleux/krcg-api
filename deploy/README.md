@@ -17,9 +17,10 @@ automatic Let's Encrypt issuance:
 | `v4`    | `krcg-api>=4,<5`    | FastAPI / uvicorn | `v4.api.krcg.org`  | served by nginx |
 
 The apex `api.krcg.org` is an nginx alias on the version selected by
-`krcg_api_live` (currently `v3`). To switch the apex to v4 at the end of the
-migration window, set `krcg_api_live: v4` and re-run the playbook — the
-nginx_site role expands the v4 TLS certificate automatically.
+`krcg_api_live` (currently `v3`). Every version's TLS certificate covers the
+apex from day one (`nginx_site_cert_extra_domains`), so switching the apex to
+v4 at the end of the migration window is a pure config change: set
+`krcg_api_live: v4` and re-run the playbook.
 
 DNS for `v3.api.krcg.org`, `v4.api.krcg.org` and `api.krcg.org` must point at
 the server before the first run (Let's Encrypt HTTP-01).
