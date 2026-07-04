@@ -1,0 +1,54 @@
+---
+# Remove the old Flask/uWSGI deployment of api.krcg.org.
+# Run once before the first deploy.yml run (from this deploy/ directory):
+#   ansible-playbook cleanup.yml -i "HOST," --user deploy --private-key ~/.ssh/deploy
+- name: Clean up old Flask deployment for api.krcg.org
+  hosts: all
+  tasks:
+    - name: Stop old systemd service
+      ansible.builtin.systemd:
+        name: api.krcg.org
+        state: stopped
+        enabled: false
+      ignore_errors: true
+
+    - name: Remove old systemd unit file
+      ansible.builtin.file:
+        path: /etc/systemd/system/api.krcg.org.service
+        state: absent
+      notify: Daemon reload
+
+    - name: Remove old nginx HTTP config
+      ansible.builtin.file:
+        path: /etc/nginx/sites-enabled/api.krcg.org.http.conf
+        state: absent
+      notify: Reload nginx
+
+    - name: Remove old nginx HTTPS config
+      ansible.builtin.file:
+        path: /etc/nginx/sites-enabled/api.krcg.org.https.conf
+        state: absent
+      notify: Reload nginx
+
+    - name: Remove old project directory
+      ansible.builtin.file:
+        path: /home/lpanhaleux/projects/api.krcg.org
+        state: absent
+
+    - name: Remove old PID file
+      ansible.builtin.file:
+        path: /tmp/api.krcg.org-master.pid
+        state: absent
+
+    # SSL certs at /etc/letsencrypt/live/api.krcg.org/ are kept — reused by new deployment
+    # Certbot renewal hook is kept — shared across domains
+
+  handlers:
+    - name: Daemon reload
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Reload nginx
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded
