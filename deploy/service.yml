@@ -1,17 +1,24 @@
 ---
 # Provision one API version (ver: {name, pins, port, server, nginx_cors}).
+# UV_PYTHON_INSTALL_DIR: uv runs as root here and would keep its managed
+# CPython under /root/.local, where the venv symlinks can't be followed by
+# the service user (and ProtectHome hides it) — pin it to a shared path.
 - name: Create the virtualenv on Python 3.12 ({{ ver.name }})
   ansible.builtin.command:
     cmd: >-
       /usr/local/bin/uv venv --python 3.12
       {{ krcg_api_home }}/{{ ver.name }}/venv
     creates: "{{ krcg_api_home }}/{{ ver.name }}/venv/bin/python"
+  environment:
+    UV_PYTHON_INSTALL_DIR: /usr/local/share/uv/python
 
 - name: Install / upgrade krcg-api ({{ ver.name }})
   ansible.builtin.command:
     argv: >-
       {{ ['/usr/local/bin/uv', 'pip', 'install', '--upgrade', '--python',
           krcg_api_home ~ '/' ~ ver.name ~ '/venv/bin/python'] + ver.pins }}
+  environment:
+    UV_PYTHON_INSTALL_DIR: /usr/local/share/uv/python
   register: krcg_api_install
   changed_when: >-
     'Installed' in (krcg_api_install.stdout + krcg_api_install.stderr)
