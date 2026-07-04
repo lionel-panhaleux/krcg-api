@@ -43,35 +43,42 @@ clean: clean-build
     rm -rf .pytest_cache .ruff_cache
     @echo "✅ Cleaned!"
 
-# Build the package
-build:
-    @echo "🔨 Building package..."
-    uv build
-    @echo "✅ Package built!"
-
-# Bump the version (level: minor | major)
+# Bump the version, tag, and push (level: minor | major)
 bump level="minor": check
     #!/usr/bin/env bash
     set -euo pipefail
     uv version --bump "{{ level }}"
     VERSION="$(uv version --short)"
     echo "📝 Committing version ${VERSION}..."
-    git add pyproject.toml
+    git add pyproject.toml CHANGES.md
     git commit -m "Release ${VERSION}" && git tag "v${VERSION}"
     echo "📤 Pushing to remote..."
     git push origin master --tags
 
-# Publish package to PyPI
-publish:
-    @echo "📦 Publishing to PyPI..."
-    @UV_PUBLISH_TOKEN="$(tr -d '\n' < ~/.pypi_token)" uv publish
-    @echo "✅ Release completed!"
+# Update CHANGELOG.md with release notes, clear CHANGES.md
+changelog:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    VERSION="$(uv version --short)"
+    DATE="$(date +%Y-%m-%d)"
+    echo "📝 Updating changelog..."
+    { echo "# Changelog"; echo; echo "## ${VERSION} (${DATE})"; echo; cat CHANGES.md; echo; tail -n +2 CHANGELOG.md; } > CHANGELOG.tmp
+    mv CHANGELOG.tmp CHANGELOG.md
+    > CHANGES.md
+    git add CHANGELOG.md CHANGES.md
+    git commit -m "Update changelog"
+    git push origin master
 
-# Create a release and reinstall with dev dependencies
-release: clean-build check test
-    @just bump minor
-    @just build
-    @just publish
+# Create a release (bump, tag, push — CI handles PyPI + GitHub release)
+release level="minor": clean-build check test
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [[ ! -s CHANGES.md ]] || [[ -z "$(tr -d '[:space:]' < CHANGES.md)" ]]; then
+        echo "❌ CHANGES.md is empty — add release notes before releasing"
+        exit 1
+    fi
+    just bump {{ level }}
+    just changelog
 
 # Update all dependencies to latest versions
 update:
