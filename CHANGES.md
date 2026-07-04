@@ -8,6 +8,10 @@
   - `/convert` JSON input/output now uses the v5 deck shape; added `txt` and
     `vdb` plain-text output formats.
 - Requires Python 3.12+.
+- API reference served with [Scalar](https://scalar.com) at `/scalar` (root
+  redirects there); Swagger UI and ReDoc remain at `/docs` and `/redoc`. Card
+  search filter values are enumerated in the OpenAPI schema and operation ids
+  match handler names, for clean generated SDKs.
 - New Ansible deploy under `deploy/` (server-setup collection), run by CI on
   every published release. Two API versions run side by side during the
   migration window: `v3.api.krcg.org` (legacy 3.x, pre-v5 JSON) and

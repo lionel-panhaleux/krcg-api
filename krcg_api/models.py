@@ -98,12 +98,20 @@ class CardSearchRequest(BaseModel):
         default=None,
         description="Additional language to search in (for text search only).",
     )
+    kind: list[str] | None = Field(
+        default=None, description="Card kind (Crypt or Library)."
+    )
     type: list[str] | None = Field(default=None, description="Type of the card.")
     clan: list[str] | None = Field(
         default=None, description="Clan/Creed or required clan/creed (or none)."
     )
-    group: list[int] | None = Field(
-        default=None, description="Group (crypt cards only)."
+    group: list[int | str] | None = Field(
+        default=None,
+        description='Group (crypt cards only): "G1".."G7" or "Any" '
+        "(bare numbers are accepted too).",
+    )
+    path: list[str] | None = Field(
+        default=None, description="Path (also matches cards requiring it)."
     )
     trait: list[str] | None = Field(default=None, description="Trait.")
     discipline: list[str] | None = Field(

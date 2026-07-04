@@ -41,6 +41,7 @@ dependencies = [
     "krcg>=5",
     "msgspec",
     "python-multipart",
+    "scalar-fastapi>=1.8.2",
     "uvicorn[standard]",
 ]
 

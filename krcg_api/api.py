@@ -138,7 +138,7 @@ def _canonicalize_criteria(
 
 @router.get("/", include_in_schema=False)
 def root() -> RedirectResponse:
-    return RedirectResponse(url="/docs")
+    return RedirectResponse(url="/scalar")
 
 
 @router.get(
