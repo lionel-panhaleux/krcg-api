@@ -25,14 +25,6 @@ DESCRIPTION = """
 Cards and decks are served in the
 [krcg v5](https://github.com/lionel-panhaleux/krcg) JSON format.
 
-### Documentation flavors
-
-This same API is documented three ways — pick whichever you prefer:
-
-- [**Scalar**](/scalar) — modern reference with a built-in API client (default).
-- [**Swagger UI**](/docs) — classic interactive "try it out" console.
-- [**ReDoc**](/redoc) — clean three-pane reference for reading.
-
 The raw schema is at [`/openapi.json`](/openapi.json) — feed it to any
 OpenAPI client generator to get a typed SDK.
 
@@ -114,6 +106,9 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="KRCG API",
         description=DESCRIPTION,
+        # Scalar (served at /scalar) is the only docs UI
+        docs_url=None,
+        redoc_url=None,
         version=importlib.metadata.version("krcg-api"),
         contact={
             "name": "KRCG API",

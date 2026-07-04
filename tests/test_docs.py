@@ -4,12 +4,13 @@ def test_root_redirects_to_scalar(client):
     assert response.headers["location"] == "/scalar"
 
 
-def test_docs_uis_are_served(client):
-    """Scalar (pretty default), Swagger UI and ReDoc are all available."""
-    for path in ("/scalar", "/docs", "/redoc"):
-        response = client.get(path)
-        assert response.status_code == 200, path
-        assert "text/html" in response.headers["content-type"], path
+def test_scalar_is_the_only_docs_ui(client):
+    """Scalar is served; Swagger UI and ReDoc are disabled."""
+    response = client.get("/scalar")
+    assert response.status_code == 200
+    assert "text/html" in response.headers["content-type"]
+    for path in ("/docs", "/redoc"):
+        assert client.get(path).status_code == 404, path
 
 
 def test_openapi_operation_ids_are_clean(client):
