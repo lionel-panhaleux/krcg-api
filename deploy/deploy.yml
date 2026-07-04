@@ -24,12 +24,13 @@
         # krcg-api 3.x declares krcg>=4.16 without an upper bound, and
         # krcg 5 removed the modules it imports — the krcg<5 pin is required
         pins: ["krcg-api<4", "krcg<5", "gunicorn"]
-        port: 8003
+        # ports 8001-8005 belong to the legacy myserver deployments
+        port: 8010
         server: gunicorn
         nginx_cors: false
       - name: v4
         pins: ["krcg-api>=4,<5"]
-        port: 8004
+        port: 8011
         server: uvicorn
         nginx_cors: true
 
