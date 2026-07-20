@@ -38,7 +38,7 @@ dependencies = [
     "arrow",
     "babel",
     "fastapi",
-    "krcg>=5.4",  # 5.4 fixed Amaranth fragment share URLs (#deck/<uid>)
+    "krcg>=5.9",  # 5.9 links cards named in card text (Card.cards, <Card Name>)
     "msgspec",
     "python-multipart",
     "scalar-fastapi>=1.8.2",

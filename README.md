@@ -64,6 +64,7 @@ curl -X GET "http://127.0.0.1:8000/card/Alastor" -H  "accept: application/json"
   "rulings": [
     {
       "text": "If the weapon retrieved costs blood, that cost is paid by the vampire chosen by the terms. [LSJ 20040518]",
+      "reminder": false,
       "references": [
         {
           "text": "[LSJ 20040518]",
@@ -74,9 +75,31 @@ curl -X GET "http://127.0.0.1:8000/card/Alastor" -H  "accept: application/json"
     }
   ],
   "i18n": {},
-  "variants": []
+  "variants": [],
+  "cards": []
 }
 ```
+
+A card whose text names another card marks it in place with `<Card Name>`,
+and lists the cards it names in `cards`:
+
+```json
+{
+  "printed_name": "Villein",
+  "text": "Trifle.\nPut this card on a vampire you control who has any amount of blood and move 2 to 5 blood from that vampire to your pool. Cards named <Minion Tap> cost you +1 pool to play. Villein costs +1 pool to play on this vampire.",
+  "cards": [
+    {
+      "id": 101217,
+      "printed_name": "Minion Tap",
+      "unicity_suffix": "",
+      "suffix": ""
+    }
+  ]
+}
+```
+
+Every marker left in the text names a card listed in `cards`, so a client can
+render them as links; strip the angle brackets to display the plain text.
 
 Search for cards by text, type, discipline, title, city, artist, set,
 preconstructed starter, group, capacity, trait, sect, bonus values, etc.:
