@@ -3,7 +3,7 @@ import math
 import random
 import urllib.parse
 from collections.abc import Iterable
-from typing import Annotated, Any
+from typing import Annotated, Any, cast
 
 import aiohttp
 import arrow
@@ -35,17 +35,17 @@ CASE_SENSITIVE_DIMENSIONS = {"discipline", *TEXT_DIMENSIONS}
 
 def get_cards(request: Request) -> krcg_collections.CardDict:
     """Dependency: the loaded cards library."""
-    return request.app.state.cards
+    return cast(krcg_collections.CardDict, request.app.state.cards)
 
 
 def get_twda(request: Request) -> krcg_twda.DecksArchive:
     """Dependency: the loaded TWDA."""
-    return request.app.state.twda
+    return cast(krcg_twda.DecksArchive, request.app.state.twda)
 
 
 def get_http(request: Request) -> aiohttp.ClientSession:
     """Dependency: the shared aiohttp session (deck providers)."""
-    return request.app.state.http
+    return cast(aiohttp.ClientSession, request.app.state.http)
 
 
 Cards = Annotated[krcg_collections.CardDict, Depends(get_cards)]
