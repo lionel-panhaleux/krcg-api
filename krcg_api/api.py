@@ -1,10 +1,9 @@
-from collections.abc import Iterable
-from typing import Annotated, Any
-
 import io
 import math
 import random
 import urllib.parse
+from collections.abc import Iterable
+from typing import Annotated, Any
 
 import aiohttp
 import arrow
@@ -12,12 +11,8 @@ import babel
 import msgspec
 from fastapi import APIRouter, Depends, Header, HTTPException, Request
 from fastapi.responses import PlainTextResponse, RedirectResponse
-
-from krcg import analyzer
+from krcg import analyzer, models, parser, providers
 from krcg import collections as krcg_collections
-from krcg import models
-from krcg import parser
-from krcg import providers
 from krcg import twda as krcg_twda
 from krcg import utils as krcg_utils
 

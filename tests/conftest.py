@@ -1,11 +1,10 @@
 from unittest.mock import patch
 
-import pytest
-
 import krcg
+import pytest
+from fastapi.testclient import TestClient
 from krcg import twda
 
-from fastapi.testclient import TestClient
 from krcg_api import create_app
 
 
