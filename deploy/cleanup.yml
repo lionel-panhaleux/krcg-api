@@ -41,7 +41,10 @@
         path: /tmp/api.krcg.org-master.pid
         state: absent
 
-    # SSL certs at /etc/letsencrypt/live/api.krcg.org/ are kept — reused by new deployment
+    # The api.krcg.org certificate lineage is left in place, but deploy.yml never
+    # reuses it: each version gets its own lineage (v3.api / v4.api) carrying the
+    # apex as a SAN. The bare lineage is an orphan — once no vhost references it,
+    # remove it by hand with `certbot delete --cert-name api.krcg.org`.
     # Certbot renewal hook is kept — shared across domains
 
   handlers:
