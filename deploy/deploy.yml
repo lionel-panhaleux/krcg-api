@@ -45,9 +45,11 @@
     - name: Install uv (provisions Python and the venvs)
       ansible.builtin.shell:
         cmd: >-
+          set -o pipefail &&
           curl -LsSf https://astral.sh/uv/install.sh
           | env UV_INSTALL_DIR=/usr/local/bin INSTALLER_NO_MODIFY_PATH=1 sh
         creates: /usr/local/bin/uv
+        executable: /bin/bash
 
     - name: Deploy each API version
       ansible.builtin.include_tasks: service.yml
