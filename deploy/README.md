@@ -68,6 +68,3 @@ ansible-playbook deploy.yml -i "1.2.3.4," --user deploy --private-key ~/.ssh/dep
 
 (Run from this `deploy/` directory so `ansible.cfg` is picked up. Add
 `--check --diff` for a dry run.)
-
-Before the first run, decommission the old Flask/uWSGI deployment once with
-[`cleanup.yml`](cleanup.yml).
