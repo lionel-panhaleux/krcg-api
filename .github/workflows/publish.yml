@@ -13,10 +13,10 @@ jobs:
       id-token: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@v10.1.0
 
       - name: Build
         run: uv build
@@ -33,7 +33,7 @@ jobs:
       actions: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Create release
         run: gh release create "${{ github.ref_name }}" --notes-file CHANGES.md
