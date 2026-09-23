@@ -4,4 +4,4 @@
 collections:
   - name: https://github.com/lionel-panhaleux/server-setup.git
     type: git
-    version: main
+    version: ansible-final
