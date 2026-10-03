@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.3 (2026-10-03)
+
+- Upgrade to krcg 5.14:
+  - Deck import: VDB precon links (`https://vdb.im/decks/V5L:PL`) import, where
+    they used to answer 502 on VDB's 400. A playtest precon answers 400.
+  - A TWDA score serializes in the TWDA's own wording in plain-text deck
+    exports, `1GW4 + 4vp in final`, where it used to be `1GW4+4!` (krcg 5.13).
+
+
 ## 4.2 (2026-09-04)
 
 - Upgrade to krcg 5.12. Ruling payloads gain a field, and card data changes:
