@@ -8,14 +8,14 @@
 #        The app serves no CORS headers; nginx adds them (open_api_paths).
 #
 # Each version serves on <name>.api.krcg.org; the apex api.krcg.org is an
-# alias on the site selected by krcg_api_live. Flip krcg_api_live to v4 to
-# end the migration window (the role expands the TLS cert automatically).
+# alias on the site selected by krcg_api_live (every version's TLS cert covers
+# the apex, so switching it is a server_name change only).
 - name: Deploy krcg-api
   hosts: all
   become: true
   vars:
     krcg_api_domain: api.krcg.org
-    krcg_api_live: v3  # version serving the apex domain
+    krcg_api_live: v4  # version serving the apex domain
     krcg_api_user: krcg_api
     krcg_api_home: /opt/krcg-api
     krcg_api_workers: 2
